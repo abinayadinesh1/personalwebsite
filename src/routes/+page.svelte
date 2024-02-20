@@ -24,7 +24,7 @@
   with how soil health and agriculture dictates health quality.
 </p>
 <p>
-  I&#39;d love for you to check out my <a href="abinayadinesh.com/dev">work</a>.
+  I&#39;d love for you to check out my <a href="./writing">work</a>.
 </p>
 <p>
   In my free time, I am <a
