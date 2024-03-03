@@ -57,20 +57,24 @@
 <h1>Farmer Interviews</h1>
 <ul>
   <li>
-    Interview with <a href="./writing/durstorganic">Durst Organic Farms</a>, a
-    model regen farm in CA
+    Interview with <a href="./writing/farmerinterviews/durstorganic"
+      >Durst Organic Farms</a
+    >, a model regen farm in CA
   </li>
   <li>
-    Interview with <a href="">Ratto Brothers</a>, a large, leafy green growers
-    in CA
+    Interview with <a href="./writing/farmerinterviews/rattobrothers"
+      >Ratto Brothers</a
+    >, a large, leafy green growers in CA
   </li>
   <li>
-    Interview with <a href="">Cloverfield Organic Farms</a>, a living,
-    breathing, autonomous food forest
+    Interview with <a href="./writing/farmerinterviews/cloverfieldorganics"
+      >Cloverfield Organic Farms</a
+    >, a living, breathing, autonomous food forest
   </li>
   <li>
-    Interview with <a href="">Park Farming</a>,where Scott Park is leading a
-    decades long experiment in regen ag
+    Interview with <a href="./writing/farmerinterviews/parkfarming"
+      >Park Farming</a
+    >,where Scott Park is leading a decades long experiment in regen ag
   </li>
 </ul>
 <!-- 

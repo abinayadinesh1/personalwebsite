@@ -1,15 +1,14 @@
-<h1>hello!</h1>
-<h4 id="updated-9-10">Updated: 9/10</h4>
+<h1>hello there!</h1>
+<h4 id="updated-9-10">Updated: 4/2/24</h4>
 <p>
-  im currently interested in using optics, ml, and creative user interfaces to
-  solve the major pitfalls of our food systems. Ask me about my <a
-    href="https://twitter.com/abinayaaaa/status/1646659588450844673"
-    >latest project</a
-  >!
+  im currently interested in using robotics to bring agency and utility to
+  farmers by developing low cost methods of on-farm processing. broadly, I'm
+  curious about how to shorten the overall food supply chain, make small farmers
+  competitive on the market, and leverage policy and sustainability for long
+  term goals in public health.
 </p>
 <p>
-  I&#39;ve always been really interested in public health. In the past, I did
-  research at <a href="https://www.columbiactcn.org/"
+  in the past, I did research at <a href="https://www.columbiactcn.org/"
     >Columbia under Vilas Menon</a
   >, data science at the
   <a href="https://www.einsteinmed.edu/centers/ictr/health-data-innovations/"
@@ -20,20 +19,22 @@
   > to improve diagnosis processes using eye tracking.
 </p>
 <p>
-  The root cause of illness is truly in food and lifestyles, making me obsessed
-  with how soil health and agriculture dictates health quality.
+  i'm currently studying a mixture of agriculture, computer science, and
+  mathematics at uc berkeley 🧸. this semester is spent conquering my fears (of
+  falling from 60m up onto rope, writing long math proofs, and starting a
+  startup).
 </p>
 <p>
-  I&#39;d love for you to check out my <a href="./writing">work</a>.
+  i&#39;d love for you to check out my past <a href="./writing">work</a>.
 </p>
 <p>
   In my free time, I am <a
     href="https://runtime.substack.com/p/what-my-body-tells-me"
     >obsessed with rock climbing</a
-  > and making tiny zines. If you ever want to climb tall rocks (lead and belay certified
-  🙌🏼), grab pastries, or build together, reach me at adinesh@berkeley.edu!
+  > and making tiny zines. If you ever want to climb (lead certified 🙌🏼), grab pastries,
+  or build together, reach me at adinesh@berkeley.edu!
 </p>
-<p>Find me around the internet!</p>
+<p>find me around the internet!</p>
 <p>
   <a
     href="https://www.apple.com/newsroom/2021/06/apples-wwdc21-swift-student-challenge-winners-code-to-change-the-world/"
