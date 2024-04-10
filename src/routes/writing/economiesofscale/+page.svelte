@@ -3,116 +3,82 @@
   <h2>tldr;</h2>
   <ul>
     <li>
-      everyone says economies og scale helps buisinesses boom and are usually
-      more efficient: if you can up your production and distribute your goods
-      better, you will make more money and use it to grow.
+      Everyone says economies of scale helps buisinesses boom and are usually
+      more efficient, as in if you can incerase your production and distribute
+      your goods better, you will make more money and use it to grow.
     </li>
     <li>
-      maybe thie works- maybe conventional agriculture is actually a prime
-      example of this. it uses machines to make more goods, increase shelf life
+      Maybe thie works and maybe conventional agriculture is actually a prime
+      example of this. It uses machines to make more goods, increase shelf life
       + distribute it farther, and has more profit to reinvest in machines and
       land.
     </li>
-    <li>but maybe, this doesn't actually work.</li>
+    <li>But maybe, there are reasons why it'll fail in the long run.</li>
   </ul>
   <p>
-    central thesis of economies of scale is its cheaper to build something at
-    higher volume (considering net profit) the fixed cost is how it takes to
-    build 1 unit. the more you can build with that one cost, the larger your
-    window of return. leads us to an important point: the more you can sell your
-    product, the more you can actually invest in making the product better.
-    start with a shit product, but if your even a bit profitable, the more you
-    can sell the better you can make the product.
+    The central thesis of "economies of scale" is once the fixed costs are taken
+    care of, it's more profitable to build something at higher volume. This
+    implies even if your product isn't the best quality at the start, or takes a
+    long time to produce, even if it is a little bit profitable, you'll have the
+    income necessary to make the product better. Essentially, the more you can
+    sell your product, the more you can actually invest in making the product
+    better.
   </p>
   <p>
-    in normal agriculture, start with a product: like Tomato. you can only sell
-    lots of Tomato if you can make lots of Tomato. the only way is if you have
-    lots of land, which requires either lots of feet or lots of machinery to
-    plant, weed, fertilize, water, and harvest. so, buy a tractor, build a
-    processing factory, make synthetic fertilizers to shorten growing cycles.
-    conventional agriculture has grown to <a
+    In conventional agriculture, start with a product like Tomato. You can only
+    sell lots of Tomato if you can make lots of Tomato. The only way is if you
+    have lots of land, which requires either lots of feet or lots of machinery
+    to plant, weed, fertilize, water, and harvest. So, add a tractor, a
+    processing factory, synthetic fertilizers and more to sell Tomato at high
+    volume. Conventional agriculture has grown to <a
       href="https://css.umich.edu/publications/factsheets/food/us-food-system-factsheet"
       >feed over 65% of our country</a
     >.
   </p>
   <p>
-    and according to the world bank, they account for 70 - 90 percent of
-    increases in food production. ALL OF THE SURPLUS OF FOOD THAT WE HAVE IS
-    BECAUSE OF CONVENTIONAL AG. without a surplus (meaning you make more food
-    than you can eat yourself), we wouldn&#39;t have cities, writing, philosphy,
-    art, robotics, computers, and more. (cities were actually created from
-    division of space and labor: we intensified farming practices so we could
-    grow more food on less land with less people and send people to highly
-    concentrated towns/cities so its easier for us to transport goods to them)
-    (suburbs were built much much later, and are only possible if you have
-    really effective transportation).
+    According to the world bank, conventional agriculture also accounts for 70 -
+    90 percent of increases in food production, which means all the food
+    abundance we have comes directly from big ag. Without a surplus of food
+    (meaning you make more food than you can eat yourself), we wouldn't have
+    cities, writing, philosphy, art, robotics, computers, and more. This follows
+    from the fact cities were created from division of space and labor: we
+    intensified farming practices so we could grow more food on less land with
+    less people and send people to highly concentrated towns/cities.
   </p>
   <p>
-    obviously, conventional agriculture is pivotal to us being here. and do they
-    benefit from economies of scale? obviously. You can only grow so much Tomato
-    if you are farming 12/36 months of a 3 year cycle. But, if you fertilize
-    every year, that turns into 24/36 months of the year.
-  </p>
-  <p>why doesn&#39;t this work for agriculture?</p>
-  <p>where do economies of scale break down?</p>
-  <p>
-    worldwide, “With over 70% of the world’s food production reliant on family
-    farmers, this type of farming represents the vast majority of agriculture
-    worldwide, both in developed and developing countries.
-  </p>
-  <ul>
-    <li>
-      Large-scale family farms and industrial nonfamily farms account for only
-      5% of farms, but 63.8% of production (in $). Small-scale family farms
-      represent 89% of U.S. farms, but only 17.8% of production.4
-    </li>
-  </ul>
-  <p>
-    Fixed costs can also often be thought of as <em>setup</em> costs - steps that
-    need to take place at the beginning of a process. The longer your process runs,
-    the more those costs get spread out.
-  </p>
-  <p>over time, then you reach this cost cliff.</p>
-  <p>
-    deeconomies of scale: the features that lead to an increase in average costs
-    as a business grows beyond a certain size. not just as it grows beyond a
-    certain size, but as it grows over a certain TIME PERIOD. you cant grow on a
-    single piece of land with the ideals of economies at scale for over 100
-    years - after a certain point, the amount you need to spend on fertilizer,
-    disease management, water (due to drought/less water holding capacity of the
-    soil). <strong
-      >after a certain time period, the economy of scale actually fails +
-      further production leads to lower costs.</strong
-    >
-    because of international markets, growing of cash crops, and markets FAR from
-    feeding people, conventional agriculture can continue to make money. but we are
-    doing quite poorly at the job of feeding people.
-  </p>
-  <ol>
-    <li>fixed cost</li>
-    <li>produce more to make it profitable</li>
-    <li>
-      run process for a long time --&gt; increase production --&gt; make more
-      net profit
-    </li>
-    <li>
-      reach a cost cliff: you&#39;ve fucked over the land you&#39;re on that it
-      costs so much to farm on it (increased water, fertilizer, and pesticide
-      costs)
-    </li>
-    <li>DIP</li>
-  </ol>
-  <p>
-    move to another place and start again what this actually looks like is
-    consolidation: big companies can&#39;t produce well on the land theyre on so
-    they buy land from smaller farmers or acquire smaller farms, industrialize
-    those processes, and do the same.
+    Obviously, conventional agriculture is pivotal to us being here and they
+    benefit largely economies of scale.
   </p>
   <p>
-    do this n times and you have plowed, then deserted all the land in the
-    world. at times, you have made insane quanities of food. but now, once
-    you&#39;ve run out of physical space, what next? shipping fertile soil from
-    mars? extreme poverty around the world?
+    However, the major inputs to agriculture actually are deeconomies of scale.
+    Tractors, synthetic inputs, pesticides, etc. all lead to an increase in
+    average costs the more the business scales. The more pesticides you apply,
+    the more pests become resistant to disease and even more is needed to kill
+    the same amount. The more fertilizer is applied without considering the
+    yearly fertility of the soil, the more the intrinsic fertility goes down and
+    the more fertilizer is needed the next year.
+  </p>
+  <p>
+    Many farmers have realized that you cant grow the same crop on the same
+    piece of land with the ideals of economies at scale for over 100 years
+    without diminishing returns. After a certain point, the amount you need to
+    spend on fertilizer, disease management, water increases faster than the
+    price of the product. Increased volume of production in the economy of scale
+    actually led to lower profits.
+  </p>
+  <p>
+    When corporate farms deplete the fertility of their soil or suffer from
+    prolonged drought, they move to another place and start again. The result is
+    major farm consolidation: the conventional farmers benefit from high profits
+    for the first 100 years and since they have the money to buy more land, they
+    continue absorbing more farms and generating revenue, leaving deserted
+    farmland in its tracks.
+  </p>
+  <p>
+    doing this across America, Latin America, Africa, India and more means you
+    have plowed, then deserted all the land in the world. At times, you have
+    made insane quanities of food. Now, once you've run out of physical space,
+    what next? Shipping fertile soil from mars? food shortages around the world?
   </p>
 </body>
 

@@ -9,9 +9,9 @@
 </p>
 <p>
   But how else are you to know about humanities biggest issues, without
-  listening to the people reporting on it? Plus, it seems impossible to find PMF
-  for a problem you made up. On the other hand, there are millions of problems
-  in our world to fix: climate change, lack of humanitarian aid, surveillance,
+  listening to the people reporting on it? It seems impossible to find PMF for a
+  problem you made up. On the other hand, there are millions of problems in our
+  world to fix: climate change, lack of humanitarian aid, surveillance,
   renewable energy, corruption, inequitable transportation, poverty, and chronic
   disease (just to name a few). ^3
 </p>
@@ -40,11 +40,12 @@
   salary of being a ML scientist or Optimization Engineer at Amazon. But I’d
   have to argue that there’s a lot more opportunity in it than there used to be,
   and just as much risk when compared to starting a B2B Saas in today’s
-  saturated markets! To get an ambitious project off the ground, it only takes a
-  few cold emails, the right people, or keeping your eyes out for grants. VC
-  money trickles in this space, but there are a few (LowerCarbon, Founders Fund)
-  that are willing to take on higher risks to support inventions for the future.
-  Here’s a list^1 I conjured of a few I know of: lmk if you know any too!
+  saturated markets! To get an ambitious project off the ground, it takes being
+  scrappy: a few cold emails, the right people, or keeping your eyes out for
+  grants. VC money trickles in this space, but there are a few (LowerCarbon,
+  Founders Fund) that are willing to take on higher risks to support inventions
+  for the future. Here’s a list^1 I conjured of a few I know of: lmk if you know
+  any too!
 </p>
 <p>Here’s just one reason that should convince everyone to read the news:</p>
 <ol>
