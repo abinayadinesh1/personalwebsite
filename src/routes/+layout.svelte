@@ -1,15 +1,20 @@
 <body>
   <nav>
-    <navbar-h1>abinaya dinesh</navbar-h1>
-    <a href="/">about</a>
-    <a href="/writing">writing</a>
+    <!-- <navbar-h1>abinaya dinesh</navbar-h1> -->
+    <a href="/"><strong>about</strong></a>
+    <a href="/writing"><strong>writing</strong></a>
   </nav>
 
   <slot />
 </body>
 
 <style>
-  body {
-    background-image: url("bg.jpg");
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    padding-top: 0.2em;
+    padding-bottom: 0.7em;
   }
 </style>

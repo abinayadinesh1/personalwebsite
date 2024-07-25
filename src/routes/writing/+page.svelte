@@ -78,6 +78,10 @@
   <li><a href="./writing/phofsoil">the industry of soil pH</a></li>
 </ul>
 
+<h1>Notes</h1>
+<li>
+  <a href="./writing/notes/">ag ideas</a>
+</li>
 <!-- 
 <a href=""></a>
 <a href=""></a>

@@ -1,6 +1,5 @@
 <hr />
-<p>title: The Effects of Conventional Agriculture on Public Health</p>
-<hr />
+<p>The Effects of Conventional Agriculture on Public Health</p>
 <p>
   The nutritional values of vegetables like asparagus and spinach have dropped
   significantly since 1950. A 2004 US study found important nutrients in some
@@ -58,7 +57,9 @@
 </p>
 <p>experiment showing nutrients decreasing in rice such as b vitamins</p>
 <p>
-  <a href="http://advances.sciencemag.org/content/4/5/eaaq1012/tab-pdf"></a>
+  <a href="http://advances.sciencemag.org/content/4/5/eaaq1012/tab-pdf"
+    >random link</a
+  >
 </p>
 <p>
   Extra carbon dioxide acts like empty calories or “junk food” for the plants,
