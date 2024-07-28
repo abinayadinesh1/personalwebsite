@@ -1,29 +1,8 @@
-<h1>Farmer Interviews</h1>
-<ul>
-  <li>
-    Interview with <a href="./writing/farmerinterviews/durstorganic"
-      >Durst Organic Farms</a
-    >, a model regen farm in CA
-  </li>
-  <li>
-    Interview with <a href="./writing/farmerinterviews/rattobrothers"
-      >Ratto Brothers</a
-    >, a large, leafy green growers in CA
-  </li>
-  <li>
-    Interview with <a href="./writing/farmerinterviews/cloverfieldorganics"
-      >Cloverfield Organic Farms</a
-    >, a living, breathing, autonomous food forest
-  </li>
-  <li>
-    Interview with <a href="./writing/farmerinterviews/parkfarming"
-      >Park Farming</a
-    >,where Scott Park is leading a decades long experiment in regen ag
-  </li>
-</ul>
-
 <h1>Writing</h1>
 <ul>
+  <li>
+    <a href = "./writing/homeforgenius">07.24.24 an environment for genius</a>
+  </li>
   <li>
     <a href="./writing/economiesofscale"
       >2.17.24 why do economies at scale break down with agriculture?</a
@@ -78,10 +57,36 @@
   <li><a href="./writing/phofsoil">the industry of soil pH</a></li>
 </ul>
 
+<h1>Farmer Interviews</h1>
+<ul>
+  <li>
+    Interview with <a href="./writing/farmerinterviews/durstorganic"
+      >Durst Organic Farms</a
+    >, a model regen farm in CA
+  </li>
+  <li>
+    Interview with <a href="./writing/farmerinterviews/rattobrothers"
+      >Ratto Brothers</a
+    >, a large, leafy green growers in CA
+  </li>
+  <li>
+    Interview with <a href="./writing/farmerinterviews/cloverfieldorganics"
+      >Cloverfield Organic Farms</a
+    >, a living, breathing, autonomous food forest
+  </li>
+  <li>
+    Interview with <a href="./writing/farmerinterviews/parkfarming"
+      >Park Farming</a
+    >,where Scott Park is leading a decades long experiment in regen ag
+  </li>
+</ul>
+
+
 <h1>Notes</h1>
 <li>
   <a href="./writing/notes/">ag ideas</a>
 </li>
+
 <!-- 
 <a href=""></a>
 <a href=""></a>

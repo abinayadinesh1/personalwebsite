@@ -1,14 +1,30 @@
 <script>
-  let img1 = "src/IMG_4363.jpg";
-  let img2 = "src/IMG_6410.jpg";
-  let img3 = "src/IMG_6795.jpg";
-  let img4 = "src/IMG_9055.jpg";
+  let img1 = "/IMG_4363.jpg";
+  let img2 = "/IMG_6410.jpg";
+  let img3 = "/IMG_6795.jpg";
+  let img4 = "/IMG_9055.jpg";
+
+  // /Users/abinayadinesh/Documents/personalwebsite/src/routes/+page.svelte
+  // /Users/abinayadinesh/Documents/personalwebsite/static/IMG_9055.jpg
+
 </script>
 
 <body>
   <h1>hi!! i'm abinaya dinesh</h1>
   <h4>adinesh@berkeley.edu</h4>
   <br />
+  <div class="image-container-1">
+    <img
+      src={img1}
+      alt="an image of abi"
+      style="width:20%; border-radius:10px;"
+    />
+    <img
+      src={img2}
+      alt="an image of abi"
+      style="width:20%; border-radius:10px;"
+    />
+  </div>
   <div class="image-container-1">
     <img
       src={img3}
@@ -22,7 +38,7 @@
     />
   </div>
 
-  <h3>Updated: 7/21/24</h3>
+  <h3>Updated: 7/28/24</h3>
   <p>
     im currently interested in using robotics to bring agency and utility to
     farmers by developing visual navigation systems that can explore and
@@ -32,21 +48,14 @@
     health.
   </p>
   <p>
-    in the past, I did research at <a href="https://www.columbiactcn.org/"
-      >Columbia under Vilas Menon</a
-    >, data science at the
-    <a href="https://www.einsteinmed.edu/centers/ictr/health-data-innovations/"
-      >Albert Einstein College of Medicine</a
-    >, and
+    in the past, I developed fungal cultures for farms at <a href ="https://www.loambio.com/">Loam Bio</a>, machine learning algorithms for the <a href="https://apps.apple.com/us/app/mta-traintime/id1104885987">MTA</a>, and
     <a href="https://ieeexplore.ieee.org/document/9668883"
       >science fair projects</a
     > to improve diagnosis processes using eye tracking.
   </p>
   <p>
     i'm currently studying a mixture of agriculture, computer science, and
-    mathematics at uc berkeley 🧸. this semester is spent conquering my fears
-    (of falling from 60m up onto rope, writing long math proofs, and starting a
-    startup).
+    mathematics at uc berkeley 🧸. my next semester will be spent understanding the fate of developing countries (should we all aspire to be another America?), writing algorithms, and talking to hundreds of farmers for <a href="https://ambrook.com/">Ambrook<a/>. 
   </p>
   <p>
     i&#39;d love for you to check out my past <a href="./writing">work</a>.
@@ -59,18 +68,6 @@
     pastries, or build together, reach out to me!
   </p>
   <p>find me around the internet!</p>
-  <div class="image-container-1">
-    <img
-      src={img1}
-      alt="an image of abi"
-      style="width:20%; border-radius:10px;"
-    />
-    <img
-      src={img2}
-      alt="an image of abi"
-      style="width:20%; border-radius:10px;"
-    />
-  </div>
 
   <p>
     <a
@@ -99,11 +96,11 @@
 
 <style>
   .image-container-1 {
-    padding: 1.5em;
+    padding: 0.25em;
     display: flex;
     /* border: 2px dotted #558f6d; */
-    justify-content: left;
-    align-items: left;
+    justify-content: center;
+    align-items: center;
     gap: 2em;
     border-radius: 25px;
   }
