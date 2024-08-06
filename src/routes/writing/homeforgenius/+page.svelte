@@ -3,7 +3,7 @@
     let capt2 = "the reality"
     let capt3 = "the lake. a turtle, smaller than my little palm, floats in the middle of the lake, peeking its nose above the surface."
 </script>
-<h1> An environment for genius</h1>
+<h1> an environment for genius</h1>
 
 <p>
     F and I visited IAS recently: the Institute for Advanced Study. Just 15 minutes away from my childhood home, the most brilliant minds in the history of math and science have studied or visited here. It looks just as I'd expected. 
