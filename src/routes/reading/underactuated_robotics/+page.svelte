@@ -1,7 +1,9 @@
 <script>
-    import SvelteMarkdown from "svelte-markdown";
-    source = `
-    # lect 1
+import SvelteMarkdown from "svelte-markdown";
+const source = `
+# [Underactuated Robotics](https://underactuated.csail.mit.edu/) by Russ Tedrake
+
+## lect 1
 ### robot dynamics
 agility robotics
 boston dynamics
@@ -160,3 +162,7 @@ stall fluid [dynamics]() -
 
 `
 </script>
+
+<SvelteMarkdown {source} />
+
+

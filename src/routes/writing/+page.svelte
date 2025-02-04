@@ -1,3 +1,4 @@
+<body>
 <h1>Writing</h1>
 <ul>
   <li>
@@ -92,20 +93,8 @@
 
 
 <h1>Notes</h1>
-<li>
-  <a href="./writing/notes/">ag ideas</a>
-</li>
-
-<!-- 
-<a href=""></a>
-<a href=""></a>
-<a href=""></a>
-<a href=""></a>
-<a href=""></a>
-<a href=""></a>
-<a href=""></a>
-<a href=""></a>
-<a href=""></a>
-<a href=""></a>
-<a href=""></a>
-<a href=""></a> -->
+<ul>
+  <li><a href="./secret/coursework/">coursework</a></li>
+  <li><a href="./writing/notes/">ag ideas</a></li>
+</ul>
+</body>
