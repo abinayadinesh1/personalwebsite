@@ -1,7 +1,10 @@
 <h1>Writing</h1>
 <ul>
   <li>
-    <a href = "./writing/homeforgenius">07.24.24 an environment for genius</a>
+    <a href = "./writing/driving">how to drive to maximize your passengers comfort</a>
+  </li>
+  <li>
+    <a href = "./writing/homeforgenius">07.24.24 IAS: an environment for genius</a>
   </li>
   <li>
     <a href="./writing/economiesofscale"
