@@ -1,7 +1,13 @@
 <h1>Writing</h1>
 <ul>
   <li>
-    <a href = "./writing/driving">how to drive to maximize your passengers comfort</a>
+    <a href = " https://docs.google.com/document/d/1UOtDPD3F_469Qe_RGj4N10eKHTV5VavyjYZcgpg0Yyw/edit?usp=sharing">01.22.25 a lit review including parallelized trajectory optimization</a>
+  </li>
+  <li>
+    <a href = "./writing/driving">01.07.25 how to drive to maximize your passengers comfort</a>
+  </li>
+  <li>
+    <a href = "./writing/researcher">11.19.24 how to write an email to a researcher (undergrad)</a>
   </li>
   <li>
     <a href = "./writing/homeforgenius">07.24.24 IAS: an environment for genius</a>
