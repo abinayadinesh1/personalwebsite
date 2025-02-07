@@ -19,8 +19,4 @@
     padding-top: 0.2em;
     padding-bottom: 0.7em;
   }
-  .body {
-    margin-bottom: 2 rem;
-  } 
-
 </style>
