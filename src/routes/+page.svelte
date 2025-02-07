@@ -61,6 +61,10 @@
         <a href="https://www.apple.com/newsroom/2021/06/apples-wwdc21-swift-student-challenge-winners-code-to-change-the-world/">Apple</a> |
         <a href="https://www.teenvogue.com/story/national-stem-day">Teen Vogue</a>
       </p>
+      <hr class="solid">
+      <p>
+        I love to host nomads, researchers, and curious fellas at our <a href = "https://joinarcadia.org/">group house in Berkeley</a>. Reach out if you need a place to stay!
+      </p>
 
     </div>
 
@@ -81,18 +85,14 @@
         mathematics at uc berkeley 🧸. 
       </p>
       <p>
-        i'd love for you to check out my past <a href="./writing">work</a>.
+        For the past two years, I’ve been obsessed with understanding our food systems, and flew to Minnesota to help build microbial fertilizers for Loam Bio. 
+        Later, I worked at Farm-Ng, where I helped build a motion planner for their autonomous rover. Since then, I’ve been obsessed with low level software, ML for edge devices, and robotics. I’m currently building a 16 DoF mobile manipulator from scratch - you can check for progress <a href ="https://x.com/abinayaaaa">here</a>! 
       </p>
-      <p>
-        if you need a place to stay, come visit <a href = "https://joinarcadia.org/">Arcadia</a>.
-      </p>
-
       <p>
         in my free time, I am <a href="https://runtime.substack.com/p/what-my-body-tells-me">obsessed with rock climbing</a> and making tiny zines. If you ever want to climb (lead certified 🙌🏼), grab
         pastries, or build together, reach out to me!
       </p>
-      <div id="telescoping-text"></div>  
-
+      <!-- <div id="telescoping-text"></div>   -->
     </div>  
   </div>
 </body>
@@ -109,13 +109,14 @@
   .text-column {
     padding: 1rem;
     max-width: 600px;
-    margin-right: 5rem;
+    margin-right: 1rem;
   }
 
   .image-column {
     width: 100%;
     max-width: 500px;
     padding-top: 1rem;
+    padding-right: 1rem;
   }
 
   .image-grid {
@@ -129,6 +130,10 @@
     border-radius: 10px;
     object-fit: cover;
   }
+  hr.solid {
+  border-top: 3px solid #bbb;
+}
+
 
   /* Responsive layout */
   @media (max-width: 1200px) {
