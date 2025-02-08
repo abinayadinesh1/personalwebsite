@@ -2,6 +2,9 @@
 <h1>Writing</h1>
 <ul>
   <li>
+    <a href = "./writing/fav_pubs">01.07.25 favorite publications of 2024</a>
+  </li>
+  <li>
     <a href = " https://docs.google.com/document/d/1UOtDPD3F_469Qe_RGj4N10eKHTV5VavyjYZcgpg0Yyw/edit?usp=sharing">01.22.25 a lit review including parallelized trajectory optimization</a>
   </li>
   <li>

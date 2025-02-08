@@ -82,17 +82,18 @@
     <div class="text-column">
       <p>
         i'm currently studying a mixture of agriculture, computer science, and
-        mathematics at uc berkeley 🧸. 
+        mathematics <a href = "./secret/coursework">at uc berkeley</a> 🧸. 
       </p>
       <p>
-        For the past two years, I’ve been obsessed with understanding our food systems, and flew to Minnesota to help build microbial fertilizers for Loam Bio. 
-        Later, I worked at Farm-Ng, where I helped build a motion planner for their autonomous rover. Since then, I’ve been obsessed with low level software, ML for edge devices, and robotics. I’m currently building a 16 DoF mobile manipulator from scratch - you can check for progress <a href ="https://x.com/abinayaaaa">here</a>! 
+        for the past two years, I’ve been obsessed with understanding our food systems, and flew to Minnesota to help build microbial fertilizers for <a href="https://www.loambio.com/">Loam Bio. </a>
+        Later, I worked at <a href = "https://farm-ng.com/">Farm-Ng</a>, where I helped build a motion planner for their autonomous rover. Since then, I’ve been obsessed with low level software, ML for edge devices, and robotics. I’m currently building a 16 DoF mobile manipulator from scratch - you can check for progress <a href ="https://x.com/abinayaaaa">here</a>! 
       </p>
+      <p>i'm currently dreaming about non-anthropomorphic robots that can cohere with our day to day activities, making life more frictionless and leaving space for whimsy.</p>
       <p>
-        in my free time, I am <a href="https://runtime.substack.com/p/what-my-body-tells-me">obsessed with rock climbing</a> and making tiny zines. If you ever want to climb (lead certified 🙌🏼), grab
-        pastries, or build together, reach out to me!
-      </p>
-      <!-- <div id="telescoping-text"></div>   -->
+        in my free time, I am <a href="https://runtime.substack.com/p/what-my-body-tells-me">obsessed with rock climbing</a>, skiing, and occasionaly, photography. 
+        <hr class="solid">
+
+        <!-- <div id="telescoping-text"></div>   -->
     </div>  
   </div>
 </body>
@@ -130,10 +131,6 @@
     border-radius: 10px;
     object-fit: cover;
   }
-  hr.solid {
-  border-top: 3px solid #bbb;
-}
-
 
   /* Responsive layout */
   @media (max-width: 1200px) {
