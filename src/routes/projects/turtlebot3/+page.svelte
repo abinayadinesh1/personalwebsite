@@ -1,7 +1,6 @@
 <script>
     import SvelteMarkdown from "svelte-markdown";
-    const source = `
-    # turtlebot3
+    const source = `# turtlebot3
 
 Over the summer, I worked at a company called farm-ng building autonomous rovers for farms. They started out relying on GPS data and waypoint-finding to preset locations to navigate through fields, but the time needed to collect a high resolution GPS information really bogged down our speed of delivery. Towards the end of my internship, we started exploring visual navigation system for GPS denied navigation, so I wanted to build my own hardware kit to fully understand how to build and deploy a visual navigation system that works for outdoor environments. 
 
@@ -71,8 +70,10 @@ i love using dremels!
 ### Closure
 
 We ended up developing 3) the algorithm for goal-directed navigation and 1), the pipeline for converting data from the microphone into a task for the robot. The main challenge was finding out towards the end of our hackathon that most of our motors were non functional, including the ones on the turtlebot3. We’re still not sure when/how they broke, especially given that all the software (for teleop, slam) is still working, but this further influenced my shift to [building a mobile base from scratch](https://www.notion.so/mobile-base-w-programmable-sdk-143935f751838039a0e6ec5a8df14e02?pvs=21) with off the shelf parts that I could individually test and debug, instead of the turtlebot stack.`
-``
-    
+
+
 </script>
 
 <SvelteMarkdown {source} />
+
+
