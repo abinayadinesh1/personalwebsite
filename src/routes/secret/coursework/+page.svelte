@@ -1,5 +1,5 @@
 <body>
-  <h2>Coursework at UC Berkeley ~</h2>
+  <h2>Coursework 🧸</h2>
     <h3>Spring 2025</h3>
     <ul>
       <li>CS 162: Operating Systems</li>
@@ -49,5 +49,3 @@
     </ul>
   </body>
   
-  <i class="las la-user"></i>  <!-- for a user icon -->
-  <i class="las la-home"></i>  <!-- for a home icon -->
