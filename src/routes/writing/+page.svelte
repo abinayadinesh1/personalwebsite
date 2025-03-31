@@ -1,5 +1,6 @@
 <body>
 <h1>Writing</h1>
+<h1>General</h1>
 <ul>
   <li>
     <a href = "./writing/fav_pubs">01.07.25 favorite publications of 2024</a>
@@ -17,13 +18,20 @@
     <a href = "./writing/homeforgenius">07.24.24 IAS: an environment for genius</a>
   </li>
   <li>
-    <a href="./writing/economiesofscale"
-      >2.17.24 why do economies at scale break down with agriculture?</a
+    <a href="./writing/readthenews"
+      >⭐️ 12.28.23 should tech people read the news?</a
     >
   </li>
+
+</ul>
+<h1>CS/Hardware</h1>
+<h2>Projects</h2>
+<h2>Paper Readings</h2>
+<h1>Ag</h1>
+<ul>
   <li>
-    <a href="./writing/readthenews"
-      >12.28.23 should tech people read the news?</a
+    <a href="./writing/economiesofscale"
+      >2.17.24 why do economies at scale break down with agriculture?</a
     >
   </li>
   <li>
@@ -70,7 +78,7 @@
   <li><a href="./writing/phofsoil">the industry of soil pH</a></li>
 </ul>
 
-<h1>Farmer Interviews</h1>
+<h2>Farmer Interviews</h2>
 <ul>
   <li>
     Interview with <a href="./writing/farmerinterviews/durstorganic"

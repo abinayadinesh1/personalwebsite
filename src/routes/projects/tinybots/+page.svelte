@@ -1,9 +1,9 @@
 <script>
     import SvelteMarkdown from "svelte-markdown";
-    const source = `
-    # introvert bot
+    const source = 
+    `
 
----
+# introvert bot
 
 I flew across the country for two days to build microbots with my friends. 
 
