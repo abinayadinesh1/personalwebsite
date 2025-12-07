@@ -85,12 +85,13 @@
         mathematics <a href = "./secret/coursework">at uc berkeley</a> 🧸. 
       </p>
       <p>
-        for the past two years, I’ve been obsessed with understanding our food systems, and flew to Minnesota to help build microbial fertilizers for <a href="https://www.loambio.com/">Loam Bio. </a>
-        Later, I worked at <a href = "https://farm-ng.com/">Farm-Ng</a>, where I helped build a motion planner for their autonomous rover. Since then, I’ve been obsessed with low level software, ML for edge devices, and robotics. I’m currently building a 16 DoF mobile manipulator from scratch - you can check for progress <a href ="https://x.com/abinayaaaa">here</a>! 
+        between 2022-2024, i was obsessed with understanding our food systems, and flew to Minnesota to help build microbial fertilizers for <a href="https://www.loambio.com/">Loam Bio. </a>
+        Later, I worked at <a href = "https://farm-ng.com/">Farm-Ng</a>, where I helped build a motion planner for their autonomous rover. This sparked my love for robotics, and I've now spent countless hours playing with motors, writing low level software, optimizing models for edge devices, and profiling GPU's. 
+        Most recently, I did a 5-month stint with Seneca, where we worked on building robotic systems for heavy lift drones that enable us to fight fires from the air. I'm super grateful to help build something that protect wild spaces and urban infrastructure. 
+        Now, I spend most of my time thinking about how to engineer robust, reliable, and observable software for hardware, from the OS level to full-scale mobile manipulators. 
       </p>
-      <p>i'm currently dreaming about non-anthropomorphic robots that can cohere with our day to day activities, making life more frictionless and leaving space for whimsy.</p>
       <p>
-        in my free time, I am <a href="https://runtime.substack.com/p/what-my-body-tells-me">obsessed with rock climbing</a>, skiing, and occasionaly, photography. 
+        in my free time, I am <a href="https://runtime.substack.com/p/what-my-body-tells-me">obsessed with rock climbing</a>, skiing, and occasionally, photography. 
         <hr class="solid">
 
         <!-- <div id="telescoping-text"></div>   -->
