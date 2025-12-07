@@ -24,9 +24,11 @@
   </li>
 
 </ul>
+<br />
 <h1>CS/Hardware</h1>
 <h2>Projects</h2>
 <h2>Paper Readings</h2>
+<br />
 <h1>Ag</h1>
 <ul>
   <li>
@@ -102,6 +104,7 @@
   </li>
 </ul>
 
+<br />
 
 <h1>Notes</h1>
 <ul>
