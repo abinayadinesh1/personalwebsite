@@ -86,10 +86,11 @@
       </p>
       <p>
         between 2022-2024, i was obsessed with understanding our food systems, and flew to Minnesota to help build microbial fertilizers for <a href="https://www.loambio.com/">Loam Bio. </a>
-        Later, I worked at <a href = "https://farm-ng.com/">Farm-Ng</a>, where I helped build a motion planner for their autonomous rover. This sparked my love for robotics, and I've now spent countless hours playing with motors, writing low level software, optimizing models for edge devices, and profiling GPU's. 
-        Most recently, I did a 5-month stint with Seneca, where we worked on building robotic systems for heavy lift drones that enable us to fight fires from the air. I'm super grateful to help build something that protect wild spaces and urban infrastructure. 
-        Now, I spend most of my time thinking about how to engineer robust, reliable, and observable software for hardware, from the OS level to full-scale mobile manipulators. 
+        Later, I worked at <a href = "https://farm-ng.com/">Farm-Ng</a>, where I helped build a motion planner for their autonomous rover. 
       </p>
+      <p>This sparked my love for robotics, and I've now spent countless hours playing with motors, writing low level software, optimizing models for edge devices, and profiling GPU's. </p>
+      <p>Most recently, I did a 5-month stint with Seneca, where we worked on building robotic systems for heavy lift drones that enable us to fight fires from the air. I'm super grateful to help build something that protect wild spaces and urban infrastructure. </p>
+      <p>Now, I spend most of my time thinking about how to engineer robust, reliable, and observable software for hardware, from the OS level to full-scale mobile manipulators. </p>
       <p>
         in my free time, I am <a href="https://runtime.substack.com/p/what-my-body-tells-me">obsessed with rock climbing</a>, skiing, and occasionally, photography. 
         <hr class="solid">
