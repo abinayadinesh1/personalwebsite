@@ -4,7 +4,7 @@
 
 # Problem Solving at Seneca 🔐
 
-**Before you read:** this is meant to be a fun depiction of what problem solving felt like at a very early stage startup building very large autonomous drones for firefighting. There are lessons to learn from my experiences, but in no way were our processes always optimal or best. The point is: how did we address problems when they came up?
+**Before you read:** this is meant to be a fun depiction of what problem solving felt like at a very early stage startup building very large autonomous drones for firefighting (https://seneca.com/). There are lessons to learn from my experiences, but in no way were our processes always optimal or best. The point is: how did we address problems when they came up?
 
 In order of events:
 
