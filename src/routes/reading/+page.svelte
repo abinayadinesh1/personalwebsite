@@ -78,13 +78,6 @@
       image: "/weather.jpeg",
       note: ""
     },
-    {
-      date: "",
-      title: "Sound: A Very Short Introduction",
-      author: "Mike Goldsmith",
-      image: "/sound.jpeg",
-      note: ""
-    }
 
   ];
 
@@ -95,8 +88,14 @@
       author: "Paul Horowitz and Winfield Hill",
       image: "/elec.jpg",
       note: "Keep coming back to this for the fundamentals"
+    },
+    {
+      date: "",
+      title: "Linear Algebra",
+      author: "Alexander Givental",
+      image: "/linalg.jpg",
+      note: "there's a million linalg books; this is succint, and trains your general problem solving skills. he's a mathematical physics prof, and this book gives physics grounding with all the normal vector stuff. just read the first chapter."
     }
-
   ];
 
 

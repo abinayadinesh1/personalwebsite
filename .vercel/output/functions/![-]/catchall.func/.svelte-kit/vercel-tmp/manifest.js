@@ -7,10 +7,10 @@ function __memo(fn) {
 return {
 	appDir: "_app",
 	appPath: "_app",
-	assets: new Set(["IMG_4363.jpg","IMG_6410.jpg","IMG_6795.jpg","IMG_9055.jpg","Screenshot 2024-11-19 at 4.00.38 PM.png","bg.jpg","final.jpg","fonts/BerkeleyMonoTrial-Regular.otf","lelan_pic.png","light_mode.jpg","new_bg","polaroid_pic.png","pretty_image.jpg","turtlebot_pic.png"]),
-	mimeTypes: {".jpg":"image/jpeg",".png":"image/png",".otf":"font/otf"},
+	assets: new Set(["IMG_4363.jpg","IMG_6410.jpg","IMG_6795.jpg","IMG_9055.jpg","Screenshot 2024-11-19 at 4.00.38 PM.png","anthropocene.jpg","bg.jpg","bigthings.jpg","burden_of_joy.jpg","elec.jpg","final.jpg","fire.jpg","fonts/BerkeleyMonoTrial-Regular.otf","golden.jpeg","hailmary.jpg","homelessness.jpg","idea_factory.jpg","lelan_pic.png","light_mode.jpg","linalg.jpg","new_bg","polaroid_pic.png","pretty_image.jpg","secretlife.jpg","sound.jpeg","turtlebot_pic.png","weather.jpeg"]),
+	mimeTypes: {".jpg":"image/jpeg",".png":"image/png",".otf":"font/otf",".jpeg":"image/jpeg"},
 	_: {
-		client: {start:"_app/immutable/entry/start.6-SxChco.js",app:"_app/immutable/entry/app.19YVpuAH.js",imports:["_app/immutable/entry/start.6-SxChco.js","_app/immutable/chunks/D1jodhVs.js","_app/immutable/chunks/Ci_zxSXj.js","_app/immutable/entry/app.19YVpuAH.js","_app/immutable/chunks/Ci_zxSXj.js","_app/immutable/chunks/BlG282hF.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
+		client: {start:"_app/immutable/entry/start.C6z_ecQb.js",app:"_app/immutable/entry/app.DaySKNAr.js",imports:["_app/immutable/entry/start.C6z_ecQb.js","_app/immutable/chunks/BhzJ0JCo.js","_app/immutable/chunks/BRAXwxwd.js","_app/immutable/entry/app.DaySKNAr.js","_app/immutable/chunks/BRAXwxwd.js","_app/immutable/chunks/Cm5b7JXn.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
 		nodes: [
 			__memo(() => import('../output/server/nodes/0.js')),
 			__memo(() => import('../output/server/nodes/1.js')),
