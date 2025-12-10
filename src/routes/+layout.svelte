@@ -1,3 +1,7 @@
+<script>
+  import '../app.css';
+</script>
+
 <body>
   <nav>
     <!-- <navbar-h1>abinaya dinesh</navbar-h1> -->
