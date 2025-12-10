@@ -1,0 +1,9 @@
+/* In your global app.css or similar */
+@font-face {
+    font-family: 'BerkeleyMono';
+    src: url('/fonts/BerkeleyMonoTrial-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap; /* Improves loading behavior */
+  }
+

@@ -1,0 +1,168 @@
+/* Carousel Container */
+.carousel-container {
+  position: relative;
+  max-width: 860px;
+  margin: 0.5rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.carousel-item {
+  flex-shrink: 0;
+  width: 160px;
+}
+
+/* Book Card */
+.book-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0.1rem;
+  position: relative;
+}
+
+.book-card:hover .book-note-popup {
+  opacity: 1;
+  visibility: visible;
+}
+
+.book-card img {
+  width: 140px;
+  height: 210px;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 0.5rem;
+}
+
+.book-info {
+  width: 100%;
+  max-width: 160px;
+}
+
+.book-title {
+  font-size: 0.95em;
+  margin: 0.25rem 0 0.1rem 0;
+  font-weight: 600;
+}
+
+.book-author {
+  font-size: 0.75em;
+  margin: 0.1rem 0;
+  color: var(--text-1);
+  opacity: 0.8;
+}
+
+.book-date {
+  font-size: 0.65em;
+  margin: 0.25rem 0 0 0;
+  color: var(--text-1);
+  opacity: 0.6;
+}
+
+/* Book Note Popup */
+.book-note-popup {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--bg-1);
+  border: 1px solid var(--link);
+  border-radius: 6px;
+  padding: 0.5rem;
+  max-width: 200px;
+  font-size: 0.7em;
+  color: var(--text-1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  z-index: 20;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+}
+
+.book-note-popup p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Carousel Navigation */
+.carousel-button {
+  position: absolute;
+  background: var(--bg-1);
+  border: 2px solid var(--link);
+  color: var(--link);
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  min-height: 30px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  z-index: 10;
+  top: 50%;
+  transform: translateY(-50%);
+  line-height: 1;
+}
+
+.carousel-button.prev {
+  left: -40px;
+}
+
+.carousel-button.next {
+  right: -40px;
+}
+
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .carousel-container {
+    max-width: 320px;
+    padding: 0 1rem;
+  }
+
+  .carousel-item {
+    width: 100px;
+  }
+
+  .book-card img {
+    width: 90px;
+    height: 135px;
+  }
+
+  .carousel-button {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+
+  .carousel-button.prev {
+    left: -35px;
+  }
+
+  .carousel-button.next {
+    right: -35px;
+  }
+}
+
