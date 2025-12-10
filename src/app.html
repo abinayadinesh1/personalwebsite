@@ -15,15 +15,22 @@
     %sveltekit.head%
 
     <style>
+      html {
+        background-color: #000000;
+        background: #000000;
+        margin: 0;
+        padding: 0;
+      }
+      
       body {
         --bg-1: #f6f3e1;
-        --text-1: #490303;
+        --text-1: #b4ebcb;
         --bg-2: hsl(224, 100%, 11%);
         --bg-3: hsl(206, 20%, 80%);
         --fg-1: hsl(0, 0%, 0%);
         --fg-2: hsl(0, 0%, 20%);
         --fg-2: hsl(0, 0%, 30%);
-        --link: #558f6d;
+        --link: #b4ebcb;
         --link-hover: #b4ebcb;
         --link-active: #b4ebcb;
         --line: #41413B;
@@ -33,19 +40,24 @@
           Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
         --font-mono: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo,
           Consolas, "DejaVu Sans Mono", monospace;
-        background: var(--bg-1);
+        background: #000000;
+        background-color: #000000;
         color: var(--fg-1);
         font-family: var(--font);
         line-height: 1.5;
-        margin: 1rem;
-        height: calc(100vh - 2rem);
+        margin: 0;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        min-height: 100vh;
         align-items: center;
         justify-content: center;
-        background-color: var(--bg-1);
         color: var(--text-1);
-        margin-bottom: 2 rem;
       }
-
+      u {
+        color: var(--link);
+      }
       navbar-h1 {
         font-size: 2rem;
         color: var(--text-1);
@@ -209,11 +221,11 @@
         display: flex;
         gap: 1em;
         padding-bottom: 2em;
-        background: var(--bg-2);
+        background: #000000;
+        background-color: #000000;
         z-index: 2;
         margin: 0 0 1em 0;
         border-radius: 5;
-        background-color: var(--bg-1);
       }
 
       nav a {
@@ -221,7 +233,7 @@
       }
 
       nav a[aria-current="true"] {
-        border-bottom: 2px solid;
+        border-bottom: 2px solid #cd7f32;
       }
 
       ul:has(form) {

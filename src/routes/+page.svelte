@@ -54,7 +54,7 @@
       />
       <h1>abinaya dinesh</h1>
       <h4>Updated: 02/04/225</h4>
-      <h4-blue>adinesh[at]berkeley.edu</h4-blue>
+      <u><h4>adinesh[at]berkeley.edu</h4></u>
       <p class="social-links">
         <a href="https://curius.app/abinaya-dinesh">Curius</a> |
         <a href="x.com/abinayaaaa">Twitter</a> |

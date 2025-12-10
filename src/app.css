@@ -7,3 +7,71 @@
     font-display: swap; /* Improves loading behavior */
   }
 
+/* Set html and body background to black */
+html {
+  background-color: #000000 !important;
+  background: #000000 !important;
+}
+
+body {
+  background-color: #000000 !important;
+  background: #000000 !important;
+  margin: 0 !important;
+}
+
+/* Bronze text effect for all text content only */
+h1, h2, h3, h4, h5, h6,
+p, span, li, td, th,
+a, label, button,
+input:not([type="image"]), textarea, select,
+.book-title, .book-author, .book-date {
+  position: relative;
+  background: linear-gradient(
+    to right,
+    #b87333 0%,
+    #cd7f32 20%,
+    #e6a85c 40%,
+    #cd7f32 60%,
+    #b87333 80%,
+    #966919 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+}
+
+/* Fix underlines to be visible on black background */
+a {
+  text-decoration-color: #b4ebcb;
+  -webkit-text-decoration-color: #b4ebcb;
+}
+
+a:hover {
+  text-decoration-color: #e6a85c;
+  -webkit-text-decoration-color: #e6a85c;
+}
+
+nav a[aria-current="true"] {
+  border-bottom-color: #cd7f32 !important;
+}
+
+/* Exclude non-text elements and containers */
+div, body, img, svg, canvas, video, iframe,
+input[type="image"],
+.book-card img {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  color: unset !important;
+  filter: unset !important;
+}
+
+/* Ensure divs don't get the text effect */
+div {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
