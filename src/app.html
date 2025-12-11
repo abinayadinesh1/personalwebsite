@@ -31,7 +31,7 @@
         --fg-2: hsl(0, 0%, 20%);
         --fg-2: hsl(0, 0%, 30%);
         --link: #b4ebcb;
-        --link-hover: #b4ebcb;
+        --link-hover: #cd7f32;
         --link-active: #b4ebcb;
         --line: #41413B;
         --border-radius: 4px;
@@ -85,6 +85,7 @@
       }
       p {
         font-size: 0.8em;
+        font-color: var(--link);
         /* padding-bottom: 1em; */
       }
       :is(h1, h2, h3, h4, h5, h6, p) {
@@ -133,7 +134,7 @@
       }
 
       button {
-        background: var(--link);
+        background: var(--link-hover);
         color: var(--bg-1);
         padding: 0.5rem 1rem;
         border: none;
@@ -141,11 +142,11 @@
       }
 
       button:hover {
-        background: var(--link-hover);
+        background: var(--link);
       }
 
       button:active {
-        background: var(--link-active);
+        background: var(--link);
       }
 
       :is(button, button:hover, button:active):disabled {

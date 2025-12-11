@@ -17,7 +17,7 @@
         07.24.24 <a href = "./writing/homeforgenius"> IAS: an environment for genius</a>
       </li>
       <li>
-        ⭐️ 12.28.23 <a href="./writing/readthenews"> should tech people read the news?</a>
+        ⭐️12.28.23 <a href="./writing/readthenews"> should tech people read the news?</a>
       </li>
     
     </ul>
