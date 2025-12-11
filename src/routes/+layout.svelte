@@ -22,7 +22,7 @@
     font-size: 1.5em;
     padding-top: 0.2em;
     padding-bottom: 0.7em;
-    background-color: #000000;
-    background: #000000;
+    background-color: #1e1e1e;
+    background: #1e1e1e;
   }
 </style>
