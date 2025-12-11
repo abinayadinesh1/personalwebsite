@@ -176,27 +176,30 @@
 
 
 <h3>Textbooks</h3>  
-<div class="carousel">
-  <div class="carousel-track" style="transform: translateX(-{transformOffset}px)">
-    {#each textbooks as textbook}
-      <div class="carousel-item">
-        <div class="book-card">
-          {#if textbook.note}
-            <div class="book-note-popup">
-              <p>{textbook.note}</p>
+<div class="carousel-container">  
+  <div class="carousel">
+    <div class="carousel-track">
+      {#each textbooks as textbook}
+        <div class="carousel-item">
+          <div class="book-card">
+            {#if textbook.note}
+              <div class="book-note-popup">
+                <p>{textbook.note}</p>
+              </div>
+            {/if}
+            <img src={textbook.image} alt="{textbook.title} cover" />
+            <div class="book-info">
+              <h4 class="book-title">{textbook.title}</h4>
+              <p class="book-author">by {textbook.author}</p>
+              <p class="book-date">{textbook.date}</p>
             </div>
-          {/if}
-          <img src={textbook.image} alt="{textbook.title} cover" />
-          <div class="book-info">
-            <h4 class="book-title">{textbook.title}</h4>
-            <p class="book-author">by {textbook.author}</p>
-            <p class="book-date">{textbook.date}</p>
           </div>
         </div>
-      </div>
-    {/each}
+      {/each}
+    </div>
   </div>
 </div>
+
 
 <h3>Courses</h3>
 

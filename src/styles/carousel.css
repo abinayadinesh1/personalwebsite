@@ -80,13 +80,13 @@
   position: absolute;
   top: 0;
   right: 0;
-  background: var(--bg-1);
-  border: 1px solid var(--link);
+  background-color: var(--link-hover) !important;  /* Already correct */
+  border: 1px solid var(--link-hover);
   border-radius: 6px;
   padding: 0.5rem;
   max-width: 200px;
   font-size: 0.7em;
-  color: var(--text-1);
+  color: var(--link);  /* Move color here instead of just on <p> */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   z-index: 20;
   opacity: 0;
@@ -98,14 +98,15 @@
 .book-note-popup p {
   margin: 0;
   line-height: 1.4;
+  color: var(--link);
 }
 
 /* Carousel Navigation */
 .carousel-button {
   position: absolute;
-  background: var(--bg-1);
-  border: 2px solid var(--link);
-  color: var(--link);
+  /* background: var(--link); */
+  border: 2px solid var(--link-hover);
+  /* color: var(--link-hover); */ 
   width: 30px;
   height: 30px;
   min-width: 30px;
