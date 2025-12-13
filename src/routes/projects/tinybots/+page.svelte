@@ -37,4 +37,6 @@ We ended up with a script to move the bot in all directors and for it to autonom
     `
 </script>
 
-<SvelteMarkdown {source} />
+<div class="markdown-wrapper">
+  <SvelteMarkdown {source} />
+</div>

@@ -1,0 +1,386 @@
+/* Projects Dashboard */
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  margin: 0;
+}
+
+.add-button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #cd7f32;
+  background: transparent;
+  color: #b4ebcb;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.add-button:hover {
+  background: #cd7f32;
+  color: #1e1e1e;
+  transform: scale(1.1);
+}
+
+.add-button:active {
+  transform: scale(0.95);
+}
+
+.projects-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.project-card {
+  border: 2px solid #cd7f32;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-decoration: none;
+  display: block;
+  transition: all 0.3s ease;
+  background: rgba(30, 30, 30, 0.5);
+  width: 100%;
+}
+
+.project-card:hover {
+  border-color: #e6a85c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(205, 127, 50, 0.3);
+}
+
+.card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.project-title {
+  font-size: 1.2rem;
+  margin: 0 0 1rem 0;
+  color: #b4ebcb !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  filter: none !important;
+  position: relative;
+}
+
+.project-title::before {
+  display: none;
+}
+
+.project-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.private-badge {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.last-updated {
+  font-size: 0.85rem;
+  color: #b4ebcb !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  filter: none !important;
+  position: relative;
+}
+
+.last-updated::before {
+  display: none;
+}
+
+.status {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(128, 128, 128, 0.2) !important;
+  color: #cd7f32 !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  filter: none !important;
+  position: relative;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+  align-self: flex-start;
+}
+
+.status::before {
+  display: none;
+}
+
+.commit-thumbnail {
+  flex-shrink: 0;
+  width: 80px;
+  height: 60px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.commit-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 100%;
+  width: 100%;
+}
+
+.commit-bar {
+  flex: 1;
+  background: linear-gradient(
+    to top,
+    #b87333 0%,
+    #cd7f32 50%,
+    #e6a85c 100%
+  );
+  border-radius: 2px 2px 0 0;
+  min-height: 4px;
+  transition: all 0.3s ease;
+}
+
+.project-card:hover .commit-bar {
+  opacity: 0.8;
+}
+
+/* Editable project card styles */
+.editable-card {
+  cursor: default;
+}
+
+.editable-card:hover {
+  transform: none;
+  box-shadow: 0 4px 12px rgba(205, 127, 50, 0.3);
+}
+
+.project-title-input {
+  width: 100%;
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  background: rgba(30, 30, 30, 0.8);
+  border: 1px solid #cd7f32;
+  border-radius: 4px;
+  color: #b4ebcb;
+  font-family: inherit;
+}
+
+.project-title-input:focus {
+  outline: none;
+  border-color: #e6a85c;
+}
+
+.date-label,
+.status-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: #b4ebcb !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  filter: none !important;
+  font-size: 0.85rem;
+}
+
+.date-input,
+.status-select {
+  padding: 0.5rem;
+  background: rgba(30, 30, 30, 0.8) !important;
+  border: 1px solid #cd7f32;
+  border-radius: 4px;
+  color: #b4ebcb;
+  font-family: inherit;
+  font-size: 0.85rem;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.date-input:focus,
+.status-select:focus {
+  outline: none;
+  border-color: #e6a85c;
+}
+
+.status-select {
+  cursor: pointer;
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+.status-select:hover,
+.status-select:focus,
+.status-select:active {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+.status-select option {
+  background: rgba(30, 30, 30, 0.95) !important;
+  color: #b4ebcb !important;
+  padding: 0.5rem;
+}
+
+.status-select option:checked {
+  background: rgba(30, 30, 30, 0.95) !important;
+  color: #b4ebcb !important;
+}
+
+.visibility-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #b4ebcb !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  filter: none !important;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.visibility-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #cd7f32;
+}
+
+.visibility-checkbox:checked {
+  accent-color: #cd7f32;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.save-button,
+.cancel-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #cd7f32;
+  border-radius: 4px;
+  background: transparent;
+  color: #b4ebcb;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.save-button:hover {
+  background: #cd7f32;
+  color: #1e1e1e;
+}
+
+.cancel-button:hover {
+  background: rgba(128, 128, 128, 0.3);
+  border-color: #966919;
+}
+
+.project-card-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.edit-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #cd7f32;
+  background: rgba(30, 30, 30, 0.9);
+  color: #b4ebcb;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  padding: 0;
+  z-index: 10;
+}
+
+.edit-button:hover {
+  background: #cd7f32;
+  color: #1e1e1e;
+  transform: scale(1.1);
+}
+
+.delete-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #966919;
+  border-radius: 4px;
+  background: transparent;
+  color: #966919;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.delete-button:hover {
+  background: #966919;
+  color: #1e1e1e;
+}
+
+/* Markdown content styles */
+:global(.markdown-body h1),
+:global(.markdown-body h2),
+:global(.markdown-body h3),
+:global(.markdown-body h4),
+:global(.markdown-body h5),
+:global(.markdown-body h6) {
+  color: #cd7f32 !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  filter: none !important;
+}
+
+:global(.markdown-body p),
+:global(.markdown-body li),
+:global(.markdown-body span) {
+  color: #b4ebcb !important;
+}
