@@ -14,7 +14,7 @@ Timeline:
 
 Assembly followed clearly from the manual, and the result looked quite like a burger. I later realized that lidar was the most expensive part of the kit (350$) and the only part of the stack which I *didn’t* need. 
 
-![pic](turtlebot_pic).png)
+![pic](/turtlebot_pic.png)
 
 Since I didn’t want the navigation of this bot to rely on sensed geometric structure coming from the lidar, I tried removing it from the stack and replacing it with a camera. To my dismay, **this kit will not work if any of the starting components are missing.** Even though, as a engineer, you know the motors will work regardless of if the lidar is connected, the built-in startup node will fail if the lidar is missing. This meant the top layer of the bot was essentially useless to me, and later inspired me to make a [mobile base from scratch without the lidar](https://www.notion.so/mobile-base-w-programmable-sdk-143935f751838039a0e6ec5a8df14e02?pvs=21). 
 
@@ -63,7 +63,7 @@ One of the biggest outcomes of this was coming up with an pipeline for taking re
 
 I took my turtlebot stack to a hardware hackathon at founders inc, where I got to pair with an awesome team to make this mobile base into a friendly robot for homes. Our goal was to be able to 1) take in commands via voice, 2) Mount an arm to the back of the robot so it can pick up items, and 3) use a simple object detection algorithm to navigate the base to an object of interest. 
 
-![i love using dremels!](polaroid_pic.png)
+![i love using dremels!](/polaroid_pic.png)
 
 i love using dremels!
 
@@ -73,7 +73,6 @@ We ended up developing 3) the algorithm for goal-directed navigation and 1), the
 
 
 </script>
-
-<SvelteMarkdown {source} />
-
-
+<div class="markdown-text">
+  <SvelteMarkdown {source} />
+</div>
