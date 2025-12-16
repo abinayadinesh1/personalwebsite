@@ -11,8 +11,8 @@
 
   
   Miraculously worked first try (have never said that before); uploading code, controlling each motor independently.
-
-  ![pic](/pcb.jpeg)
+  
+  <img src="/pcb.jpeg" alt="Description" width="25%" />
 `
   </script>
 
