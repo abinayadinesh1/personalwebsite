@@ -1,0 +1,29 @@
+/* Buttons */
+button,
+input,
+select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+button {
+  background: var(--link-hover);
+  color: var(--bg-1);
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--border-radius);
+}
+
+button:hover {
+  background: var(--link);
+}
+
+button:active {
+  background: var(--link);
+}
+
+:is(button, button:hover, button:active):disabled {
+  background: var(--link);
+  filter: grayscale(1);
+  opacity: 0.4;
+}

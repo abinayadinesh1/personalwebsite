@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import '../styles/components/homepage.css';
 
   let img1 = "/IMG_4363.jpg";
   let img2 = "/IMG_6410.jpg";
@@ -98,79 +99,3 @@
     </div>  
   </div>
 </body>
-
-<style>
-  .page-container {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    max-width: 100%;
-    margin: 0 auto;
-    align-items: start;
-  }
-
-  .text-column {
-    padding: 1rem;
-    max-width: 600px;
-    margin-right: 1rem;
-  }
-
-  .image-column {
-    width: 100%;
-    max-width: 500px;
-    padding-top: 1rem;
-    padding-right: 1rem;
-  }
-
-  .image-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
-  .image-grid img {
-    width: 100%;
-    border-radius: 10px;
-    object-fit: cover;
-  }
-
-  /* Responsive layout */
-  @media (max-width: 1200px) {
-    .page-container {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto auto auto;
-    }
-
-    .text-column {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .image-column {
-      margin: 2rem auto;
-    }
-
-  .social-links {
-    margin-top: 2rem;
-  }
-
-  .social-links a {
-    /* margin: 0 0.5rem; */
-  }
-}
-:global(.telescopic-text) {
-    margin: 1em 0;
-    line-height: 1.6;
-  }
-
-  :global(.telescopic-text span) {
-    cursor: pointer;
-    color: #558f6d;
-    text-decoration: underline;
-    text-decoration-style: dotted;
-  }
-
-  :global(.telescopic-text span:hover) {
-    color: #3a6049;
-  }
-
-</style>

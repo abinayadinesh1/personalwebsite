@@ -1,0 +1,403 @@
+/* Project Editor Component Styles */
+.editor-dashboard {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 200px);
+}
+
+.editor-column {
+  flex: 0 0 75%;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-column {
+  flex: 0 0 25%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(205, 127, 50, 0.3);
+}
+
+.editor-header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.add-date-btn {
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  border: 1px solid var(--link-hover);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-image: var(--bronze-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: bold;
+}
+
+.add-date-btn:hover {
+  background: rgba(205, 127, 50, 0.1);
+  border-color: #e6a85c;
+}
+
+.editor-content {
+  flex: 1;
+  position: relative;
+  border: 1px solid rgba(205, 127, 50, 0.2);
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: rgba(30, 30, 30, 0.3);
+  transition: all 0.3s ease;
+}
+
+.editor-content.editing {
+  border-color: var(--link-hover);
+}
+
+.editor-content:hover {
+  border-color: rgba(205, 127, 50, 0.4);
+}
+
+.edit-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(205, 127, 50, 0.2);
+}
+
+.save-btn, .cancel-btn {
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  border: 1px solid var(--link-hover);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  background-image: var(--bronze-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: bold;
+}
+
+.save-btn:hover {
+  background: rgba(205, 127, 50, 0.2);
+}
+
+.cancel-btn:hover {
+  background: rgba(150, 105, 25, 0.2);
+}
+
+.markdown-editor {
+  width: 100%;
+  min-height: 500px;
+  background: rgba(20, 20, 20, 0.5);
+  border: none;
+  border-radius: 4px;
+  padding: 1rem;
+  font-family: 'BerkeleyMono', monospace;
+  font-size: 1rem;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  color: var(--link-hover);
+}
+
+.markdown-display {
+  min-height: 500px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  opacity: 0.6;
+  font-style: italic;
+  background: var(--bronze-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Sidebar Styles */
+.sidebar-section {
+  background: rgba(30, 30, 30, 0.3);
+  border: 1px solid rgba(205, 127, 50, 0.2);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.sidebar-section h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  border-bottom: 1px solid rgba(205, 127, 50, 0.3);
+  padding-bottom: 0.5rem;
+}
+
+.sidebar-section h4 {
+  margin: 1rem 0 0.25rem 0;
+  font-size: 1rem;
+}
+
+/* Timeline Styles */
+.timeline-container {
+  position: relative;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -1.5rem;
+  top: 0.3rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--link-hover);
+  border: 2px solid rgba(205, 127, 50, 0.5);
+}
+
+.timeline-line {
+  position: absolute;
+  left: -1.1rem;
+  top: 0.7rem;
+  width: 2px;
+  height: calc(100% + 0.5rem);
+  background: rgba(205, 127, 50, 0.3);
+}
+
+.timeline-line.last {
+  display: none;
+}
+
+.timeline-label {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  color: var(--link-hover) !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  background: none !important;
+  font-weight: bold;
+}
+
+.empty-timeline {
+  text-align: center;
+  padding: 1rem;
+  opacity: 0.6;
+  font-style: italic;
+  font-size: 0.9rem;
+  background: var(--bronze-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* GitHub Styles */
+.github-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.repo-link {
+  word-break: break-all;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  background: var(--bronze-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: bold;
+}
+
+.repo-link:hover {
+  opacity: 0.8;
+}
+
+.edit-repo-btn, .add-repo-btn {
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  border: 1px solid var(--link-hover);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+  background-image: var(--bronze-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: bold;
+}
+
+.edit-repo-btn:hover, .add-repo-btn:hover {
+  background: rgba(205, 127, 50, 0.1);
+}
+
+.no-repo {
+  font-size: 0.85rem;
+  opacity: 0.6;
+  font-style: italic;
+  background: var(--bronze-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.repo-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.repo-select {
+  padding: 0.5rem;
+  background: rgba(20, 20, 20, 0.5);
+  border: 1px solid var(--link-hover);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  outline: none;
+  color: var(--link-hover);
+  width: 100%;
+  font-family: inherit;
+}
+
+.repo-select option {
+  background: rgba(30, 30, 30, 0.95);
+  color: var(--link-hover);
+}
+
+.loading-repos,
+.no-repos {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  font-style: italic;
+  text-align: center;
+  padding: 0.5rem;
+  background: var(--bronze-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.no-repos a {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+.repo-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.repo-actions .save-btn,
+.repo-actions .cancel-btn {
+  flex: 1;
+  padding: 0.4rem;
+  font-size: 0.85rem;
+}
+
+/* Commit History */
+.commit-history {
+  margin-top: 1rem;
+}
+
+.commit-history h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+}
+
+.contributions-count {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  margin-bottom: 0.5rem;
+  background: var(--bronze-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.no-commits {
+  font-size: 0.85rem;
+  opacity: 0.6;
+  font-style: italic;
+  text-align: center;
+  padding: 1rem;
+  background: var(--bronze-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Markdown display styles */
+.markdown-display :global(h2) {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(205, 127, 50, 0.2);
+}
+
+.markdown-display :global(p) {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.markdown-display :global(ul), .markdown-display :global(ol) {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.markdown-display :global(li) {
+  margin-bottom: 0.5rem;
+}
+
+.markdown-display :global(img) {
+  max-width: 100%;
+  border-radius: 4px;
+  margin: 1rem 0;
+}
+
+@media (max-width: 1024px) {
+  .editor-dashboard {
+    flex-direction: column;
+  }
+
+  .editor-column {
+    flex: 1;
+  }
+
+  .sidebar-column {
+    flex: 1;
+  }
+}

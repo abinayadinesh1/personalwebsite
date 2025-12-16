@@ -1,5 +1,8 @@
 <script>
-  import '../app.css';
+  import '../styles/global.css';
+  import '../styles/components/buttons.css';
+  import '../styles/components/forms.css';
+  import '../styles/components/nav.css';
 </script>
 
 <body>
@@ -13,16 +16,3 @@
 
   <slot />
 </body>
-
-<style>
-  nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5em;
-    padding-top: 0.2em;
-    padding-bottom: 0.7em;
-    background-color: #1e1e1e;
-    background: #1e1e1e;
-  }
-</style>

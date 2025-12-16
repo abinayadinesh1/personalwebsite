@@ -1,21 +1,18 @@
 <script>
-  import SvelteMarkdown from "svelte-markdown";
-  const source = `
-  
-  ### My first PCB, made in 15 hours in KiCad. 
+  import { onMount } from 'svelte';
+  import { browser } from '$app/environment';
+  import ProjectEditor from '$lib/components/ProjectEditor.svelte';
 
-  - controls 10 haptic motors, w/ capacity up to 16
-  - 5V to ctrl motors and 3.3V to ctrl board
-  - i2C forwarder to mux motor id's
-  - LED status grid
+  export let data;
 
-  
-  Miraculously worked first try (have never said that before); uploading code, controlling each motor independently.
-  
-  <img src="/pcb.jpeg" alt="Description" width="25%" />
-`
-  </script>
+  let isAdmin = data?.isAdmin || false;
 
-<div class="markdown-wrapper">
-  <SvelteMarkdown {source} />
-</div>
+  onMount(() => {
+    if (browser) {
+      const clientAuth = sessionStorage.getItem('adminAuth') === 'true';
+      isAdmin = data?.isAdmin || clientAuth;
+    }
+  });
+</script>
+
+<ProjectEditor projectId="eagelmann-vest-pcb" {isAdmin} />

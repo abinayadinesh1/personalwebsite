@@ -1,0 +1,24 @@
+/* Form Inputs and Selects */
+input,
+textarea,
+select {
+  padding: 0.5rem;
+  border: 1px solid var(--bg-2);
+  border-radius: var(--border-radius);
+  box-sizing: border-box;
+}
+
+input,
+textarea {
+  background: var(--bg-1);
+  color: inherit;
+}
+
+select:not([multiple]) {
+  background: var(--bg-2);
+}
+
+textarea {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
