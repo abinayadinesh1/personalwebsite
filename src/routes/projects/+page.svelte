@@ -3,11 +3,15 @@
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   import { page } from '$app/stores';
+  import { loadProjects, saveProjectToSupabase } from '$lib/utils/projects.js';
 
   export let data; // Server-side data from +page.server.js
 
   let isAdmin = data?.isAdmin || false;
   let editingProject = null;
+  let loadingProjects = false;
+  let savingProject = false;
+  let saveError = null;
 
   function checkAuth() {
     if (browser) {
@@ -72,8 +76,8 @@
   // New project being added
   let newProject = null;
 
-  // Load from localStorage and sync auth on mount
-  onMount(() => {
+  // Load projects from Supabase (with localStorage fallback) on mount
+  onMount(async () => {
     if (browser) {
       // Sync admin auth from server-side cookie (primary) or sessionStorage (fallback)
       // Server-side auth is the source of truth, but we also check sessionStorage
@@ -82,20 +86,54 @@
       const clientAuth = checkAuth();
       isAdmin = serverAuth || clientAuth;
       
-      // Load projects from localStorage
-      const stored = localStorage.getItem('projects');
-      if (stored) {
-        try {
-          const loaded = JSON.parse(stored);
+      // Load projects from Supabase first (with localStorage fallback)
+      loadingProjects = true;
+      try {
+        const loaded = await loadProjects(isAdmin);
+        if (loaded.length > 0) {
           // Ensure all projects have isPublic field (default to true for backwards compatibility)
           projectsData = loaded.map(p => ({
             ...p,
             isPublic: p.isPublic !== undefined ? p.isPublic : true
           }));
-        } catch (e) {
-          console.error('Error loading projects from localStorage:', e);
+        } else {
+          // If no projects loaded, try localStorage as fallback
+          const stored = localStorage.getItem('projects');
+          if (stored) {
+            try {
+              const parsed = JSON.parse(stored);
+              projectsData = parsed.map(p => ({
+                ...p,
+                isPublic: p.isPublic !== undefined ? p.isPublic : true
+              }));
+            } catch (e) {
+              console.error('Error loading projects from localStorage:', e);
+              projectsData = defaultProjects;
+            }
+          } else {
+            projectsData = defaultProjects;
+          }
+        }
+      } catch (error) {
+        console.error('Error loading projects:', error);
+        // Fall back to localStorage
+        const stored = localStorage.getItem('projects');
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            projectsData = parsed.map(p => ({
+              ...p,
+              isPublic: p.isPublic !== undefined ? p.isPublic : true
+            }));
+          } catch (e) {
+            console.error('Error loading projects from localStorage:', e);
+            projectsData = defaultProjects;
+          }
+        } else {
           projectsData = defaultProjects;
         }
+      } finally {
+        loadingProjects = false;
       }
     }
   });
@@ -138,18 +176,46 @@
     };
   }
 
-  function handleSaveProject() {
-    if (newProject && newProject.title.trim()) {
-      // Generate a path from the title
-      const pathId = newProject.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-      newProject.path = `/projects/${pathId}`;
-      newProject.id = pathId;
-      newProject.hasCommits = true;
-      delete newProject.isNew;
+  async function handleSaveProject() {
+    if (!newProject || !newProject.title.trim()) {
+      return;
+    }
+    
+    if (!browser) return;
+    
+    savingProject = true;
+    saveError = null;
+    
+    // Generate a path from the title
+    const pathId = newProject.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    newProject.path = `/projects/${pathId}`;
+    newProject.id = pathId;
+    newProject.hasCommits = newProject.hasCommits ?? true;
+    
+    try {
+      // Save to Supabase via API (this will also update localStorage cache)
+      const savedProject = await saveProjectToSupabase(newProject);
       
-      projectsData = [...projectsData, newProject];
-      // localStorage will be updated automatically via the reactive statement
+      // Update local state
+      projectsData = [...projectsData, savedProject];
+      
+      // Reset form
       newProject = null;
+      
+      console.log('Project created:', savedProject);
+    } catch (error) {
+      saveError = error.message || 'Failed to save project';
+      console.error('Error creating project:', error);
+      
+      // Still save to localStorage as backup for offline use
+      delete newProject.isNew;
+      projectsData = [...projectsData, newProject];
+      
+      // Note: We're not showing an alert here - the error will be displayed in the UI
+      // The project is still saved locally so the user doesn't lose their work
+      newProject = null;
+    } finally {
+      savingProject = false;
     }
   }
 
@@ -196,6 +262,10 @@
     {/if}
   </div>
 
+  {#if loadingProjects}
+    <div class="loading-indicator">Loading projects...</div>
+  {/if}
+
   <div class="projects-grid">
     {#if newProject}
       <!-- New project editable card -->
@@ -238,9 +308,26 @@
               {/if}
             </div>
             <div class="edit-actions">
-              <button class="save-button" on:click={handleSaveProject}>Save</button>
-              <button class="cancel-button" on:click={handleCancelProject}>Cancel</button>
+              <button 
+                class="save-button" 
+                on:click={handleSaveProject} 
+                disabled={savingProject || !newProject.title.trim()}
+              >
+                {savingProject ? 'Creating...' : 'Save'}
+              </button>
+              <button 
+                class="cancel-button" 
+                on:click={handleCancelProject}
+                disabled={savingProject}
+              >
+                Cancel
+              </button>
             </div>
+            {#if saveError}
+              <p class="error-message" style="color: #c33; margin-top: 0.5rem; font-size: 0.9rem;">
+                Error: {saveError}
+              </p>
+            {/if}
           </div>
         </div>
       </div>
