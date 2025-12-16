@@ -1,11 +1,19 @@
 <script>
-    import SvelteMarkdown from "svelte-markdown";
-    const source = `
-    12-13-2025 explaining the topology differences between PCIe, NVLink™, NVSwitch™, InfiniBand, and RoCE. inspired by [this](https://developer.nvidia.com/nccl)
-    `
+  import { onMount } from 'svelte';
+  import { browser } from '$app/environment';
+  import ProjectEditor from '$lib/components/ProjectEditor.svelte';
+
+  export let data;
+
+  let isAdmin = data?.isAdmin || false;
+
+  onMount(() => {
+    if (browser) {
+      const clientAuth = sessionStorage.getItem('adminAuth') === 'true';
+      isAdmin = data?.isAdmin || clientAuth;
+    }
+  });
 </script>
 
-<div class="markdown-wrapper">
-    <SvelteMarkdown {source} />
-  </div>
+<ProjectEditor projectId="writing_ideas" {isAdmin} />
   

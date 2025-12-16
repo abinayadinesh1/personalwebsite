@@ -23,6 +23,7 @@
 		"@mui/material": "^5.15.10",
 		"@sveltejs/adapter-vercel": "^5.4.1",
 		"@sveltejs/kit": "^2.5.20",
+		"github-contribution-graph": "^2.0.3",
 		"markdown-it": "^14.1.0",
 		"svelte": "^4.2.7",
 		"svelte-markdown": "^0.4.1"

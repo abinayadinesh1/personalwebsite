@@ -1,31 +1,109 @@
 <script>
   import { goto } from '$app/navigation';
   import { browser } from '$app/environment';
-  import { PUBLIC_ADMIN_PASSWORD } from '$env/static/public';
+  import { onMount } from 'svelte';
+  import '../../styles/components/admin.css';
 
   let password = '';
   let error = '';
+  let loading = false;
 
-  // Password is loaded from environment variable PUBLIC_ADMIN_PASSWORD
-  // Set it in your .env file (see .env.example)
-  const ADMIN_PASSWORD = PUBLIC_ADMIN_PASSWORD || '';
+  // GitHub authentication
+  let githubToken = '';
+  let githubError = '';
+  let githubLoading = false;
+  let githubAuthenticated = false;
+  let githubUsername = '';
 
-  function handleLogin() {
-    if (!ADMIN_PASSWORD) {
-      error = 'Admin password not configured. Please set PUBLIC_ADMIN_PASSWORD in .env file';
+  onMount(async () => {
+    // Check if GitHub is already authenticated
+    if (browser) {
+      try {
+        const response = await fetch('/api/github/auth');
+        const data = await response.json();
+        if (data.authenticated) {
+          githubAuthenticated = true;
+          githubUsername = data.username || '';
+        }
+      } catch (err) {
+        console.error('Error checking GitHub auth:', err);
+      }
+    }
+  });
+
+  async function handleLogin() {
+    if (!password.trim()) {
+      error = 'Please enter a password';
       return;
     }
 
-    if (password === ADMIN_PASSWORD) {
-      if (browser) {
-        sessionStorage.setItem('adminAuth', 'true');
-        goto('/projects');
+    loading = true;
+    error = '';
+
+    try {
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ password })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        if (browser) {
+          sessionStorage.setItem('adminAuth', 'true');
+          goto('/projects');
+        }
+      } else {
+        error = 'Incorrect password';
+        password = '';
       }
-    } else {
-      error = 'Incorrect password';
-      password = '';
+    } catch (err) {
+      error = 'An error occurred. Please try again.';
+      console.error('Login error:', err);
+    } finally {
+      loading = false;
     }
   }
+
+  async function handleGitHubAuth() {
+    if (!githubToken.trim()) {
+      githubError = 'Please enter a GitHub Personal Access Token';
+      return;
+    }
+
+    githubLoading = true;
+    githubError = '';
+
+    try {
+      const response = await fetch('/api/github/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ token: githubToken })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        githubAuthenticated = true;
+        githubUsername = data.username || '';
+        githubToken = ''; // Clear the input for security
+      } else {
+        githubError = data.error || 'Invalid token';
+        githubToken = '';
+      }
+    } catch (err) {
+      githubError = 'An error occurred. Please try again.';
+      console.error('GitHub auth error:', err);
+    } finally {
+      githubLoading = false;
+    }
+  }
+
 
   function handleKeyPress(event) {
     if (event.key === 'Enter') {
@@ -50,96 +128,55 @@
       {#if error}
         <p class="error">{error}</p>
       {/if}
-      <button type="submit">Login</button>
+      <button type="submit" disabled={loading}>
+        {loading ? 'Logging in...' : 'Login'}
+      </button>
     </form>
   </div>
+
+  <div class="admin-card">
+    <h1>GitHub Authentication</h1>
+    {#if githubAuthenticated}
+      <div class="github-authenticated">
+        <p class="success">✓ Authenticated as <strong>{githubUsername}</strong></p>
+        <p class="info">
+          Using GitHub token from environment variables.
+        </p>
+        <p class="info">
+          <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer">
+            Manage tokens
+          </a>
+        </p>
+      </div>
+    {:else}
+      <div class="github-not-authenticated">
+        <p class="info">
+          GitHub authentication is not configured. Set <code>GITHUB_TOKEN</code> in your <code>.env</code> file,
+          or use the form below to authenticate manually.
+        </p>
+        <form on:submit|preventDefault={handleGitHubAuth}>
+          <label>
+            GitHub Personal Access Token (optional):
+            <input
+              type="password"
+              bind:value={githubToken}
+              placeholder="ghp_xxxxxxxxxxxx"
+            />
+          </label>
+          <p class="info">
+            Create a token at{' '}
+            <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer">
+              github.com/settings/tokens
+            </a>
+          </p>
+          {#if githubError}
+            <p class="error">{githubError}</p>
+          {/if}
+          <button type="submit" disabled={githubLoading}>
+            {githubLoading ? 'Authenticating...' : 'Authenticate Manually'}
+          </button>
+        </form>
+      </div>
+    {/if}
+  </div>
 </div>
-
-<style>
-  .admin-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 60vh;
-    padding: 2rem;
-  }
-
-  .admin-card {
-    border: 2px solid #cd7f32;
-    border-radius: 8px;
-    padding: 2rem;
-    background: rgba(30, 30, 30, 0.5);
-    max-width: 400px;
-    width: 100%;
-  }
-
-  .admin-card h1 {
-    margin: 0 0 1.5rem 0;
-    color: #cd7f32 !important;
-    background: none !important;
-    -webkit-background-clip: unset !important;
-    background-clip: unset !important;
-    filter: none !important;
-  }
-
-  .admin-card form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .admin-card label {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    color: #b4ebcb !important;
-    background: none !important;
-    -webkit-background-clip: unset !important;
-    background-clip: unset !important;
-    filter: none !important;
-    font-size: 0.9rem;
-  }
-
-  .admin-card input {
-    padding: 0.75rem;
-    background: rgba(30, 30, 30, 0.8);
-    border: 1px solid #cd7f32;
-    border-radius: 4px;
-    color: #b4ebcb;
-    font-family: inherit;
-    font-size: 1rem;
-  }
-
-  .admin-card input:focus {
-    outline: none;
-    border-color: #e6a85c;
-  }
-
-  .admin-card button {
-    padding: 0.75rem 1.5rem;
-    border: 1px solid #cd7f32;
-    border-radius: 4px;
-    background: transparent;
-    color: #b4ebcb;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    margin-top: 0.5rem;
-  }
-
-  .admin-card button:hover {
-    background: #cd7f32;
-    color: #1e1e1e;
-  }
-
-  .error {
-    color: #e6a85c !important;
-    background: none !important;
-    -webkit-background-clip: unset !important;
-    background-clip: unset !important;
-    filter: none !important;
-    font-size: 0.85rem;
-    margin: 0;
-  }
-</style>

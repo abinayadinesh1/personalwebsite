@@ -1,18 +1,18 @@
 <script>
-import SvelteMarkdown from "svelte-markdown";
-const source = `
-### a friendly 5 foot tall bot that can make sandwiches for you
+  import { onMount } from 'svelte';
+  import { browser } from '$app/environment';
+  import ProjectEditor from '$lib/components/ProjectEditor.svelte';
 
-over the weekend, i flew to across the country for the BEST hardware hackathon to take place, hosted by Brian Machado at UWaterloo.  
+  export let data;
 
-in < 14 hours of pure engineering, we built a 'wifey' bot that can make sandwiches for you!!
+  let isAdmin = data?.isAdmin || false;
 
-apart from the features of the base bracket bot (self balancing, rc'able, cameras, etc.), we added a 6DOF teleoperable arm that we controlled to pick up bread + other sandwich ingredients. may not be the most tasty, but at least it's made with love <3 
-`
-
+  onMount(() => {
+    if (browser) {
+      const clientAuth = sessionStorage.getItem('adminAuth') === 'true';
+      isAdmin = data?.isAdmin || clientAuth;
+    }
+  });
 </script>
 
-
-<div class="markdown-wrapper">
-  <SvelteMarkdown {source} />
-</div>
+<ProjectEditor projectId="bracketbots" {isAdmin} />

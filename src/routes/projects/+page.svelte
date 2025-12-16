@@ -4,7 +4,9 @@
   import { browser } from '$app/environment';
   import { page } from '$app/stores';
 
-  let isAdmin = false;
+  export let data; // Server-side data from +page.server.js
+
+  let isAdmin = data?.isAdmin || false;
   let editingProject = null;
 
   function checkAuth() {
@@ -70,11 +72,15 @@
   // New project being added
   let newProject = null;
 
-  // Load from localStorage and check auth on mount
+  // Load from localStorage and sync auth on mount
   onMount(() => {
     if (browser) {
-      // Check admin auth
-      isAdmin = checkAuth();
+      // Sync admin auth from server-side cookie (primary) or sessionStorage (fallback)
+      // Server-side auth is the source of truth, but we also check sessionStorage
+      // for immediate client-side updates after login
+      const serverAuth = data?.isAdmin || false;
+      const clientAuth = checkAuth();
+      isAdmin = serverAuth || clientAuth;
       
       // Load projects from localStorage
       const stored = localStorage.getItem('projects');
