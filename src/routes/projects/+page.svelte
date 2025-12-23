@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   import { page } from '$app/stores';
-  import { loadProjects, saveProjectToSupabase } from '$lib/utils/projects.js';
+  import { loadProjects, saveProjectToSupabase, updateProjectInSupabase, deleteProjectFromSupabase } from '$lib/utils/projects.js';
 
   export let data; // Server-side data from +page.server.js
 
@@ -229,24 +229,82 @@
     }
   }
 
-  function handleSaveEdit() {
-    if (editingProject) {
+  async function handleSaveEdit() {
+    if (!editingProject || !browser) return;
+    
+    savingProject = true;
+    saveError = null;
+    
+    try {
+      // Update in Supabase (this will also update localStorage cache)
+      const updatedProject = await updateProjectInSupabase(editingProject);
+      
+      // Update local state
+      const index = projectsData.findIndex(p => p.id === updatedProject.id);
+      if (index !== -1) {
+        projectsData[index] = updatedProject;
+        projectsData = [...projectsData]; // Trigger reactivity
+      }
+      
+      editingProject = null;
+      console.log('Project updated:', updatedProject);
+    } catch (error) {
+      saveError = error.message || 'Failed to update project';
+      console.error('Error updating project:', error);
+      
+      // Still update local state as backup
       const index = projectsData.findIndex(p => p.id === editingProject.id);
       if (index !== -1) {
         projectsData[index] = { ...editingProject };
         projectsData = [...projectsData]; // Trigger reactivity
-        editingProject = null;
       }
+      // Don't close the edit form on error so user can retry
+    } finally {
+      savingProject = false;
     }
   }
 
   function handleCancelEdit() {
     editingProject = null;
+    saveError = null;
   }
 
-  function handleDeleteProject(projectId) {
-    if (confirm('Are you sure you want to delete this project?')) {
+  async function handleDeleteProject(projectId) {
+    if (!browser) return;
+    
+    if (!confirm('Are you sure you want to delete this project?')) {
+      return;
+    }
+    
+    savingProject = true;
+    saveError = null;
+    
+    try {
+      // Delete from Supabase (this will also update localStorage cache)
+      await deleteProjectFromSupabase(projectId);
+      
+      // Update local state
       projectsData = projectsData.filter(p => p.id !== projectId);
+      
+      // If we were editing this project, cancel the edit
+      if (editingProject && editingProject.id === projectId) {
+        editingProject = null;
+      }
+      
+      console.log('Project deleted:', projectId);
+    } catch (error) {
+      saveError = error.message || 'Failed to delete project';
+      console.error('Error deleting project:', error);
+      
+      // Still remove from local state as backup
+      projectsData = projectsData.filter(p => p.id !== projectId);
+      
+      // If we were editing this project, cancel the edit
+      if (editingProject && editingProject.id === projectId) {
+        editingProject = null;
+      }
+    } finally {
+      savingProject = false;
     }
   }
 </script>
@@ -372,10 +430,33 @@
                 </label>
               </div>
               <div class="edit-actions">
-                <button class="save-button" on:click={handleSaveEdit}>Save</button>
-                <button class="cancel-button" on:click={handleCancelEdit}>Cancel</button>
-                <button class="delete-button" on:click={() => handleDeleteProject(project.id)}>Delete</button>
+                <button 
+                  class="save-button" 
+                  on:click={handleSaveEdit}
+                  disabled={savingProject}
+                >
+                  {savingProject ? 'Saving...' : 'Save'}
+                </button>
+                <button 
+                  class="cancel-button" 
+                  on:click={handleCancelEdit}
+                  disabled={savingProject}
+                >
+                  Cancel
+                </button>
+                <button 
+                  class="delete-button" 
+                  on:click={() => handleDeleteProject(project.id)}
+                  disabled={savingProject}
+                >
+                  Delete
+                </button>
               </div>
+              {#if saveError}
+                <p class="error-message" style="color: #c33; margin-top: 0.5rem; font-size: 0.9rem;">
+                  Error: {saveError}
+                </p>
+              {/if}
             </div>
           </div>
         </div>

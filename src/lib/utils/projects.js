@@ -111,3 +111,100 @@ export async function saveProjectToSupabase(project) {
     throw error; // Re-throw so caller knows Supabase save failed
   }
 }
+
+/**
+ * Update project in Supabase and update localStorage cache
+ * @param {Object} project - Project object to update (must include id)
+ * @returns {Promise<Object>} Updated project object
+ */
+export async function updateProjectInSupabase(project) {
+  try {
+    const response = await fetch('/api/projects', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: project.id,
+        title: project.title,
+        path: project.path,
+        status: project.status,
+        lastUpdated: project.lastUpdated,
+        hasCommits: project.hasCommits ?? false,
+        isPublic: project.isPublic ?? true
+      })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Failed to update project: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    const updatedProject = data.project;
+    
+    // Update localStorage cache
+    const cachedProjects = loadFromLocalStorage();
+    const existingIndex = cachedProjects.findIndex(p => p.id === updatedProject.id);
+    
+    if (existingIndex >= 0) {
+      cachedProjects[existingIndex] = updatedProject;
+    } else {
+      cachedProjects.push(updatedProject);
+    }
+    
+    localStorage.setItem('projects', JSON.stringify(cachedProjects));
+    localStorage.setItem('projects_last_sync', new Date().toISOString());
+    
+    return updatedProject;
+  } catch (error) {
+    console.error('Error updating project in Supabase:', error);
+    // Still update localStorage as backup
+    const cachedProjects = loadFromLocalStorage();
+    const existingIndex = cachedProjects.findIndex(p => p.id === project.id);
+    
+    if (existingIndex >= 0) {
+      cachedProjects[existingIndex] = project;
+    } else {
+      cachedProjects.push(project);
+    }
+    localStorage.setItem('projects', JSON.stringify(cachedProjects));
+    throw error; // Re-throw so caller knows Supabase update failed
+  }
+}
+
+/**
+ * Delete project from Supabase and update localStorage cache
+ * @param {string} projectId - ID of project to delete
+ * @returns {Promise<void>}
+ */
+export async function deleteProjectFromSupabase(projectId) {
+  try {
+    const response = await fetch(`/api/projects?id=${encodeURIComponent(projectId)}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Failed to delete project: ${response.status}`);
+    }
+    
+    // Update localStorage cache
+    const cachedProjects = loadFromLocalStorage();
+    const filteredProjects = cachedProjects.filter(p => p.id !== projectId);
+    localStorage.setItem('projects', JSON.stringify(filteredProjects));
+    localStorage.setItem('projects_last_sync', new Date().toISOString());
+    
+    return;
+  } catch (error) {
+    console.error('Error deleting project from Supabase:', error);
+    // Still update localStorage as backup
+    const cachedProjects = loadFromLocalStorage();
+    const filteredProjects = cachedProjects.filter(p => p.id !== projectId);
+    localStorage.setItem('projects', JSON.stringify(filteredProjects));
+    throw error; // Re-throw so caller knows Supabase delete failed
+  }
+}
