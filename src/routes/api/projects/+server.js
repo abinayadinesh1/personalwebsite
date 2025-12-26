@@ -104,23 +104,21 @@ export async function POST({ request, cookies }) {
       return json({ error: 'Failed to create project: no data returned' }, { status: 500 });
     }
     
-    // If status is not 'Graduated', also create an entry in project_content
-    if (status !== 'Graduated') {
-      const { error: contentError } = await supabase
-        .from('project_content')
-        .insert({
-          project_id: projectId,
-          markdown_content: '',
-          github_repo: null,
-          created_at: now,
-          last_updated: now
-        });
-      
-      if (contentError) {
-        console.error('Error creating project content:', contentError);
-        // Don't fail the whole request, but log the error
-        // The content can be added later
-      }
+    // Always create an entry in project_content (even for Graduated projects, in case they need content later)
+    const { error: contentError } = await supabase
+      .from('project_content')
+      .insert({
+        project_id: projectId,
+        markdown_content: '',
+        github_repo: null,
+        created_at: now,
+        last_updated: now
+      });
+    
+    if (contentError) {
+      console.error('Error creating project content:', contentError);
+      // Don't fail the whole request, but log the error
+      // The content can be added later via upsert
     }
     
     // Transform to frontend format
@@ -199,6 +197,31 @@ export async function PUT({ request, cookies, url }) {
     
     // Handle single row response
     const updatedProject = Array.isArray(project) ? project[0] : project;
+    
+    // Ensure project_content entry exists (create if it doesn't)
+    const { data: existingContent } = await supabase
+      .from('project_content')
+      .select('project_id')
+      .eq('project_id', id)
+      .single();
+    
+    if (!existingContent) {
+      // Create project_content entry if it doesn't exist
+      const { error: contentError } = await supabase
+        .from('project_content')
+        .insert({
+          project_id: id,
+          markdown_content: '',
+          github_repo: null,
+          created_at: now,
+          last_updated: now
+        });
+      
+      if (contentError) {
+        console.error('Error creating project content during update:', contentError);
+        // Don't fail the update, but log the error
+      }
+    }
     
     // Transform to frontend format
     const formattedProject = {

@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   import { page } from '$app/stores';
-  import { loadProjects, saveProjectToSupabase, updateProjectInSupabase, deleteProjectFromSupabase } from '$lib/utils/projects.js';
+  import { loadProjects, saveProjectToSupabase, updateProjectInSupabase, deleteProjectFromSupabase, syncProjectsToSupabase } from '$lib/utils/projects.js';
 
   export let data; // Server-side data from +page.server.js
 
@@ -97,21 +97,52 @@
             isPublic: p.isPublic !== undefined ? p.isPublic : true
           }));
         } else {
-          // If no projects loaded, try localStorage as fallback
-          const stored = localStorage.getItem('projects');
-          if (stored) {
+          // If no projects loaded from database, sync default projects (if admin) or use defaults
+          if (isAdmin) {
+            // Sync default projects to database
+            console.log('No projects in database, syncing default projects...');
             try {
-              const parsed = JSON.parse(stored);
-              projectsData = parsed.map(p => ({
+              const synced = await syncProjectsToSupabase(defaultProjects);
+              projectsData = synced.map(p => ({
                 ...p,
                 isPublic: p.isPublic !== undefined ? p.isPublic : true
               }));
-            } catch (e) {
-              console.error('Error loading projects from localStorage:', e);
-              projectsData = defaultProjects;
+            } catch (syncError) {
+              console.error('Error syncing projects to database:', syncError);
+              // Fall through to localStorage/defaults
+              const stored = localStorage.getItem('projects');
+              if (stored) {
+                try {
+                  const parsed = JSON.parse(stored);
+                  projectsData = parsed.map(p => ({
+                    ...p,
+                    isPublic: p.isPublic !== undefined ? p.isPublic : true
+                  }));
+                } catch (e) {
+                  console.error('Error loading projects from localStorage:', e);
+                  projectsData = defaultProjects;
+                }
+              } else {
+                projectsData = defaultProjects;
+              }
             }
           } else {
-            projectsData = defaultProjects;
+            // Non-admin: try localStorage as fallback
+            const stored = localStorage.getItem('projects');
+            if (stored) {
+              try {
+                const parsed = JSON.parse(stored);
+                projectsData = parsed.map(p => ({
+                  ...p,
+                  isPublic: p.isPublic !== undefined ? p.isPublic : true
+                }));
+              } catch (e) {
+                console.error('Error loading projects from localStorage:', e);
+                projectsData = defaultProjects;
+              }
+            } else {
+              projectsData = defaultProjects;
+            }
           }
         }
       } catch (error) {
