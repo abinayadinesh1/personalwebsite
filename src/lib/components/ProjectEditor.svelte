@@ -123,20 +123,50 @@
       day: 'numeric' 
     });
     
-    const dateHeader = `\n\n## ${dateStr}\n\n`;
+    const dateHeader = `## ${dateStr}\n\n`;
     
     if (!isEditing) {
       isEditing = true;
     }
     
-    // Add date header at the end
-    markdownContent += dateHeader;
+    // Add date header at the top
+    markdownContent = dateHeader + (markdownContent ? '\n\n' + markdownContent : '');
     
     // Focus textarea and move cursor after the new header
     setTimeout(() => {
       if (editTextarea) {
         editTextarea.focus();
-        const newPos = editTextarea.value.length;
+        const newPos = dateHeader.length;
+        editTextarea.setSelectionRange(newPos, newPos);
+      }
+    }, 0);
+  }
+
+  function insertBulletList() {
+    if (!isAdmin || !editTextarea) return;
+    
+    const textarea = editTextarea;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = markdownContent;
+    
+    // Get the current line
+    const beforeCursor = text.substring(0, start);
+    const afterCursor = text.substring(end);
+    const lineStart = beforeCursor.lastIndexOf('\n') + 1;
+    const lineEnd = afterCursor.indexOf('\n');
+    const currentLine = text.substring(lineStart, end + (lineEnd === -1 ? text.length : lineEnd));
+    
+    // Insert bullet point
+    const bullet = '- ';
+    const newText = text.substring(0, start) + bullet + text.substring(end);
+    markdownContent = newText;
+    
+    // Move cursor after the bullet
+    setTimeout(() => {
+      if (editTextarea) {
+        editTextarea.focus();
+        const newPos = start + bullet.length;
         editTextarea.setSelectionRange(newPos, newPos);
       }
     }, 0);
@@ -326,6 +356,10 @@
     >
       {#if isEditing && isAdmin}
         <div class="edit-toolbar">
+          <button class="toolbar-btn" on:click={insertBulletList} title="Insert bullet list">
+            <i class="las la-list-ul"></i> Bullet List
+          </button>
+          <div class="toolbar-spacer"></div>
           <button class="save-btn" on:click={handleSave}>Save</button>
           <button class="cancel-btn" on:click={handleCancel}>Cancel</button>
         </div>
