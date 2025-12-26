@@ -2,39 +2,75 @@
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   import ProjectEditor from '$lib/components/ProjectEditor.svelte';
-  import { getProjectStatus } from '$lib/utils/projectStatus.js';
+  import { loadProjects } from '$lib/utils/projects.js';
 
   export let data;
 
   let isAdmin = data?.isAdmin || false;
-  let showEditor = true;
+  let project = null;
+  let loading = true;
+  let error = null;
+  let showEditor = false;
 
-  const defaultProjects = [
-    { id: 'writing', title: 'writing', path: '/projects/writing_ideas', lastUpdated: '2025-12-13', status: 'In Progress', hasCommits: true, isPublic: false },
-    { id: 'pcb 1', title: 'haptic motor controller (pcb)', path: '/projects/eagelmann-vest-pcb', lastUpdated: '2025-04-17', status: 'Graduated', hasCommits: true, isPublic: true },
-    { id: 'turtlebot3', title: 'Visual Navigation with Turtlebot3', path: '/projects/turtlebot3', lastUpdated: '2024-09-15', status: 'Graduated', hasCommits: true, isPublic: true },
-    { id: 'tinybots', title: 'Playing with micro-micro-controllers', path: '/projects/tinybots', lastUpdated: '2024-08-20', status: 'Graduated', hasCommits: true, isPublic: true },
-    { id: 'bracketbots', title: "Building a 'wifey' bot", path: '/projects/bracketbots', lastUpdated: '2024-10-10', status: 'Graduated', hasCommits: true, isPublic: true }
-  ];
-
-  onMount(() => {
+  onMount(async () => {
     if (browser) {
       const clientAuth = sessionStorage.getItem('adminAuth') === 'true';
       isAdmin = data?.isAdmin || clientAuth;
 
-      const { showEditor: shouldShowEditor } = getProjectStatus('writing_ideas', defaultProjects);
-      showEditor = shouldShowEditor;
+      // Load projects to find the writing project
+      try {
+        const projects = await loadProjects(isAdmin);
+        // Find project by path (since route is /projects/writing_ideas)
+        // The project ID in database is "writing", but path is "/projects/writing_ideas"
+        project = projects.find(p => p.path === '/projects/writing_ideas' || p.id === 'writing');
+        
+        if (!project) {
+          error = 'Project not found';
+          loading = false;
+          return;
+        }
+
+        console.log('✅ Found project:', { id: project.id, path: project.path });
+        
+        // Show editor if project is not "Graduated"
+        showEditor = project.status !== 'Graduated';
+        loading = false;
+      } catch (err) {
+        console.error('Error loading project:', err);
+        error = 'Failed to load project';
+        loading = false;
+      }
     }
   });
 </script>
 
-{#if showEditor}
-  <ProjectEditor projectId="writing_ideas" {isAdmin} />
-{:else}
-  <!-- Graduated project content - add your static content here -->
-  <div class="graduated-project">
-    <h1>writing</h1>
-    <p>This is a graduated project. Add your project content here.</p>
+{#if loading}
+  <div style="padding: 2rem; text-align: center;">
+    <p>Loading project...</p>
   </div>
+{:else if error}
+  <div style="padding: 2rem;">
+    <h1>Project Not Found</h1>
+    <p>{error}</p>
+    <a href="/projects">← Back to Projects</a>
+  </div>
+{:else if project}
+  {#if showEditor}
+    <!-- Pass project.id (which is "writing") not the route param -->
+    <ProjectEditor projectId={project.id} {isAdmin} />
+  {:else}
+    <!-- Graduated project content -->
+    <div style="padding: 2rem; max-width: 800px; margin: 0 auto;">
+      <h1>{project.title}</h1>
+      <p style="color: #666; margin-bottom: 2rem;">
+        Last updated: {new Date(project.lastUpdated).toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        })}
+      </p>
+      <p>This project has been graduated. Static content will be displayed here.</p>
+      <a href="/projects">← Back to Projects</a>
+    </div>
+  {/if}
 {/if}
-  
