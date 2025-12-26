@@ -70,8 +70,8 @@
     }
   ];
 
-  // Load projects from localStorage or use defaults
-  let projectsData = defaultProjects;
+  // Initialize as empty array - will be loaded from database
+  let projectsData = [];
 
   // New project being added
   let newProject = null;
@@ -86,30 +86,59 @@
       const clientAuth = checkAuth();
       isAdmin = serverAuth || clientAuth;
       
-      // Load projects from Supabase first (with localStorage fallback)
+      // Always try to load from database first
       loadingProjects = true;
       try {
-        const loaded = await loadProjects(isAdmin);
-        if (loaded.length > 0) {
-          // Ensure all projects have isPublic field (default to true for backwards compatibility)
-          projectsData = loaded.map(p => ({
-            ...p,
-            isPublic: p.isPublic !== undefined ? p.isPublic : true
-          }));
-        } else {
-          // If no projects loaded from database, sync default projects (if admin) or use defaults
-          if (isAdmin) {
-            // Sync default projects to database
-            console.log('No projects in database, syncing default projects...');
-            try {
-              const synced = await syncProjectsToSupabase(defaultProjects);
-              projectsData = synced.map(p => ({
-                ...p,
-                isPublic: p.isPublic !== undefined ? p.isPublic : true
-              }));
-            } catch (syncError) {
-              console.error('Error syncing projects to database:', syncError);
-              // Fall through to localStorage/defaults
+        // Try to fetch directly from API (bypassing localStorage cache)
+        const response = await fetch('/api/projects');
+        
+        if (response.ok) {
+          const data = await response.json();
+          const loaded = data.projects || [];
+          
+          if (loaded.length > 0) {
+            // Projects exist in database - use them
+            projectsData = loaded.map(p => ({
+              ...p,
+              isPublic: p.isPublic !== undefined ? p.isPublic : true
+            }));
+            // Update localStorage cache
+            localStorage.setItem('projects', JSON.stringify(projectsData));
+            localStorage.setItem('projects_last_sync', new Date().toISOString());
+          } else {
+            // No projects in database - sync default projects if admin
+            if (isAdmin) {
+              console.log('No projects in database, syncing default projects...');
+              try {
+                const synced = await syncProjectsToSupabase(defaultProjects);
+                projectsData = synced.map(p => ({
+                  ...p,
+                  isPublic: p.isPublic !== undefined ? p.isPublic : true
+                }));
+                // Update localStorage cache
+                localStorage.setItem('projects', JSON.stringify(projectsData));
+                localStorage.setItem('projects_last_sync', new Date().toISOString());
+              } catch (syncError) {
+                console.error('Error syncing projects to database:', syncError);
+                // Fall back to localStorage if sync fails
+                const stored = localStorage.getItem('projects');
+                if (stored) {
+                  try {
+                    const parsed = JSON.parse(stored);
+                    projectsData = parsed.map(p => ({
+                      ...p,
+                      isPublic: p.isPublic !== undefined ? p.isPublic : true
+                    }));
+                  } catch (e) {
+                    console.error('Error loading projects from localStorage:', e);
+                    projectsData = defaultProjects;
+                  }
+                } else {
+                  projectsData = defaultProjects;
+                }
+              }
+            } else {
+              // Non-admin: use localStorage or defaults
               const stored = localStorage.getItem('projects');
               if (stored) {
                 try {
@@ -126,28 +155,29 @@
                 projectsData = defaultProjects;
               }
             }
-          } else {
-            // Non-admin: try localStorage as fallback
-            const stored = localStorage.getItem('projects');
-            if (stored) {
-              try {
-                const parsed = JSON.parse(stored);
-                projectsData = parsed.map(p => ({
-                  ...p,
-                  isPublic: p.isPublic !== undefined ? p.isPublic : true
-                }));
-              } catch (e) {
-                console.error('Error loading projects from localStorage:', e);
-                projectsData = defaultProjects;
-              }
-            } else {
+          }
+        } else {
+          // API request failed - fall back to localStorage
+          console.warn('Failed to load from Supabase, falling back to localStorage');
+          const stored = localStorage.getItem('projects');
+          if (stored) {
+            try {
+              const parsed = JSON.parse(stored);
+              projectsData = parsed.map(p => ({
+                ...p,
+                isPublic: p.isPublic !== undefined ? p.isPublic : true
+              }));
+            } catch (e) {
+              console.error('Error loading projects from localStorage:', e);
               projectsData = defaultProjects;
             }
+          } else {
+            projectsData = defaultProjects;
           }
         }
       } catch (error) {
         console.error('Error loading projects:', error);
-        // Fall back to localStorage
+        // Fall back to localStorage on network error
         const stored = localStorage.getItem('projects');
         if (stored) {
           try {
@@ -169,8 +199,8 @@
     }
   });
 
-  // Save to localStorage whenever projectsData changes
-  $: if (browser && projectsData) {
+  // Save to localStorage whenever projectsData changes (only after initial load)
+  $: if (browser && projectsData.length > 0) {
     localStorage.setItem('projects', JSON.stringify(projectsData));
   }
 

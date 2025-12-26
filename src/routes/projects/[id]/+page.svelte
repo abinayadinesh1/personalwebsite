@@ -54,7 +54,7 @@
   </div>
 {:else if project}
   {#if showEditor}
-    <ProjectEditor projectId={projectId} {isAdmin} />
+    <ProjectEditor projectId={project.id} {isAdmin} />
   {:else}
     <!-- Graduated project content -->
     <div style="padding: 2rem; max-width: 800px; margin: 0 auto;">

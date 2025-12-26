@@ -10,14 +10,8 @@
   export let projectId = '';
   export let isAdmin = false;
 
-  // Extract project ID from route if not provided
-  $: if (!projectId && browser) {
-    const pathname = $page.url.pathname;
-    const match = pathname.match(/\/projects\/([^\/]+)/);
-    if (match) {
-      projectId = match[1];
-    }
-  }
+  // Note: projectId should always be provided as a prop from the parent component
+  // (which resolves the project and passes project.id, not the route param)
 
   let markdownContent = '';
   let isEditing = false;
@@ -49,6 +43,7 @@
   async function loadProjectData() {
     if (!browser || !projectId) return;
     
+    console.log('📥 Loading project content with ID:', projectId);
     loadingContent = true;
     try {
       const content = await loadProjectContent(projectId);
@@ -69,6 +64,7 @@
   async function saveProjectData() {
     if (!browser || !projectId) return;
     
+    console.log('💾 Saving project content with ID:', projectId);
     savingContent = true;
     saveError = null;
     
