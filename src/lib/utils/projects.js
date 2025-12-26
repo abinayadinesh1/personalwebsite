@@ -208,3 +208,174 @@ export async function deleteProjectFromSupabase(projectId) {
     throw error; // Re-throw so caller knows Supabase delete failed
   }
 }
+
+/**
+ * Load project content from Supabase, with localStorage as fallback
+ * @param {string} projectId - ID of the project
+ * @returns {Promise<Object>} Object with markdownContent, githubRepo, and lastUpdated
+ */
+export async function loadProjectContent(projectId) {
+  if (typeof window === 'undefined') {
+    // Server-side: return empty content
+    return { markdownContent: '', githubRepo: '', lastUpdated: null };
+  }
+  
+  try {
+    // Try to fetch from Supabase first
+    const response = await fetch(`/api/projects/${encodeURIComponent(projectId)}/content`);
+    
+    if (response.ok) {
+      const data = await response.json();
+      const content = data.content || { markdownContent: '', githubRepo: '', lastUpdated: null };
+      
+      // Cache in localStorage for offline/fallback use
+      const key = `project_${projectId}`;
+      const cacheData = {
+        content: content.markdownContent,
+        githubRepo: content.githubRepo,
+        lastUpdated: content.lastUpdated || new Date().toISOString()
+      };
+      localStorage.setItem(key, JSON.stringify(cacheData));
+      
+      return content;
+    } else {
+      // If Supabase fails, fall back to localStorage
+      console.warn('Failed to load content from Supabase, falling back to localStorage');
+      return loadProjectContentFromLocalStorage(projectId);
+    }
+  } catch (error) {
+    console.error('Error loading project content from Supabase:', error);
+    // Fall back to localStorage
+    return loadProjectContentFromLocalStorage(projectId);
+  }
+}
+
+/**
+ * Load project content from localStorage
+ * @param {string} projectId - ID of the project
+ * @returns {Object} Object with markdownContent, githubRepo, and lastUpdated
+ */
+export function loadProjectContentFromLocalStorage(projectId) {
+  if (typeof window === 'undefined') {
+    return { markdownContent: '', githubRepo: '', lastUpdated: null };
+  }
+  
+  const key = `project_${projectId}`;
+  const stored = localStorage.getItem(key);
+  
+  if (stored) {
+    try {
+      const data = JSON.parse(stored);
+      return {
+        markdownContent: data.content || '',
+        githubRepo: data.githubRepo || '',
+        lastUpdated: data.lastUpdated || null
+      };
+    } catch (e) {
+      console.error('Error parsing project content from localStorage:', e);
+      return { markdownContent: '', githubRepo: '', lastUpdated: null };
+    }
+  }
+  
+  return { markdownContent: '', githubRepo: '', lastUpdated: null };
+}
+
+/**
+ * Sync projects to Supabase - creates projects in database if they don't exist
+ * @param {Array} projects - Array of projects to sync
+ * @returns {Promise<Array>} Array of synced projects
+ */
+export async function syncProjectsToSupabase(projects) {
+  if (typeof window === 'undefined') {
+    return [];
+  }
+  
+  const syncedProjects = [];
+  
+  // First, load existing projects to see which ones already exist
+  let existingProjects = [];
+  try {
+    const loaded = await loadProjects(true); // Load as admin to get all projects
+    existingProjects = loaded.map(p => p.id);
+  } catch (error) {
+    console.error('Error loading existing projects for sync:', error);
+    // Continue anyway - we'll try to create/update each project
+  }
+  
+  for (const project of projects) {
+    try {
+      if (existingProjects.includes(project.id)) {
+        // Project exists, update it
+        const updatedProject = await updateProjectInSupabase(project);
+        syncedProjects.push(updatedProject);
+      } else {
+        // Project doesn't exist, create it
+        const savedProject = await saveProjectToSupabase(project);
+        syncedProjects.push(savedProject);
+      }
+    } catch (error) {
+      console.error(`Error syncing project ${project.id}:`, error);
+      // Continue with other projects even if one fails
+      // Include the project in the result so it's still displayed
+      syncedProjects.push(project);
+    }
+  }
+  
+  return syncedProjects;
+}
+
+/**
+ * Save project content to Supabase and update localStorage cache
+ * @param {string} projectId - ID of the project
+ * @param {string} markdownContent - Markdown content to save
+ * @param {string} githubRepo - GitHub repository URL (optional)
+ * @returns {Promise<Object>} Saved content object
+ */
+export async function saveProjectContentToSupabase(projectId, markdownContent, githubRepo = '') {
+  if (typeof window === 'undefined') {
+    throw new Error('saveProjectContentToSupabase can only be called from the browser');
+  }
+  
+  try {
+    const response = await fetch(`/api/projects/${encodeURIComponent(projectId)}/content`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        markdownContent: markdownContent || '',
+        githubRepo: githubRepo || ''
+      })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Failed to save project content: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    const savedContent = data.content || { markdownContent: '', githubRepo: '', lastUpdated: null };
+    
+    // Update localStorage cache
+    const key = `project_${projectId}`;
+    const cacheData = {
+      content: savedContent.markdownContent,
+      githubRepo: savedContent.githubRepo,
+      lastUpdated: savedContent.lastUpdated || new Date().toISOString()
+    };
+    localStorage.setItem(key, JSON.stringify(cacheData));
+    
+    return savedContent;
+  } catch (error) {
+    console.error('Error saving project content to Supabase:', error);
+    // Still save to localStorage as backup
+    const key = `project_${projectId}`;
+    const cacheData = {
+      content: markdownContent || '',
+      githubRepo: githubRepo || '',
+      lastUpdated: new Date().toISOString()
+    };
+    localStorage.setItem(key, JSON.stringify(cacheData));
+    throw error; // Re-throw so caller knows Supabase save failed
+  }
+}

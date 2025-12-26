@@ -4,6 +4,7 @@
   import { page } from '$app/stores';
   import SvelteMarkdown from 'svelte-markdown';
   import ContributionsGraph from '$lib/components/ContributionsGraph.svelte';
+  import { loadProjectContent, saveProjectContentToSupabase } from '$lib/utils/projects.js';
   import '../../styles/components/editor.css';
 
   export let projectId = '';
@@ -31,50 +32,57 @@
   let availableRepos = [];
   let loadingRepos = false;
   let selectedRepoId = '';
+  let loadingContent = false;
+  let savingContent = false;
+  let saveError = null;
 
-  // Load project data from localStorage
-  onMount(() => {
+  // Load project data from backend (with localStorage fallback)
+  onMount(async () => {
     if (browser && projectId) {
-      loadProjectData();
+      await loadProjectData();
       if (isAdmin) {
         loadAvailableRepos();
       }
     }
   });
 
-  function loadProjectData() {
-    if (!browser) return;
+  async function loadProjectData() {
+    if (!browser || !projectId) return;
     
-    const key = `project_${projectId}`;
-    const stored = localStorage.getItem(key);
-    
-    if (stored) {
-      try {
-        const data = JSON.parse(stored);
-        markdownContent = data.content || '';
-        githubRepo = data.githubRepo || '';
-        if (githubRepo) {
-          loadContributions();
-        }
-        updateTimeline();
-      } catch (e) {
-        console.error('Error loading project data:', e);
+    loadingContent = true;
+    try {
+      const content = await loadProjectContent(projectId);
+      markdownContent = content.markdownContent || '';
+      githubRepo = content.githubRepo || '';
+      if (githubRepo) {
+        loadContributions();
       }
+      updateTimeline();
+    } catch (e) {
+      console.error('Error loading project data:', e);
+      // Content will be empty, which is fine - user can start fresh
+    } finally {
+      loadingContent = false;
     }
   }
 
-  function saveProjectData() {
+  async function saveProjectData() {
     if (!browser || !projectId) return;
     
-    const key = `project_${projectId}`;
-    const data = {
-      content: markdownContent,
-      githubRepo: githubRepo,
-      lastUpdated: new Date().toISOString()
-    };
+    savingContent = true;
+    saveError = null;
     
-    localStorage.setItem(key, JSON.stringify(data));
-    updateTimeline();
+    try {
+      // Save to Supabase (this will also update localStorage cache)
+      await saveProjectContentToSupabase(projectId, markdownContent, githubRepo);
+      updateTimeline();
+    } catch (error) {
+      console.error('Error saving project content:', error);
+      saveError = error.message || 'Failed to save content';
+      // Content is still saved to localStorage as backup by the utility function
+    } finally {
+      savingContent = false;
+    }
   }
 
   function handleDoubleClick() {
@@ -103,14 +111,17 @@
     }, 200);
   }
 
-  function handleSave() {
-    saveProjectData();
-    isEditing = false;
+  async function handleSave() {
+    await saveProjectData();
+    if (!saveError) {
+      isEditing = false;
+    }
   }
 
-  function handleCancel() {
-    loadProjectData(); // Reload original content
+  async function handleCancel() {
+    await loadProjectData(); // Reload original content
     isEditing = false;
+    saveError = null;
   }
 
   function addDateEntry() {
@@ -137,36 +148,6 @@
       if (editTextarea) {
         editTextarea.focus();
         const newPos = dateHeader.length;
-        editTextarea.setSelectionRange(newPos, newPos);
-      }
-    }, 0);
-  }
-
-  function insertBulletList() {
-    if (!isAdmin || !editTextarea) return;
-    
-    const textarea = editTextarea;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const text = markdownContent;
-    
-    // Get the current line
-    const beforeCursor = text.substring(0, start);
-    const afterCursor = text.substring(end);
-    const lineStart = beforeCursor.lastIndexOf('\n') + 1;
-    const lineEnd = afterCursor.indexOf('\n');
-    const currentLine = text.substring(lineStart, end + (lineEnd === -1 ? text.length : lineEnd));
-    
-    // Insert bullet point
-    const bullet = '- ';
-    const newText = text.substring(0, start) + bullet + text.substring(end);
-    markdownContent = newText;
-    
-    // Move cursor after the bullet
-    setTimeout(() => {
-      if (editTextarea) {
-        editTextarea.focus();
-        const newPos = start + bullet.length;
         editTextarea.setSelectionRange(newPos, newPos);
       }
     }, 0);
@@ -306,7 +287,7 @@
     isEditingRepo = true;
   }
 
-  function saveRepo() {
+  async function saveRepo() {
     if (selectedRepoId) {
       const selectedRepo = availableRepos.find(r => r.id.toString() === selectedRepoId);
       if (selectedRepo) {
@@ -316,7 +297,7 @@
       githubRepo = '';
     }
     isEditingRepo = false;
-    saveProjectData();
+    await saveProjectData();
     if (githubRepo) {
       loadContributions();
     }
@@ -356,23 +337,27 @@
     >
       {#if isEditing && isAdmin}
         <div class="edit-toolbar">
-          <button class="toolbar-btn" on:click={insertBulletList} title="Insert bullet list">
-            <i class="las la-list-ul"></i> Bullet List
+          <button class="save-btn" on:click={handleSave} disabled={savingContent}>
+            {savingContent ? 'Saving...' : 'Save'}
           </button>
-          <div class="toolbar-spacer"></div>
-          <button class="save-btn" on:click={handleSave}>Save</button>
-          <button class="cancel-btn" on:click={handleCancel}>Cancel</button>
+          <button class="cancel-btn" on:click={handleCancel} disabled={savingContent}>Cancel</button>
+          {#if saveError}
+            <span class="save-error" style="color: #ff6b6b; font-size: 0.9rem; margin-left: 1rem;">
+              {saveError}
+            </span>
+          {/if}
         </div>
         <textarea
           bind:this={editTextarea}
           bind:value={markdownContent}
-          on:blur={handleBlur}
           class="markdown-editor"
           placeholder="Start writing your daily log... Double-click to edit or use 'Add Date' to add a new entry."
         ></textarea>
       {:else}
         <div class="markdown-display">
-          {#if markdownContent}
+          {#if loadingContent}
+            <p class="empty-state">Loading content...</p>
+          {:else if markdownContent}
             <SvelteMarkdown source={markdownContent} />
           {:else}
             <p class="empty-state">
