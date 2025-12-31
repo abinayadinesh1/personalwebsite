@@ -94,7 +94,7 @@
       <p>
         in my free time, I am <a href="https://runtime.substack.com/p/what-my-body-tells-me">obsessed with rock climbing</a>, skiing, and occasionally, photography. 
         <hr class="solid">
-
+        <a href="https://drive.google.com/file/d/14ItwjFKHKaMP2Gp4xY0hrOXUA45f7-Jo/view?usp=sharing">Resume</a>
         <!-- <div id="telescoping-text"></div>   -->
     </div>  
   </div>
