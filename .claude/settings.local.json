@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(npm run build)",
-      "Bash(npx svelte-check --threshold warning)"
+      "Bash(npx svelte-check --threshold warning)",
+      "Bash(npm install @neondatabase/serverless)"
     ]
   },
   "enableAllProjectMcpServers": false
