@@ -52,12 +52,19 @@ export async function GET({ params, cookies, url }) {
     }
     
     // Transform to frontend format
+    let markdownText = content.markdown_content || '';
+
+    // Strip <hidden>...</hidden> blocks for non-admin users
+    if (!isAdmin) {
+      markdownText = markdownText.replace(/<hidden>[\s\S]*?<\/hidden>/g, '');
+    }
+
     const formattedContent = {
-      markdownContent: content.markdown_content || '',
+      markdownContent: markdownText,
       githubRepo: content.github_repo || '',
       lastUpdated: content.last_updated
     };
-    
+
     return json({ content: formattedContent });
   } catch (error) {
     console.error('Error in GET /api/projects/[id]/content:', error);

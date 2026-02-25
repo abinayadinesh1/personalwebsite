@@ -30,6 +30,40 @@
   let savingContent = false;
   let saveError = null;
 
+  // Split content into segments: regular markdown and hidden blocks.
+  // Returns array of { type: 'visible' | 'hidden', content: string }
+  function splitHiddenContent(content) {
+    if (!content) return [];
+    const segments = [];
+    const regex = /<hidden>([\s\S]*?)<\/hidden>/g;
+    let lastIndex = 0;
+    let match;
+
+    while ((match = regex.exec(content)) !== null) {
+      // Add visible content before this hidden block
+      if (match.index > lastIndex) {
+        segments.push({ type: 'visible', content: content.slice(lastIndex, match.index) });
+      }
+      // Add the hidden block
+      segments.push({ type: 'hidden', content: match[1] });
+      lastIndex = match.index + match[0].length;
+    }
+    // Add remaining visible content
+    if (lastIndex < content.length) {
+      segments.push({ type: 'visible', content: content.slice(lastIndex) });
+    }
+    return segments;
+  }
+
+  // For non-admins: just strip hidden blocks entirely
+  function stripHiddenContent(content) {
+    if (!content) return '';
+    return content.replace(/<hidden>[\s\S]*?<\/hidden>/g, '');
+  }
+
+  $: contentSegments = isAdmin ? splitHiddenContent(markdownContent) : [];
+  $: publicContent = !isAdmin ? stripHiddenContent(markdownContent) : '';
+
   // Load project data from backend (with localStorage fallback)
   onMount(async () => {
     if (browser && projectId) {
@@ -354,7 +388,20 @@
           {#if loadingContent}
             <p class="empty-state">Loading content...</p>
           {:else if markdownContent}
-            <SvelteMarkdown source={markdownContent} />
+            {#if isAdmin}
+              {#each contentSegments as segment}
+                {#if segment.type === 'hidden'}
+                  <div class="hidden-content-admin">
+                    <span class="hidden-badge">Hidden</span>
+                    <SvelteMarkdown source={segment.content} />
+                  </div>
+                {:else}
+                  <SvelteMarkdown source={segment.content} />
+                {/if}
+              {/each}
+            {:else}
+              <SvelteMarkdown source={publicContent} />
+            {/if}
           {:else}
             <p class="empty-state">
               {#if isAdmin}
