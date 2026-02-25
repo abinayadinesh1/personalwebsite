@@ -33,7 +33,7 @@ export async function POST({ request }) {
     }
 
     const body = await request.json();
-    const { link, content } = body;
+    const { link, content, date } = body;
 
     // Validate required fields
     if (!link) {
@@ -52,10 +52,13 @@ export async function POST({ request }) {
 
     const sql = getDb();
 
+    // Parse date if provided, otherwise default to now
+    const timestamp = date ? new Date(date) : new Date();
+
     // Insert the article
     const result = await sql`
-      INSERT INTO articles (title, link, content)
-      VALUES (${title}, ${link}, ${content || null})
+      INSERT INTO articles (title, link, content, timestamp)
+      VALUES (${title}, ${link}, ${content || null}, ${timestamp})
       RETURNING id, title, link, timestamp, content
     `;
 

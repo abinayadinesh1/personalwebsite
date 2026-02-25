@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npm run build)",
       "Bash(npx svelte-check --threshold warning)",
-      "Bash(npm install @neondatabase/serverless)"
+      "Bash(npm install @neondatabase/serverless)",
+      "Bash(npm install @vercel/analytics)"
     ]
   },
   "enableAllProjectMcpServers": false
