@@ -1,3 +1,9 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(npm run build)",
+      "Bash(npx svelte-check --threshold warning)"
+    ]
+  },
   "enableAllProjectMcpServers": false
 }
