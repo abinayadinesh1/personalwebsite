@@ -8,6 +8,11 @@
   let cardWidth = 160; // Base card width in pixels
   let cardGap = 8; // Gap between cards (0.5rem ≈ 8px)
   let articles = [];
+  let isAdmin = false;
+  let editingId = null;
+  let editLink = '';
+  let editContent = '';
+  let editDate = '';
 
   const books = [
     {
@@ -123,6 +128,8 @@
     updateItemsPerView();
     window.addEventListener('resize', updateItemsPerView);
 
+    isAdmin = sessionStorage.getItem('adminAuth') === 'true';
+
     // Fetch articles from API
     try {
       const res = await fetch('/api/articles');
@@ -134,6 +141,38 @@
 
     return () => window.removeEventListener('resize', updateItemsPerView);
   });
+
+  function startEdit(article) {
+    editingId = article.id;
+    editLink = article.link;
+    editContent = article.content || '';
+    editDate = article.timestamp ? article.timestamp.slice(0, 10) : '';
+  }
+
+  function cancelEdit() {
+    editingId = null;
+  }
+
+  async function saveEdit(id) {
+    try {
+      const res = await fetch(`/api/articles/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          link: editLink,
+          content: editContent || null,
+          date: editDate || null
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        articles = articles.map(a => a.id === id ? data.article : a);
+        editingId = null;
+      }
+    } catch (err) {
+      console.error('Failed to save article:', err);
+    }
+  }
 
   function nextBook() {
     if (currentIndex + itemsPerView < books.length) {
@@ -226,12 +265,33 @@
       <h3>Short(er) Form</h3>
       <div class="articles-list">
         {#each articles as article}
-          <a class="article-card" href="/reading/articles/{article.id}">
-            <h4 class="article-title">{article.title || article.link}</h4>
-            {#if article.content}
-              <span class="notes-icon" title="Has notes">&#x1f4dd;</span>
-            {/if}
-          </a>
+          {#if editingId === article.id}
+            <div class="article-card editing">
+              <label class="edit-label">Link
+                <input type="url" bind:value={editLink} class="edit-input" />
+              </label>
+              <label class="edit-label">Notes
+                <textarea bind:value={editContent} class="edit-input edit-textarea" rows="3"></textarea>
+              </label>
+              <label class="edit-label">Date
+                <input type="date" bind:value={editDate} class="edit-input" />
+              </label>
+              <div class="edit-actions">
+                <button class="edit-btn save" on:click={() => saveEdit(article.id)}>Save</button>
+                <button class="edit-btn cancel" on:click={cancelEdit}>Cancel</button>
+              </div>
+            </div>
+          {:else}
+            <a class="article-card" href="/reading/articles/{article.id}">
+              <h4 class="article-title">{article.title || article.link}</h4>
+              {#if article.content}
+                <span class="notes-icon" title="Has notes">&#x1f4dd;</span>
+              {/if}
+              {#if isAdmin}
+                <button class="edit-icon" title="Edit article" on:click|preventDefault|stopPropagation={() => startEdit(article)}>&#x270E;</button>
+              {/if}
+            </a>
+          {/if}
         {/each}
         {#if articles.length === 0}
           <p style="font-size: 0.8em; opacity: 0.5;">No articles yet.</p>

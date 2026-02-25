@@ -15,6 +15,9 @@
 .reading-right {
   width: 300px;
   flex-shrink: 0;
+  border-left: 1px solid var(--link-hover);
+  padding-left: 2rem;
+  opacity: 0.9;
 }
 
 /* Articles column */
@@ -74,6 +77,87 @@
   line-height: 1;
 }
 
+/* Admin edit icon */
+.edit-icon {
+  position: absolute;
+  bottom: 0.4rem;
+  right: 0.4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.7em;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  padding: 0.1rem 0.25rem;
+  color: var(--link-hover);
+}
+
+.article-card:hover .edit-icon {
+  opacity: 0.7;
+}
+
+.edit-icon:hover {
+  opacity: 1 !important;
+}
+
+/* Admin edit form */
+.article-card.editing {
+  cursor: default;
+}
+
+.edit-label {
+  display: block;
+  font-size: 0.7em;
+  opacity: 0.6;
+  margin-bottom: 0.4rem;
+}
+
+.edit-input {
+  display: block;
+  width: 100%;
+  margin-top: 0.15rem;
+  padding: 0.3rem 0.4rem;
+  font-size: 1.1em;
+  font-family: var(--font);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--link-hover);
+  border-radius: 4px;
+  color: var(--link);
+  box-sizing: border-box;
+}
+
+.edit-textarea {
+  resize: vertical;
+  min-height: 2.5rem;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.edit-btn {
+  font-size: 0.7em;
+  font-family: var(--font);
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid var(--link-hover);
+  background: none;
+  color: var(--link);
+  transition: all 0.2s ease;
+}
+
+.edit-btn.save:hover {
+  background: var(--link-hover);
+  color: #1e1e1e;
+}
+
+.edit-btn.cancel:hover {
+  opacity: 0.7;
+}
+
 /* Article notes page */
 .article-notes-page {
   max-width: 640px;
@@ -117,6 +201,7 @@
   font-size: 0.9em;
   line-height: 1.7;
   white-space: pre-wrap;
+  color: var(--link-hover);
 }
 
 .article-back {
@@ -131,6 +216,77 @@
   color: var(--link-hover);
 }
 
+/* Article page header with edit button */
+.article-header-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.article-header-row h1 {
+  margin-bottom: 0.25rem;
+}
+
+.article-edit-btn {
+  background: none;
+  border: 1px solid var(--link-hover);
+  border-radius: 4px;
+  color: var(--link-hover);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.2rem 0.5rem;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.article-edit-btn:hover {
+  background: var(--link-hover);
+  color: #1e1e1e;
+}
+
+/* Article page edit form */
+.article-edit-form {
+  margin-top: 1rem;
+}
+
+.article-edit-label {
+  display: block;
+  font-size: 0.8em;
+  opacity: 0.6;
+  margin-bottom: 0.75rem;
+}
+
+.article-edit-input {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.5rem 0.6rem;
+  font-family: var(--font);
+  font-size: 1rem;
+  background: rgba(20, 20, 20, 0.5);
+  border: 1px solid var(--link-hover);
+  border-radius: 4px;
+  color: var(--link);
+  box-sizing: border-box;
+  outline: none;
+}
+
+.article-edit-input:focus {
+  border-color: var(--link);
+}
+
+.article-edit-textarea {
+  min-height: 300px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.article-edit-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .reading-layout {
@@ -139,6 +295,10 @@
 
   .reading-right {
     width: 100%;
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid var(--link-hover);
+    padding-top: 1rem;
   }
 
   .articles-list {

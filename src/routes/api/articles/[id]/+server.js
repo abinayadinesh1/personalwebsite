@@ -36,14 +36,18 @@ export async function PUT({ params, request, cookies }) {
 
   try {
     const body = await request.json();
-    const { title, content } = body;
+    const { title, content, link, date } = body;
 
     const sql = getDb();
+
+    const timestamp = date ? new Date(date) : null;
 
     const result = await sql`
       UPDATE articles
       SET title = COALESCE(${title ?? null}, title),
-          content = COALESCE(${content ?? null}, content)
+          content = COALESCE(${content ?? null}, content),
+          link = COALESCE(${link ?? null}, link),
+          timestamp = COALESCE(${timestamp}, timestamp)
       WHERE id = ${params.id}
       RETURNING id, title, link, timestamp, content
     `;
