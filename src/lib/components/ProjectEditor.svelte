@@ -29,40 +29,102 @@
   let loadingContent = false;
   let savingContent = false;
   let saveError = null;
+  let newChangelogDate = '';
+  let newChangelogLabel = '';
+  let editingChangelogIndex = -1;
+
+  // Extract changelog metadata from markdown content
+  function extractChangelog(content) {
+    if (!content) return { changelog: [], cleanContent: content };
+    const match = content.match(/<!-- changelog:(.*?) -->/);
+    if (match) {
+      try {
+        const changelog = JSON.parse(match[1]);
+        const cleanContent = content.replace(/<!-- changelog:.*? -->\n?/, '');
+        return { changelog, cleanContent };
+      } catch (e) {
+        return { changelog: [], cleanContent: content };
+      }
+    }
+    return { changelog: [], cleanContent: content };
+  }
+
+  // Embed changelog metadata into markdown content
+  function embedChangelog(content, changelog) {
+    // Remove any existing changelog metadata
+    const clean = (content || '').replace(/<!-- changelog:.*? -->\n?/, '');
+    if (changelog.length === 0) return clean;
+    return `<!-- changelog:${JSON.stringify(changelog)} -->\n${clean}`;
+  }
+
+  function addChangelogEntry() {
+    if (!isAdmin || !newChangelogDate) return;
+    const entry = {
+      date: newChangelogDate,
+      label: newChangelogLabel || ''
+    };
+    timelineData = [...timelineData, entry].sort((a, b) => new Date(a.date) - new Date(b.date));
+    markdownContent = embedChangelog(markdownContent, timelineData);
+    newChangelogDate = '';
+    newChangelogLabel = '';
+    saveProjectData();
+  }
+
+  function removeChangelogEntry(index) {
+    if (!isAdmin) return;
+    timelineData = timelineData.filter((_, i) => i !== index);
+    markdownContent = embedChangelog(markdownContent, timelineData);
+    saveProjectData();
+  }
+
+  function formatChangelogDate(dateStr) {
+    const date = new Date(dateStr + 'T00:00:00');
+    if (isNaN(date.getTime())) return dateStr;
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  }
 
   // Split content into segments: regular markdown and hidden blocks.
   // Returns array of { type: 'visible' | 'hidden', content: string }
   function splitHiddenContent(content) {
     if (!content) return [];
+    // Strip changelog metadata before splitting
+    const cleaned = content.replace(/<!-- changelog:.*? -->\n?/, '');
     const segments = [];
     const regex = /<hidden>([\s\S]*?)<\/hidden>/g;
     let lastIndex = 0;
     let match;
 
-    while ((match = regex.exec(content)) !== null) {
+    while ((match = regex.exec(cleaned)) !== null) {
       // Add visible content before this hidden block
       if (match.index > lastIndex) {
-        segments.push({ type: 'visible', content: content.slice(lastIndex, match.index) });
+        segments.push({ type: 'visible', content: cleaned.slice(lastIndex, match.index) });
       }
       // Add the hidden block
       segments.push({ type: 'hidden', content: match[1] });
       lastIndex = match.index + match[0].length;
     }
     // Add remaining visible content
-    if (lastIndex < content.length) {
-      segments.push({ type: 'visible', content: content.slice(lastIndex) });
+    if (lastIndex < cleaned.length) {
+      segments.push({ type: 'visible', content: cleaned.slice(lastIndex) });
     }
     return segments;
   }
 
-  // For non-admins: just strip hidden blocks entirely
+  // For non-admins: just strip hidden blocks and changelog metadata
   function stripHiddenContent(content) {
     if (!content) return '';
-    return content.replace(/<hidden>[\s\S]*?<\/hidden>/g, '');
+    return content.replace(/<hidden>[\s\S]*?<\/hidden>/g, '').replace(/<!-- changelog:.*? -->\n?/, '');
   }
 
   $: contentSegments = isAdmin ? splitHiddenContent(markdownContent) : [];
   $: publicContent = !isAdmin ? stripHiddenContent(markdownContent) : '';
+  // Editable content without changelog metadata
+  $: editableContent = markdownContent ? markdownContent.replace(/<!-- changelog:.*? -->\n?/, '') : '';
+
+  function handleEditableContentChange(e) {
+    const newEditableContent = e.target.value;
+    markdownContent = embedChangelog(newEditableContent, timelineData);
+  }
 
   // Load project data from backend (with localStorage fallback)
   onMount(async () => {
@@ -81,12 +143,14 @@
     loadingContent = true;
     try {
       const content = await loadProjectContent(projectId);
-      markdownContent = content.markdownContent || '';
+      const raw = content.markdownContent || '';
+      const { changelog } = extractChangelog(raw);
+      markdownContent = raw; // keep full content with metadata
+      timelineData = changelog;
       githubRepo = content.githubRepo || '';
       if (githubRepo) {
         loadContributions();
       }
-      updateTimeline();
     } catch (e) {
       console.error('Error loading project data:', e);
       // Content will be empty, which is fine - user can start fresh
@@ -105,7 +169,6 @@
     try {
       // Save to Supabase (this will also update localStorage cache)
       await saveProjectContentToSupabase(projectId, markdownContent, githubRepo);
-      updateTimeline();
     } catch (error) {
       console.error('Error saving project content:', error);
       saveError = error.message || 'Failed to save content';
@@ -154,71 +217,6 @@
     saveError = null;
   }
 
-  function addDateEntry() {
-    if (!isAdmin) return;
-    
-    const today = new Date();
-    const dateStr = today.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
-    
-    const dateHeader = `## ${dateStr}\n\n`;
-    
-    if (!isEditing) {
-      isEditing = true;
-    }
-    
-    // Add date header at the top
-    markdownContent = dateHeader + (markdownContent ? '\n\n' + markdownContent : '');
-    
-    // Focus textarea and move cursor after the new header
-    setTimeout(() => {
-      if (editTextarea) {
-        editTextarea.focus();
-        const newPos = dateHeader.length;
-        editTextarea.setSelectionRange(newPos, newPos);
-      }
-    }, 0);
-  }
-
-  function updateTimeline() {
-    if (!markdownContent) {
-      timelineData = [];
-      return;
-    }
-
-    // Extract dates from markdown headers (## Date format)
-    const dateRegex = /^##\s+(.+)$/gm;
-    const dates = [];
-    let match;
-    
-    while ((match = dateRegex.exec(markdownContent)) !== null) {
-      const dateStr = match[1].trim();
-      const date = parseDate(dateStr);
-      if (date) {
-        dates.push({
-          date: date,
-          dateStr: dateStr,
-          position: match.index
-        });
-      }
-    }
-
-    // Sort by date
-    dates.sort((a, b) => a.date - b.date);
-    timelineData = dates;
-  }
-
-  function parseDate(dateStr) {
-    // Try to parse various date formats
-    const date = new Date(dateStr);
-    if (!isNaN(date.getTime())) {
-      return date;
-    }
-    return null;
-  }
 
   async function loadAvailableRepos() {
     if (!browser || !isAdmin) return;
@@ -338,10 +336,6 @@
     isEditingRepo = false;
   }
 
-  // Update timeline when content changes
-  $: if (markdownContent) {
-    updateTimeline();
-  }
 </script>
 
 <div class="editor-dashboard">
@@ -351,9 +345,6 @@
       <h2>Daily Log</h2>
       {#if isAdmin}
         <div class="editor-actions">
-          <button class="add-date-btn" on:click={addDateEntry} title="Add date entry">
-            <i class="las la-calendar-plus"></i> Add Date
-          </button>
         </div>
       {/if}
     </div>
@@ -379,9 +370,10 @@
         </div>
         <textarea
           bind:this={editTextarea}
-          bind:value={markdownContent}
+          value={editableContent}
+          on:input={handleEditableContentChange}
           class="markdown-editor"
-          placeholder="Start writing your daily log... Double-click to edit or use 'Add Date' to add a new entry."
+          placeholder="Start writing your daily log..."
         ></textarea>
       {:else}
         <div class="markdown-display">
@@ -405,7 +397,7 @@
           {:else}
             <p class="empty-state">
               {#if isAdmin}
-                Double-click here to start editing, or click "Add Date" to add your first entry.
+                Double-click here to start editing.
               {:else}
                 No entries yet.
               {/if}
@@ -418,22 +410,36 @@
 
   <!-- Right Sidebar (25%) -->
   <div class="sidebar-column">
-    <!-- Timeline Graph -->
+    <!-- Changelog -->
     <div class="sidebar-section">
-      <h3>Timeline</h3>
+      <h3>Changelog</h3>
       <div class="timeline-container">
         {#if timelineData.length > 0}
           <div class="timeline">
             {#each timelineData as entry, index}
               <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="timeline-line" class:last={index === timelineData.length - 1}></div>
-                <div class="timeline-label">{entry.dateStr}</div>
+                <span class="timeline-dash">—</span>
+                <div class="timeline-entry-content">
+                  <span class="timeline-label">{formatChangelogDate(entry.date)}</span>
+                  {#if entry.label}
+                    <span class="timeline-entry-label">{entry.label}</span>
+                  {/if}
+                </div>
+                {#if isAdmin}
+                  <button class="timeline-remove-btn" on:click={() => removeChangelogEntry(index)} title="Remove entry">&times;</button>
+                {/if}
               </div>
             {/each}
           </div>
         {:else}
           <p class="empty-timeline">No entries yet</p>
+        {/if}
+        {#if isAdmin}
+          <div class="changelog-add-form">
+            <input type="date" bind:value={newChangelogDate} class="changelog-date-input" />
+            <input type="text" bind:value={newChangelogLabel} class="changelog-label-input" placeholder="Description (optional)" />
+            <button class="add-date-btn" on:click={addChangelogEntry} disabled={!newChangelogDate}>Add</button>
+          </div>
         {/if}
       </div>
     </div>

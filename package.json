@@ -22,7 +22,6 @@
 		"@emotion/styled": "^11.11.0",
 		"@mui/material": "^5.15.10",
 		"@neondatabase/serverless": "^1.0.2",
-		"@supabase/supabase-js": "^2.88.0",
 		"@sveltejs/adapter-vercel": "^6.3.3",
 		"@sveltejs/kit": "^2.53.2",
 		"@vercel/analytics": "^1.6.1",
