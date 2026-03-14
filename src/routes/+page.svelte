@@ -82,20 +82,21 @@
     <!-- Right column -->
     <div class="text-column">
       <p>
-        i'm currently studying a mixture of agriculture, computer science, and
-        mathematics <a href = "./secret/coursework">at uc berkeley</a> 🧸. 
+        i'm currently wrapping up a degree <a href = "./secret/coursework">at uc berkeley</a> 🧸. 
       </p>
       <p>
-        between 2022-2024, i was obsessed with understanding our food systems, and flew to Minnesota to help build microbial fertilizers for <a href="https://www.loambio.com/">Loam Bio. </a>
+        I'm a tinkerer that likes to make robots that are fun and functional. I spend most of my time thinking about how to engineer robust, reliable, and observable software for hardware, from the OS level to full-scale mobile manipulators.
+        I'm currently at <a href="https://www.pi.website/">PI</a>, helping them build better robot runtimes. 
+      </p>
+      <p>In 2025, I did a 5-month stint with <a href = "https://seneca.com/">Seneca</a>, where we build heavy lift drones that can fight fires from the air.  </p>
+      <p>
+        Between 2022-2024, I was obsessed with understanding our food systems, and flew to Minnesota to help build microbial fertilizers for <a href="https://www.loambio.com/">Loam Bio. </a>
         Later, I worked at <a href = "https://farm-ng.com/">Farm-Ng</a>, where I built a motion planner for their farm rover. 
       </p>
-      <p>Most recently, I did a 5-month stint with <a href = "https://seneca.com/">Seneca</a>, where we build heavy lift drones that can fight fires from the air. I'm super grateful to spend time protecting wild spaces and urban infrastructure. </p>
-      <p>Now, I spend most of my time thinking about how to engineer robust, reliable, and observable software for hardware, from the OS level to full-scale mobile manipulators. </p>
       <p>
-        in my free time, I am <a href="https://runtime.substack.com/p/what-my-body-tells-me">obsessed with rock climbing</a>, skiing, and occasionally, photography. 
+        In my free time, I am <a href="https://runtime.substack.com/p/what-my-body-tells-me">obsessed with rock climbing</a>, skiing, and escaping on long hikes in nature. 
         <hr class="solid">
         <a href="https://drive.google.com/file/d/14ItwjFKHKaMP2Gp4xY0hrOXUA45f7-Jo/view?usp=sharing">Resume</a>
-        <!-- <div id="telescoping-text"></div>   -->
     </div>  
   </div>
 </body>

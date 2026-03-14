@@ -1,5 +1,15 @@
 <body>
   <h2>Coursework 🧸</h2>
+    <h3>Spring 2026</h3>
+    <ul>
+      <li>ART 13: Painting</li>
+      <li>Tamil 1B: Reading, Writing, and Comprehension</li>
+    </ul>
+
+    <h3>Fall 2025</h3>
+    <ul>
+      <li>On leave!</li>
+    </ul>
     <h3>Spring 2025</h3>
     <ul>
       <li>CS 162: Operating Systems</li>
