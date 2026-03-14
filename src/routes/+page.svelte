@@ -85,7 +85,7 @@
         i'm currently wrapping up a degree <a href = "./secret/coursework">at uc berkeley</a> 🧸. 
       </p>
       <p>
-        I'm a tinkerer that likes to make robots that are fun and functional. I spend most of my time thinking about how to engineer robust, reliable, and observable software for hardware, from the OS level to full-scale mobile manipulators.
+        I'm a tinkerer that likes to make robots that are fun and functional.
         I'm currently at <a href="https://www.pi.website/">PI</a>, helping them build better robot runtimes. 
       </p>
       <p>In 2025, I did a 5-month stint with <a href = "https://seneca.com/">Seneca</a>, where we build heavy lift drones that can fight fires from the air.  </p>
@@ -94,7 +94,7 @@
         Later, I worked at <a href = "https://farm-ng.com/">Farm-Ng</a>, where I built a motion planner for their farm rover. 
       </p>
       <p>
-        In my free time, I am <a href="https://runtime.substack.com/p/what-my-body-tells-me">obsessed with rock climbing</a>, skiing, and escaping on long hikes in nature. 
+        In my free time, I am <a href="https://runtime.substack.com/p/what-my-body-tells-me">obsessed with rock climbing</a>, skiing, and escaping on long hikes to nature. 
         <hr class="solid">
         <a href="https://drive.google.com/file/d/14ItwjFKHKaMP2Gp4xY0hrOXUA45f7-Jo/view?usp=sharing">Resume</a>
     </div>  
