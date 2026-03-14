@@ -79,7 +79,7 @@
 
 .project-title {
   font-size: 1.2rem;
-  margin: 0 0 1rem 0;
+  margin: 0 0 0.2rem 0;
   color: #b4ebcb !important;
   background: none !important;
   -webkit-background-clip: unset !important;
@@ -90,6 +90,42 @@
 
 .project-title::before {
   display: none;
+}
+
+.project-subtitle {
+  font-size: 0.9rem;
+  margin: -0.5rem 0 0.75rem 0;
+  color: #b4ebcb !important;
+  opacity: 0.7;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  filter: none !important;
+  position: relative;
+  line-height: 1.4;
+}
+
+.project-subtitle::before {
+  display: none;
+}
+
+.project-subtitle-input {
+  width: 100%;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.5rem;
+  margin-bottom: 1rem;
+  background: rgba(30, 30, 30, 0.8);
+  border: 1px solid #cd7f32;
+  border-radius: 4px;
+  color: #b4ebcb;
+  font-family: inherit;
+  opacity: 0.85;
+}
+
+.project-subtitle-input:focus {
+  outline: none;
+  border-color: #e6a85c;
+  opacity: 1;
 }
 
 .project-meta {
@@ -110,13 +146,15 @@
 }
 
 .last-updated {
-  font-size: 0.85rem;
-  color: #b4ebcb !important;
+  font-size: 0.75rem;
+  color: #888 !important;
   background: none !important;
   -webkit-background-clip: unset !important;
   background-clip: unset !important;
   filter: none !important;
   position: relative;
+  display: block;
+  margin-bottom: 0.5rem;
 }
 
 .last-updated::before {
@@ -383,4 +421,94 @@
 :global(.markdown-body li),
 :global(.markdown-body span) {
   color: #b4ebcb !important;
+}
+
+/* Graduated project markdown — normalize text to standard HTML sizes */
+:global(.graduated-project-content) {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+:global(.graduated-project-content h1) {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: normal;
+  margin: 0 0 1rem 0;
+}
+
+:global(.graduated-project-content h2) {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  margin: 1.5rem 0 0.75rem 0;
+}
+
+:global(.graduated-project-content h3) {
+  font-size: 1.17rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  margin: 1.25rem 0 0.5rem 0;
+}
+
+:global(.graduated-project-content h4),
+:global(.graduated-project-content h5),
+:global(.graduated-project-content h6) {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  margin: 1rem 0 0.5rem 0;
+}
+
+:global(.graduated-project-content p) {
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+:global(.graduated-project-content li) {
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.6;
+  margin-bottom: 0.4rem;
+}
+
+:global(.graduated-project-content ul),
+:global(.graduated-project-content ol) {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+:global(.graduated-project-content strong) {
+  font-weight: 700;
+}
+
+:global(.graduated-project-content a) {
+  font-weight: 400;
+  letter-spacing: normal;
+}
+
+:global(.graduated-project-content blockquote) {
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: normal;
+  border-left: 3px solid #cd7f32;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  opacity: 0.85;
+}
+
+:global(.graduated-project-content code) {
+  font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: normal;
+}
+
+:global(.graduated-project-content img) {
+  max-width: 100%;
+  border-radius: 4px;
+  margin: 1rem 0;
 }

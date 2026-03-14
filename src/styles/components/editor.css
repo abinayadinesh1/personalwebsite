@@ -388,15 +388,50 @@
   color: transparent;
 }
 
-/* Markdown display styles */
+/* Markdown display styles — normalize text to standard HTML sizes */
+.markdown-display :global(h1) {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: normal;
+  margin: 0 0 1rem 0;
+}
+
 .markdown-display :global(h2) {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: normal;
   margin-top: 2rem;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid rgba(205, 127, 50, 0.2);
 }
 
+.markdown-display :global(h3) {
+  font-size: 1.17rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  margin: 1.5rem 0 0.75rem 0;
+}
+
+.markdown-display :global(h4) {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  margin: 1.25rem 0 0.5rem 0;
+}
+
+.markdown-display :global(h5),
+.markdown-display :global(h6) {
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  margin: 1rem 0 0.5rem 0;
+}
+
 .markdown-display :global(p) {
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: normal;
   margin-bottom: 1rem;
   line-height: 1.6;
 }
@@ -407,7 +442,36 @@
 }
 
 .markdown-display :global(li) {
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: normal;
   margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.markdown-display :global(strong) {
+  font-weight: 700;
+}
+
+.markdown-display :global(a) {
+  font-weight: 400;
+  letter-spacing: normal;
+}
+
+.markdown-display :global(blockquote) {
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: normal;
+  border-left: 3px solid #cd7f32;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  opacity: 0.85;
+}
+
+.markdown-display :global(code) {
+  font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: normal;
 }
 
 .markdown-display :global(img) {

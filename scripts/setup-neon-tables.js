@@ -12,6 +12,7 @@ async function setupTables() {
     CREATE TABLE IF NOT EXISTS projects (
       id TEXT NOT NULL,
       title TEXT NOT NULL DEFAULT '',
+      subtitle TEXT DEFAULT '',
       path TEXT NOT NULL,
       status TEXT NOT NULL,
       last_updated DATE NOT NULL,
