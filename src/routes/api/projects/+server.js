@@ -26,6 +26,7 @@ export async function GET({ url, cookies }) {
     const formattedProjects = projects.map(p => ({
       id: p.id,
       title: p.title,
+      subtitle: p.subtitle || '',
       path: p.path,
       lastUpdated: p.last_updated,
       status: p.status,
@@ -50,34 +51,35 @@ export async function POST({ request, cookies }) {
   
   try {
     const body = await request.json();
-    const { title, path, status, lastUpdated, hasCommits, isPublic } = body;
-    
+    const { title, subtitle, path, status, lastUpdated, hasCommits, isPublic } = body;
+
     // Validate required fields
     if (!title || !path || !status || !lastUpdated) {
       return json({ error: 'Missing required fields' }, { status: 400 });
     }
-    
+
     // Validate status
     const validStatuses = ['Graduated', 'In Progress', 'Graveyard', 'Idea'];
     if (!validStatuses.includes(status)) {
       return json({ error: 'Invalid status' }, { status: 400 });
     }
-    
+
     // Generate project ID from path (e.g., '/projects/my-project' -> 'my-project')
-    const projectId = path.replace('/projects/', '').replace(/^\//, '') || 
+    const projectId = path.replace('/projects/', '').replace(/^\//, '') ||
                      title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-    
+
     const supabase = getServerSupabase();
-    
+
     // Get current timestamp for created_at and updated_at
     const now = new Date().toISOString();
-    
+
     // Insert into projects table
     const { data: project, error: projectError } = await supabase
       .from('projects')
       .insert({
         id: projectId,
         title: title.trim(),
+        subtitle: (subtitle || '').trim(),
         path: path,
         status: status,
         last_updated: lastUpdated,
@@ -125,13 +127,14 @@ export async function POST({ request, cookies }) {
     const formattedProject = {
       id: insertedProject.id,
       title: insertedProject.title,
+      subtitle: insertedProject.subtitle || '',
       path: insertedProject.path,
       lastUpdated: insertedProject.last_updated,
       status: insertedProject.status,
       hasCommits: insertedProject.has_commits,
       isPublic: insertedProject.is_public
     };
-    
+
     return json({ project: formattedProject }, { status: 201 });
   } catch (error) {
     console.error('Error in POST /api/projects:', error);
@@ -149,33 +152,34 @@ export async function PUT({ request, cookies, url }) {
   
   try {
     const body = await request.json();
-    const { id, title, path, status, lastUpdated, hasCommits, isPublic } = body;
-    
+    const { id, title, subtitle, path, status, lastUpdated, hasCommits, isPublic } = body;
+
     // Validate required fields
     if (!id) {
       return json({ error: 'Project ID is required' }, { status: 400 });
     }
-    
+
     if (!title || !path || !status || !lastUpdated) {
       return json({ error: 'Missing required fields' }, { status: 400 });
     }
-    
+
     // Validate status
     const validStatuses = ['Graduated', 'In Progress', 'Graveyard', 'Idea'];
     if (!validStatuses.includes(status)) {
       return json({ error: 'Invalid status' }, { status: 400 });
     }
-    
+
     const supabase = getServerSupabase();
-    
+
     // Get current timestamp for updated_at
     const now = new Date().toISOString();
-    
+
     // Update the project
     const { data: project, error: projectError } = await supabase
       .from('projects')
       .update({
         title: title.trim(),
+        subtitle: (subtitle || '').trim(),
         path: path,
         status: status,
         last_updated: lastUpdated,
@@ -227,13 +231,14 @@ export async function PUT({ request, cookies, url }) {
     const formattedProject = {
       id: updatedProject.id,
       title: updatedProject.title,
+      subtitle: updatedProject.subtitle || '',
       path: updatedProject.path,
       lastUpdated: updatedProject.last_updated,
       status: updatedProject.status,
       hasCommits: updatedProject.has_commits,
       isPublic: updatedProject.is_public
     };
-    
+
     return json({ project: formattedProject });
   } catch (error) {
     console.error('Error in PUT /api/projects:', error);

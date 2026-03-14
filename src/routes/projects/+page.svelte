@@ -25,6 +25,7 @@
     {
       id: 'writing',
       title: 'writing',
+      subtitle: '',
       path: '/projects/writing_ideas',
       lastUpdated: '2025-12-13',
       status: 'In Progress',
@@ -35,6 +36,7 @@
     {
       id: 'pcb 1',
       title: 'haptic motor controller (pcb)',
+      subtitle: 'Designed a 2 layer pcb in Kicad to control up to 10 haptic motors at a time using a i2c forwarder.',
       path: '/projects/eagelmann-vest-pcb',
       lastUpdated: '2025-04-17',
       status: 'Graduated',
@@ -44,6 +46,7 @@
     {
       id: 'turtlebot3',
       title: 'Visual Navigation with Turtlebot3',
+      subtitle: 'Implemented the ViKiNG paper for vision based navigation on the open source Turtlebot Hamburger mobile base. Also experimented with lidar, slam, and features of ROS2.',
       path: '/projects/turtlebot3',
       lastUpdated: '2024-09-15',
       status: 'Graduated',
@@ -53,6 +56,7 @@
     {
       id: 'tinybots',
       title: 'Playing with micro-micro-controllers',
+      subtitle: 'Dabbling in very small microcontrollers and motor controllers.',
       path: '/projects/tinybots',
       lastUpdated: '2024-08-20',
       status: 'Graduated',
@@ -62,6 +66,7 @@
     {
       id: 'bracketbots',
       title: "Building a 'wifey' bot",
+      subtitle: 'Built and added an 6DoF arm to the base Bracket Bot platform, supporting small payloads over teleoperation.',
       path: '/projects/bracketbots',
       lastUpdated: '2024-10-10',
       status: 'Graduated',
@@ -228,6 +233,7 @@
     newProject = {
       id: `new-project-${Date.now()}`,
       title: '',
+      subtitle: '',
       path: '',
       lastUpdated: today,
       status: 'In Progress',
@@ -397,6 +403,12 @@
               placeholder="Project title"
               bind:value={newProject.title}
             />
+            <input
+              type="text"
+              class="project-subtitle-input"
+              placeholder="Short caption (optional)"
+              bind:value={newProject.subtitle}
+            />
             <div class="project-meta">
               <label class="date-label">
                 Last updated:
@@ -463,6 +475,12 @@
                 class="project-title-input"
                 bind:value={editingProject.title}
               />
+              <input
+                type="text"
+                class="project-subtitle-input"
+                placeholder="Short caption (optional)"
+                bind:value={editingProject.subtitle}
+              />
               <div class="project-meta">
                 <label class="date-label">
                   Last updated:
@@ -528,8 +546,11 @@
             <div class="card-content">
               <div class="card-main">
                 <h2 class="project-title">{project.title}</h2>
+                <span class="last-updated">{formatDate(project.lastUpdated)}</span>
+                {#if project.subtitle}
+                  <p class="project-subtitle">{project.subtitle}</p>
+                {/if}
               <div class="project-meta">
-                <span class="last-updated">Last updated: {formatDate(project.lastUpdated)}</span>
                 <div class="status-row">
                   <span class="status">
                     {project.status}

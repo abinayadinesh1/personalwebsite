@@ -72,6 +72,7 @@ export async function saveProjectToSupabase(project) {
       },
       body: JSON.stringify({
         title: project.title,
+        subtitle: project.subtitle || '',
         path: project.path,
         status: project.status,
         lastUpdated: project.lastUpdated,
@@ -79,7 +80,7 @@ export async function saveProjectToSupabase(project) {
         isPublic: project.isPublic ?? true
       })
     });
-    
+
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.error || `Failed to save project: ${response.status}`);
@@ -127,6 +128,7 @@ export async function updateProjectInSupabase(project) {
       body: JSON.stringify({
         id: project.id,
         title: project.title,
+        subtitle: project.subtitle || '',
         path: project.path,
         status: project.status,
         lastUpdated: project.lastUpdated,
@@ -134,7 +136,7 @@ export async function updateProjectInSupabase(project) {
         isPublic: project.isPublic ?? true
       })
     });
-    
+
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.error || `Failed to update project: ${response.status}`);

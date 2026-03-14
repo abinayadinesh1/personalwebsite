@@ -4,10 +4,10 @@ nav {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1em;
-  font-size: 1.5em;
-  padding-top: 0.2em;
-  padding-bottom: 0.7em;
+  flex-wrap: wrap;
+  gap: 0.5em 1em;
+  font-size: clamp(1rem, 4vw, 1.5em);
+  padding: 0.4em 0.5em 0.7em;
   background-color: var(--bg-dark);
   background: var(--bg-dark);
   z-index: 2;
