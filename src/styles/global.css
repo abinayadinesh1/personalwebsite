@@ -63,6 +63,32 @@ p {
   font-color: var(--link);
 }
 
+li {
+  font-size: 0.8em;
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.6;
+  margin-bottom: 0.4rem;
+}
+
+ul, ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+  list-style-position: outside;
+}
+
+ul {
+  list-style-type: disc;
+}
+
+ol {
+  list-style-type: decimal;
+}
+
+li::marker {
+  color: #cd7f32;
+}
+
 :is(h1, h2, h3, h4, h5, h6, p) {
   margin: 1rem 0.1rem;
 }
@@ -286,39 +312,6 @@ ul.todos button:hover {
   margin-bottom: 1rem;
 }
 
-.graduated-project-content li,
-.markdown-display li {
-  font-size: 1rem !important;
-  font-weight: 400 !important;
-  letter-spacing: normal !important;
-  line-height: 1.6;
-  margin-bottom: 0.4rem;
-}
-
-.graduated-project-content ul,
-.graduated-project-content ol,
-.markdown-display ul,
-.markdown-display ol {
-  margin-left: 0;
-  padding-left: 1.5rem;
-  margin-bottom: 1rem;
-  list-style-position: outside;
-}
-
-.graduated-project-content ul,
-.markdown-display ul {
-  list-style-type: disc;
-}
-
-.graduated-project-content ol,
-.markdown-display ol {
-  list-style-type: decimal;
-}
-
-.graduated-project-content li::marker,
-.markdown-display li::marker {
-  color: #cd7f32;
-}
 
 .graduated-project-content a,
 .markdown-display a {

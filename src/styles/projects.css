@@ -468,18 +468,9 @@
   margin-bottom: 1rem;
 }
 
-:global(.graduated-project-content li) {
-  font-size: 1rem;
-  font-weight: 400;
-  letter-spacing: normal;
-  line-height: 1.6;
-  margin-bottom: 0.4rem;
-}
-
 :global(.graduated-project-content ul),
 :global(.graduated-project-content ol) {
   margin-left: 1.5rem;
-  margin-bottom: 1rem;
 }
 
 :global(.graduated-project-content strong) {

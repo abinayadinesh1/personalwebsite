@@ -194,109 +194,106 @@
 
 <h1>Favorite Texts</h1>
 
-<div class="reading-layout">
-  <div class="reading-left">
-    <h3>Bookshelf</h3>
-    <p>A virtual version of my physical bookshelf, only containing the books I loved back to back.</p>
+<div class="reading-page">
+  <h3>Bookshelf</h3>
+  <p>A virtual version of my physical bookshelf, only containing the books I loved back to back.</p>
 
-    <div class="carousel-container">
-      <button class="carousel-button prev" on:click={prevBook} aria-label="Previous book">‹</button>
+  <div class="carousel-container">
+    <button class="carousel-button prev" on:click={prevBook} aria-label="Previous book">‹</button>
 
-      <div class="carousel">
-        <div class="carousel-track" style="transform: translateX(-{transformOffset}px)">
-          {#each books as book}
-            <div class="carousel-item">
-              <div class="book-card">
-                {#if book.note}
-                  <div class="book-note-popup">
-                    <p>{book.note}</p>
-                  </div>
-                {/if}
-                <img src={book.image} alt="{book.title} cover" />
-                <div class="book-info">
-                  <h4 class="book-title">{book.title}</h4>
-                  <p class="book-author">by {book.author}</p>
-                  <p class="book-date">{book.date}</p>
+    <div class="carousel">
+      <div class="carousel-track" style="transform: translateX(-{transformOffset}px)">
+        {#each books as book}
+          <div class="carousel-item">
+            <div class="book-card">
+              {#if book.note}
+                <div class="book-note-popup">
+                  <p>{book.note}</p>
                 </div>
-              </div>
-            </div>
-          {/each}
-        </div>
-      </div>
-
-      <button class="carousel-button next" on:click={nextBook} aria-label="Next book">›</button>
-    </div>
-
-    <h3>Textbooks</h3>
-    <div class="carousel-container">
-      <div class="carousel">
-        <div class="carousel-track">
-          {#each textbooks as textbook}
-            <div class="carousel-item">
-              <div class="book-card">
-                {#if textbook.note}
-                  <div class="book-note-popup">
-                    <p>{textbook.note}</p>
-                  </div>
-                {/if}
-                <img src={textbook.image} alt="{textbook.title} cover" />
-                <div class="book-info">
-                  <h4 class="book-title">{textbook.title}</h4>
-                  <p class="book-author">by {textbook.author}</p>
-                  <p class="book-date">{textbook.date}</p>
-                </div>
-              </div>
-            </div>
-          {/each}
-        </div>
-      </div>
-    </div>
-
-    <h3>Courses</h3>
-    <ul>
-      <li>
-        <a href = "./reading/underactuated_robotics">Underactuated Robotics</a>
-      </li>
-    </ul>
-  </div>
-
-  <div class="reading-right">
-    <div class="articles-column">
-      <h3>Short(er) Form</h3>
-      <div class="articles-list">
-        {#each articles as article}
-          {#if editingId === article.id}
-            <div class="article-card editing">
-              <label class="edit-label">Link
-                <input type="url" bind:value={editLink} class="edit-input" />
-              </label>
-              <label class="edit-label">Notes
-                <textarea bind:value={editContent} class="edit-input edit-textarea" rows="3"></textarea>
-              </label>
-              <label class="edit-label">Date
-                <input type="date" bind:value={editDate} class="edit-input" />
-              </label>
-              <div class="edit-actions">
-                <button class="edit-btn save" on:click={() => saveEdit(article.id)}>Save</button>
-                <button class="edit-btn cancel" on:click={cancelEdit}>Cancel</button>
-              </div>
-            </div>
-          {:else}
-            <a class="article-card" href="/reading/articles/{article.id}">
-              <h4 class="article-title">{article.title || article.link}</h4>
-              {#if article.content}
-                <span class="notes-icon" title="Has notes">&#x1f4dd;</span>
               {/if}
-              {#if isAdmin}
-                <button class="edit-icon" title="Edit article" on:click|preventDefault|stopPropagation={() => startEdit(article)}>&#x270E;</button>
-              {/if}
-            </a>
-          {/if}
+              <img src={book.image} alt="{book.title} cover" />
+              <div class="book-info">
+                <h4 class="book-title">{book.title}</h4>
+                <p class="book-author">by {book.author}</p>
+                <p class="book-date">{book.date}</p>
+              </div>
+            </div>
+          </div>
         {/each}
-        {#if articles.length === 0}
-          <p style="font-size: 0.8em; opacity: 0.5;">No articles yet.</p>
-        {/if}
+      </div>
+    </div>
+
+    <button class="carousel-button next" on:click={nextBook} aria-label="Next book">›</button>
+  </div>
+
+  <h3>Short(er) Form</h3>
+  <div class="articles-scroll">
+    {#each articles as article}
+      {#if editingId === article.id}
+        <div class="article-card editing">
+          <label class="edit-label">Link
+            <input type="url" bind:value={editLink} class="edit-input" />
+          </label>
+          <label class="edit-label">Notes
+            <textarea bind:value={editContent} class="edit-input edit-textarea" rows="3"></textarea>
+          </label>
+          <label class="edit-label">Date
+            <input type="date" bind:value={editDate} class="edit-input" />
+          </label>
+          <div class="edit-actions">
+            <button class="edit-btn save" on:click={() => saveEdit(article.id)}>Save</button>
+            <button class="edit-btn cancel" on:click={cancelEdit}>Cancel</button>
+          </div>
+        </div>
+      {:else}
+        <a class="article-card" href="/reading/articles/{article.id}">
+          <h4 class="article-title">{article.title || article.link}</h4>
+          {#if article.content}
+            <span class="notes-icon" title="Has notes">&#x1f4dd;</span>
+          {/if}
+          {#if isAdmin}
+            <button class="edit-icon" title="Edit article" on:click|preventDefault|stopPropagation={() => startEdit(article)}>&#x270E;</button>
+          {/if}
+          {#if article.timestamp}
+            <span class="article-date-stamp">{new Date(article.timestamp).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}</span>
+          {/if}
+        </a>
+      {/if}
+    {/each}
+    {#if articles.length === 0}
+      <p style="font-size: 0.8em; opacity: 0.5;">No articles yet.</p>
+    {/if}
+  </div>
+
+  <h3>Textbooks</h3>
+  <div class="carousel-container">
+    <div class="carousel">
+      <div class="carousel-track">
+        {#each textbooks as textbook}
+          <div class="carousel-item">
+            <div class="book-card">
+              {#if textbook.note}
+                <div class="book-note-popup">
+                  <p>{textbook.note}</p>
+                </div>
+              {/if}
+              <img src={textbook.image} alt="{textbook.title} cover" />
+              <div class="book-info">
+                <h4 class="book-title">{textbook.title}</h4>
+                <p class="book-author">by {textbook.author}</p>
+                <p class="book-date">{textbook.date}</p>
+              </div>
+            </div>
+          </div>
+        {/each}
       </div>
     </div>
   </div>
+
+  <h3>Courses</h3>
+  <ul>
+    <li>
+      <a href = "./reading/underactuated_robotics">Underactuated Robotics</a>
+    </li>
+  </ul>
 </div>

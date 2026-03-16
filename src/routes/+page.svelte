@@ -88,11 +88,12 @@
         I'm a tinkerer that likes to make robots that are fun and functional.
         I'm currently at <a href="https://www.pi.website/">PI</a>, helping them build better robot runtimes. 
       </p>
-      <p>In 2025, I did a 5-month stint with <a href = "https://seneca.com/">Seneca</a>, where we build heavy lift drones that can fight fires from the air.  </p>
-      <p>
-        Between 2022-2024, I was obsessed with understanding our food systems, and flew to Minnesota to help build microbial fertilizers for <a href="https://www.loambio.com/">Loam Bio. </a>
-        Later, I worked at <a href = "https://farm-ng.com/">Farm-Ng</a>, where I built a motion planner for their farm rover. 
-      </p>
+      <p> In the past, I... </p>
+      <ul>
+        <li> Spent 5-months with <a href = "https://seneca.com/">Seneca</a> to make heavy lift drones that can fight fires from the air.</li>  
+        <li> Moved to strawberry land 🍓 (Watsonville, CA) to build perception + motion planning techniques for <a href = "https://farm-ng.com/">farm rovers</a> </li>
+        <li> Flew to Minnesota to help build microbial fertilizers for <a href="https://www.loambio.com/">Loam Bio.</li>  
+      </ul>
       <p>
         In my free time, I am <a href="https://runtime.substack.com/p/what-my-body-tells-me">obsessed with rock climbing</a>, skiing, and escaping on long hikes to nature. 
         <hr class="solid">

@@ -10,7 +10,8 @@
       "Bash(npx svelte-check --threshold error)",
       "mcp__Neon__list_projects",
       "mcp__Neon__run_sql",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(host:*)"
     ]
   },
   "enableAllProjectMcpServers": false
