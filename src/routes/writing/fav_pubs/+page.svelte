@@ -1,32 +1,32 @@
 <script>
 
-    import SvelteMarkdown from "svelte-markdown";
-    const source = `
-    # favorite publications of 2024
+import SvelteMarkdown from "svelte-markdown";
+const source = `
+# favorite publications of 2024
 
-After being silo’ed away from the news, public politics, and international relations for most of my childhood, I was inspired this year to learn about the world. I love the news because it is an entry to point to history, understanding patterns and relationships between world powers that make today’s economy, health, and living conditions what they are. Otherwise, I love learning about findings in biology, math, physics, and robotics! 
+After being silo’ed away from the news, public politics, and international relations for most of my childhood, I was inspired this year to learn about the world. I love the news because it is an entry to point to history, understanding patterns and relationships between world powers that make today’s economy, health, and worldwide living conditions. Otherwise, I love learning about findings in biology, math, physics, and robotics! 
 
 ### Daily
 
-The New York Times
+- The New York Times
 
-The Economist
+- The Economist
 
 ### Biweekly
 
-Ambrook Research 
+- Ambrook Research 
 
-Quanta
+- Quanta
 
-Palladium Mag
+- Palladium Mag
 
-Works in Progress
+- Works in Progress
 
-Asterisk 
+- Asterisk 
 
-The New Yorker
+- The New Yorker
 
-The Atlantic`
+- The Atlantic`
 </script>
 
 <SvelteMarkdown {source} />

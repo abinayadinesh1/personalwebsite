@@ -58,17 +58,23 @@ h5, h6 {
   line-height: 1.1;
 }
 
-p {
-  font-size: 0.8em;
-  font-color: var(--link);
-}
-
-li {
-  font-size: 0.8em;
+p, li {
+  font-size: 0.9em;
   font-weight: 400;
   letter-spacing: normal;
   line-height: 1.6;
+}
+
+p {
+  margin-bottom: 1rem;
+}
+
+li {
   margin-bottom: 0.4rem;
+}
+
+li li {
+  font-size: 1em;
 }
 
 ul, ol {
@@ -302,16 +308,6 @@ ul.todos button:hover {
   letter-spacing: normal !important;
   margin: 1rem 0 0.5rem 0;
 }
-
-.graduated-project-content p,
-.markdown-display p {
-  font-size: 1rem !important;
-  font-weight: 400 !important;
-  letter-spacing: normal !important;
-  line-height: 1.6;
-  margin-bottom: 1rem;
-}
-
 
 .graduated-project-content a,
 .markdown-display a {

@@ -56,7 +56,7 @@
     {
       id: 'tinybots',
       title: 'Playing with micro-micro-controllers',
-      subtitle: 'Dabbling in very small microcontrollers and motor controllers.',
+      subtitle: 'Making a tinyrobot that uses stereo photoresistors to navigate away from the light!',
       path: '/projects/tinybots',
       lastUpdated: '2024-08-20',
       status: 'Graduated',

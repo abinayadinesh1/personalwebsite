@@ -454,18 +454,10 @@
 :global(.graduated-project-content h4),
 :global(.graduated-project-content h5),
 :global(.graduated-project-content h6) {
-  font-size: 1rem;
+  /* font-size: 1rem; */
   font-weight: 600;
   letter-spacing: normal;
   margin: 1rem 0 0.5rem 0;
-}
-
-:global(.graduated-project-content p) {
-  font-size: 1rem;
-  font-weight: 400;
-  letter-spacing: normal;
-  line-height: 1.6;
-  margin-bottom: 1rem;
 }
 
 :global(.graduated-project-content ul),
@@ -483,7 +475,7 @@
 }
 
 :global(.graduated-project-content blockquote) {
-  font-size: 1rem;
+  /* font-size: 1rem; */
   font-weight: 400;
   letter-spacing: normal;
   border-left: 3px solid #cd7f32;
@@ -493,7 +485,7 @@
 }
 
 :global(.graduated-project-content code) {
-  font-size: 0.9rem;
+  /* font-size: 0.9rem; */
   font-weight: 400;
   letter-spacing: normal;
 }

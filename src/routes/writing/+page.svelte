@@ -1,5 +1,5 @@
 <script>
-  const subjects = ["General", "Ag", "Farmer Interviews", "Notes"];
+  const subjects = ["General", "Ag", "Notes"];
   let selectedSubjects = ["General"];
 
   function toggleSubject(subject) {
@@ -111,25 +111,25 @@
     {
       title: "Interview with Durst Organic Farms",
       date: "",
-      subject: "Farmer Interviews",
+      subject: "Ag",
       href: "./writing/farmerinterviews/durstorganic"
     },
     {
       title: "Interview with Ratto Brothers",
       date: "",
-      subject: "Farmer Interviews",
+      subject: "Ag",
       href: "./writing/farmerinterviews/rattobrothers"
     },
     {
       title: "Interview with Cloverfield Organic Farms",
       date: "",
-      subject: "Farmer Interviews",
+      subject: "Ag",
       href: "./writing/farmerinterviews/cloverfieldorganics"
     },
     {
       title: "Interview with Park Farming",
       date: "",
-      subject: "Farmer Interviews",
+      subject: "Ag",
       href: "./writing/farmerinterviews/parkfarming"
     },
     {
