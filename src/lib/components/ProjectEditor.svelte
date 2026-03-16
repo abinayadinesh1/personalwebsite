@@ -342,7 +342,7 @@
   <!-- Main Editor Column (75%) -->
   <div class="editor-column">
     <div class="editor-header">
-      <h2>Daily Log</h2>
+      <h2>Editor</h2>
       {#if isAdmin}
         <div class="editor-actions">
         </div>
@@ -373,7 +373,7 @@
           value={editableContent}
           on:input={handleEditableContentChange}
           class="markdown-editor"
-          placeholder="Start writing your daily log..."
+          placeholder="Start writing ..."
         ></textarea>
       {:else}
         <div class="markdown-display">
