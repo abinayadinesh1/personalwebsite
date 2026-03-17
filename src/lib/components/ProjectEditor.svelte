@@ -438,7 +438,7 @@
           <div class="changelog-add-form">
             <input type="date" bind:value={newChangelogDate} class="changelog-date-input" />
             <input type="text" bind:value={newChangelogLabel} class="changelog-label-input" placeholder="Description (optional)" />
-            <button class="add-date-btn" on:click={addChangelogEntry} disabled={!newChangelogDate}>Add</button>
+            <button class="add-date-btn" on:click={addChangelogEntry}>Add</button>
           </div>
         {/if}
       </div>

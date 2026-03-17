@@ -439,17 +439,15 @@
               {/if}
             </div>
             <div class="edit-actions">
-              <button 
-                class="save-button" 
-                on:click={handleSaveProject} 
-                disabled={savingProject || !newProject.title.trim()}
+              <button
+                class="save-button"
+                on:click={handleSaveProject}
               >
                 {savingProject ? 'Creating...' : 'Save'}
               </button>
-              <button 
-                class="cancel-button" 
+              <button
+                class="cancel-button"
                 on:click={handleCancelProject}
-                disabled={savingProject}
               >
                 Cancel
               </button>
@@ -509,24 +507,21 @@
                 </label>
               </div>
               <div class="edit-actions">
-                <button 
-                  class="save-button" 
+                <button
+                  class="save-button"
                   on:click={handleSaveEdit}
-                  disabled={savingProject}
                 >
                   {savingProject ? 'Saving...' : 'Save'}
                 </button>
-                <button 
-                  class="cancel-button" 
+                <button
+                  class="cancel-button"
                   on:click={handleCancelEdit}
-                  disabled={savingProject}
                 >
                   Cancel
                 </button>
-                <button 
-                  class="delete-button" 
+                <button
+                  class="delete-button"
                   on:click={() => handleDeleteProject(project.id)}
-                  disabled={savingProject}
                 >
                   Delete
                 </button>

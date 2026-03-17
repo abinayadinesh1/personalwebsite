@@ -42,8 +42,7 @@
 
 .add-date-btn {
   padding: 0.5rem 1rem;
-  background-color: transparent;
-  border: 1px solid var(--link-hover);
+  border: 1px solid #cd7f32 !important;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
@@ -51,16 +50,16 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-image: var(--bronze-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-weight: bold;
+  background: transparent !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  color: #cd7f32 !important;
+  filter: none !important;
 }
 
 .add-date-btn:hover {
-  background: rgba(205, 127, 50, 0.1);
-  border-color: #e6a85c;
+  background: rgba(205, 127, 50, 0.1) !important;
+  border-color: #e6a85c !important;
 }
 
 .editor-content {
@@ -96,8 +95,7 @@
 
 .toolbar-btn {
   padding: 0.5rem 1rem;
-  background-color: transparent;
-  border: 1px solid var(--link-hover);
+  border: 1px solid #cd7f32 !important;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
@@ -105,39 +103,38 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-image: var(--bronze-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-weight: bold;
+  background: transparent !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  color: #cd7f32 !important;
+  filter: none !important;
 }
 
 .toolbar-btn:hover {
-  background: rgba(205, 127, 50, 0.1);
-  border-color: #e6a85c;
+  background: rgba(205, 127, 50, 0.1) !important;
+  border-color: #e6a85c !important;
 }
 
 .save-btn, .cancel-btn {
   padding: 0.5rem 1rem;
-  background-color: transparent;
-  border: 1px solid var(--link-hover);
+  border: 1px solid #cd7f32 !important;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
   transition: all 0.3s ease;
-  background-image: var(--bronze-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-weight: bold;
+  background: transparent !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  color: #cd7f32 !important;
+  filter: none !important;
 }
 
 .save-btn:hover {
-  background: rgba(205, 127, 50, 0.2);
+  background: rgba(205, 127, 50, 0.2) !important;
 }
 
 .cancel-btn:hover {
-  background: rgba(150, 105, 25, 0.2);
+  background: rgba(150, 105, 25, 0.2) !important;
 }
 
 .markdown-editor {
@@ -264,18 +261,27 @@
 .changelog-date-input,
 .changelog-label-input {
   padding: 0.4rem 0.5rem;
-  background: rgba(20, 20, 20, 0.5);
-  border: 1px solid rgba(205, 127, 50, 0.3);
+  background: transparent !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  border: 1px solid #cd7f32 !important;
   border-radius: 4px;
   font-size: 0.85rem;
-  color: var(--link-hover);
+  color: #cd7f32 !important;
+  filter: none !important;
   font-family: inherit;
   outline: none;
 }
 
+.changelog-date-input::placeholder,
+.changelog-label-input::placeholder {
+  color: #cd7f32 !important;
+  opacity: 0.7;
+}
+
 .changelog-date-input:focus,
 .changelog-label-input:focus {
-  border-color: var(--link-hover);
+  border-color: #e6a85c !important;
 }
 
 .empty-timeline {
@@ -314,22 +320,21 @@
 
 .edit-repo-btn, .add-repo-btn {
   padding: 0.5rem 1rem;
-  background-color: transparent;
-  border: 1px solid var(--link-hover);
+  border: 1px solid #cd7f32 !important;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.85rem;
   transition: all 0.3s ease;
   margin-top: 0.5rem;
-  background-image: var(--bronze-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-weight: bold;
+  background: transparent !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  color: #cd7f32 !important;
+  filter: none !important;
 }
 
 .edit-repo-btn:hover, .add-repo-btn:hover {
-  background: rgba(205, 127, 50, 0.1);
+  background: rgba(205, 127, 50, 0.1) !important;
 }
 
 .no-repo {
@@ -467,12 +472,17 @@
   margin: 1rem 0 0.5rem 0;
 }
 
+.markdown-display {
+  color: #cd7f32;
+}
+
 .markdown-display :global(p) {
   font-size: 1rem;
   font-weight: 400;
   letter-spacing: normal;
   margin-bottom: 1rem;
   line-height: 1.6;
+  color: #cd7f32;
 }
 
 .markdown-display :global(ul), .markdown-display :global(ol) {
@@ -486,6 +496,7 @@
   letter-spacing: normal;
   margin-bottom: 0.5rem;
   line-height: 1.6;
+  color: #cd7f32;
 }
 
 .markdown-display :global(strong) {
@@ -505,12 +516,42 @@
   padding-left: 1rem;
   margin: 1rem 0;
   opacity: 0.85;
+  color: #cd7f32;
 }
 
 .markdown-display :global(code) {
   font-size: 0.9rem;
   font-weight: 400;
   letter-spacing: normal;
+  color: #cd7f32;
+}
+
+.markdown-display :global(pre) {
+  color: #cd7f32;
+  background: rgba(20, 20, 20, 0.5);
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid rgba(205, 127, 50, 0.2);
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.markdown-display :global(pre code) {
+  color: #cd7f32;
+}
+
+.markdown-display :global(details) {
+  color: #cd7f32;
+  border: 1px solid rgba(205, 127, 50, 0.2);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+}
+
+.markdown-display :global(details summary) {
+  color: #cd7f32;
+  cursor: pointer;
+  font-weight: 600;
 }
 
 .markdown-display :global(img) {

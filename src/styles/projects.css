@@ -245,6 +245,11 @@
   border-color: #e6a85c;
 }
 
+.project-title-input::placeholder,
+.project-subtitle-input::placeholder {
+  color: rgba(205, 127, 50, 0.5) !important;
+}
+
 .date-label,
 .status-label {
   display: flex;
@@ -335,10 +340,13 @@
 .save-button,
 .cancel-button {
   padding: 0.5rem 1rem;
-  border: 1px solid #cd7f32;
+  border: 1px solid #cd7f32 !important;
   border-radius: 4px;
-  background: transparent;
-  color: #b4ebcb;
+  background: transparent !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  color: #cd7f32 !important;
+  filter: none !important;
   cursor: pointer;
   font-family: inherit;
   font-size: 0.9rem;
@@ -346,8 +354,8 @@
 }
 
 .save-button:hover {
-  background: #cd7f32;
-  color: #1e1e1e;
+  background: rgba(205, 127, 50, 0.15) !important;
+  color: #cd7f32 !important;
 }
 
 .cancel-button:hover {

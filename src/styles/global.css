@@ -157,11 +157,35 @@ div {
 
 /* Code */
 code {
-  background: none;
+  background: rgba(205, 127, 50, 0.12);
   font-family: var(--font-mono);
   font-size: 0.9em;
   padding: 0.15rem 0.3rem;
   border-radius: var(--border-radius);
+  color: #cd7f32 !important;
+}
+
+pre {
+  background: rgba(205, 127, 50, 0.08) !important;
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  overflow-x: auto;
+  color: #cd7f32 !important;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  color: #cd7f32 !important;
+}
+
+/* Details/Summary */
+details {
+  color: #cd7f32 !important;
+}
+
+details summary {
+  color: #cd7f32 !important;
 }
 
 /* Horizontal Rule */
