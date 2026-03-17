@@ -1,7 +1,10 @@
 <script>
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
+  import MarkdownIt from 'markdown-it';
   import '../../../../styles/articles.css';
+
+  const md = new MarkdownIt({ html: false, linkify: true, breaks: true });
 
   let article = null;
   let loading = true;
@@ -136,7 +139,7 @@
 
       {#if article.content}
         <hr class="article-notes-divider" />
-        <p class="article-content">{article.content}</p>
+        <div class="article-content">{@html md.render(article.content)}</div>
       {/if}
     {/if}
 
