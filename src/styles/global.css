@@ -157,7 +157,7 @@ div {
 
 /* Code */
 code {
-  background: var(--bg-2);
+  background: none;
   font-family: var(--font-mono);
   font-size: 0.9em;
   padding: 0.15rem 0.3rem;
@@ -330,7 +330,8 @@ ul.todos button:hover {
 
 .graduated-project-content img,
 .markdown-display img {
-  max-width: 100%;
+  max-width: 50%;
+  height: auto;
   border-radius: 4px;
   margin: 1rem 0;
 }

@@ -13,6 +13,11 @@
   let editLink = '';
   let editContent = '';
   let editDate = '';
+  let showAddForm = false;
+  let newLink = '';
+  let newContent = '';
+  let newDate = '';
+  let addError = '';
 
   const books = [
     {
@@ -174,6 +179,39 @@
     }
   }
 
+  async function addArticle() {
+    addError = '';
+    if (!newLink) {
+      addError = 'Link is required';
+      return;
+    }
+    try {
+      const res = await fetch('/api/articles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          link: newLink,
+          content: newContent || null,
+          date: newDate || null
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        articles = [data.article, ...articles];
+        newLink = '';
+        newContent = '';
+        newDate = '';
+        showAddForm = false;
+      } else {
+        const data = await res.json();
+        addError = data.error || 'Failed to add article';
+      }
+    } catch (err) {
+      console.error('Failed to add article:', err);
+      addError = 'Failed to add article';
+    }
+  }
+
   function nextBook() {
     if (currentIndex + itemsPerView < books.length) {
       currentIndex = currentIndex + 1;
@@ -226,7 +264,27 @@
     <button class="carousel-button next" on:click={nextBook} aria-label="Next book">›</button>
   </div>
 
-  <h3>Short(er) Form</h3>
+  <h3>Short(er) Form {#if isAdmin}<button class="add-article-btn" on:click={() => showAddForm = !showAddForm}>{showAddForm ? '−' : '+'}</button>{/if}</h3>
+  {#if showAddForm}
+    <div class="add-article-form">
+      <label class="edit-label">Link
+        <input type="url" bind:value={newLink} class="edit-input" placeholder="https://..." />
+      </label>
+      <label class="edit-label">Notes (optional)
+        <textarea bind:value={newContent} class="edit-input edit-textarea" rows="2" placeholder="Your notes..."></textarea>
+      </label>
+      <label class="edit-label">Date (optional)
+        <input type="date" bind:value={newDate} class="edit-input" />
+      </label>
+      {#if addError}
+        <p class="add-error">{addError}</p>
+      {/if}
+      <div class="edit-actions">
+        <button class="edit-btn save" on:click={addArticle}>Add</button>
+        <button class="edit-btn cancel" on:click={() => { showAddForm = false; addError = ''; }}>Cancel</button>
+      </div>
+    </div>
+  {/if}
   <div class="articles-scroll">
     {#each articles as article}
       {#if editingId === article.id}

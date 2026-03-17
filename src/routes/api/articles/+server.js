@@ -22,13 +22,14 @@ export async function GET() {
 }
 
 // POST - Create a new article (protected by API key)
-export async function POST({ request }) {
+export async function POST({ request, cookies }) {
   try {
-    // Check API key authorization
+    // Check authorization: admin cookie OR API key
+    const isAdmin = cookies.get('adminAuth') === 'true';
     const authHeader = request.headers.get('Authorization');
     const providedKey = authHeader?.replace('Bearer ', '');
 
-    if (!ARTICLES_API_KEY || providedKey !== ARTICLES_API_KEY) {
+    if (!isAdmin && (!ARTICLES_API_KEY || providedKey !== ARTICLES_API_KEY)) {
       return json({ error: 'Unauthorized' }, { status: 401 });
     }
 

@@ -165,6 +165,40 @@
   opacity: 0.7;
 }
 
+/* Add article button & form */
+.add-article-btn {
+  background: none;
+  border: 1px solid var(--link-hover);
+  border-radius: 4px;
+  color: var(--link-hover);
+  cursor: pointer;
+  font-size: 0.8em;
+  padding: 0 0.45rem;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  transition: all 0.2s ease;
+  line-height: 1.4;
+}
+
+.add-article-btn:hover {
+  background: var(--link-hover);
+  color: #1e1e1e;
+}
+
+.add-article-form {
+  padding: 0.75rem;
+  border: 1px solid var(--link-hover);
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  max-width: 400px;
+}
+
+.add-error {
+  font-size: 0.75em;
+  color: #e06c75;
+  margin: 0.3rem 0 0;
+}
+
 /* Article notes page */
 .article-notes-page {
   max-width: 640px;
