@@ -4,7 +4,7 @@
   import { page } from '$app/stores';
   import SvelteMarkdown from 'svelte-markdown';
   import ContributionsGraph from '$lib/components/ContributionsGraph.svelte';
-  import { loadProjectContent, saveProjectContentToSupabase } from '$lib/utils/projects.js';
+  import { loadProjectContent, saveProjectContentToNeon } from '$lib/utils/projects.js';
   import '../../styles/components/editor.css';
 
   export let projectId = '';
@@ -32,6 +32,89 @@
   let newChangelogDate = '';
   let newChangelogLabel = '';
   let editingChangelogIndex = -1;
+  let uploadingImage = false;
+  let imageFileInput = null;
+
+  // Insert text at the textarea caret (or append if the textarea isn't focused).
+  // Works against editableContent (changelog metadata stripped) and re-embeds it.
+  function insertAtCursor(text) {
+    const el = editTextarea;
+    if (!el) {
+      markdownContent = embedChangelog(editableContent + text, timelineData);
+      return;
+    }
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+    const current = el.value;
+    const updated = current.slice(0, start) + text + current.slice(end);
+    markdownContent = embedChangelog(updated, timelineData);
+    setTimeout(() => {
+      el.focus();
+      const pos = start + text.length;
+      el.setSelectionRange(pos, pos);
+    }, 0);
+  }
+
+  // Upload one image: insert a placeholder marker, POST to /api/images, then
+  // swap the marker for an <img> tag pointing at the stored image.
+  async function uploadImage(file) {
+    if (!file || !file.type || !file.type.startsWith('image/')) return;
+    uploadingImage = true;
+    saveError = null;
+    const marker = `⏳uploading-${Date.now()}-${Math.random().toString(36).slice(2)}⏳`;
+    insertAtCursor(marker);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/images', { method: 'POST', body: fd });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Upload failed (${res.status})`);
+      }
+      const { url } = await res.json();
+      const imgTag = `<img src="${url}" alt="${file.name || 'image'}" width="50%" />`;
+      markdownContent = embedChangelog(editableContent.replace(marker, imgTag), timelineData);
+      await saveProjectData();
+    } catch (e) {
+      markdownContent = embedChangelog(editableContent.replace(marker, ''), timelineData);
+      saveError = e.message || 'Image upload failed';
+    } finally {
+      uploadingImage = false;
+    }
+  }
+
+  async function handleDrop(e) {
+    if (!isAdmin) return;
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer?.files || []).filter((f) => f.type.startsWith('image/'));
+    for (const f of files) await uploadImage(f);
+  }
+
+  function handleDragOver(e) {
+    if (!isAdmin) return;
+    e.preventDefault();
+  }
+
+  async function handlePaste(e) {
+    if (!isAdmin) return;
+    const items = Array.from(e.clipboardData?.items || []).filter((it) => it.type.startsWith('image/'));
+    if (items.length === 0) return;
+    e.preventDefault();
+    for (const it of items) {
+      const f = it.getAsFile();
+      if (f) await uploadImage(f);
+    }
+  }
+
+  function triggerImagePicker() {
+    imageFileInput?.click();
+  }
+
+  async function handleFileInputChange(e) {
+    const files = Array.from(e.target.files || []).filter((f) => f.type.startsWith('image/'));
+    for (const f of files) await uploadImage(f);
+    e.target.value = '';
+  }
 
   // Extract changelog metadata from markdown content
   function extractChangelog(content) {
@@ -167,8 +250,8 @@
     saveError = null;
     
     try {
-      // Save to Supabase (this will also update localStorage cache)
-      await saveProjectContentToSupabase(projectId, markdownContent, githubRepo);
+      // Save to Neon (this will also update localStorage cache)
+      await saveProjectContentToNeon(projectId, markdownContent, githubRepo);
     } catch (error) {
       console.error('Error saving project content:', error);
       saveError = error.message || 'Failed to save content';
@@ -362,6 +445,17 @@
             {savingContent ? 'Saving...' : 'Save'}
           </button>
           <button class="cancel-btn" on:click={handleCancel} disabled={savingContent}>Cancel</button>
+          <button class="image-upload-btn" on:click={triggerImagePicker} disabled={uploadingImage} title="Upload image (or drag/paste into the editor)">
+            {uploadingImage ? 'Uploading…' : '📎 Image'}
+          </button>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            bind:this={imageFileInput}
+            on:change={handleFileInputChange}
+            style="display: none;"
+          />
           {#if saveError}
             <span class="save-error" style="color: #ff6b6b; font-size: 0.9rem; margin-left: 1rem;">
               {saveError}
@@ -372,8 +466,11 @@
           bind:this={editTextarea}
           value={editableContent}
           on:input={handleEditableContentChange}
+          on:drop={handleDrop}
+          on:dragover={handleDragOver}
+          on:paste={handlePaste}
           class="markdown-editor"
-          placeholder="Start writing ..."
+          placeholder="Start writing ... (drag or paste an image to upload)"
         ></textarea>
       {:else}
         <div class="markdown-display">

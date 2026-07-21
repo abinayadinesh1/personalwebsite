@@ -27,6 +27,7 @@
 		"@vercel/analytics": "^1.6.1",
 		"github-contribution-graph": "^2.0.3",
 		"markdown-it": "^14.1.0",
+		"sharp": "^0.35.3",
 		"svelte": "^4.2.7",
 		"svelte-markdown": "^0.4.1"
 	}

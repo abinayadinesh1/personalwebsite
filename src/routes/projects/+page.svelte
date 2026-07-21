@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   import { page } from '$app/stores';
-  import { loadProjects, saveProjectToSupabase, updateProjectInSupabase, deleteProjectFromSupabase, syncProjectsToSupabase } from '$lib/utils/projects.js';
+  import { loadProjects, saveProjectToNeon, updateProjectInNeon, deleteProjectFromNeon, syncProjectsToNeon } from '$lib/utils/projects.js';
 
   export let data; // Server-side data from +page.server.js
 
@@ -81,7 +81,7 @@
   // New project being added
   let newProject = null;
 
-  // Load projects from Supabase (with localStorage fallback) on mount
+  // Load projects from Neon (with localStorage fallback) on mount
   onMount(async () => {
     if (browser) {
       // Sync admin auth from server-side cookie (primary) or sessionStorage (fallback)
@@ -115,7 +115,7 @@
             if (isAdmin) {
               console.log('No projects in database, syncing default projects...');
               try {
-                const synced = await syncProjectsToSupabase(defaultProjects);
+                const synced = await syncProjectsToNeon(defaultProjects);
                 projectsData = synced.map(p => ({
                   ...p,
                   isPublic: p.isPublic !== undefined ? p.isPublic : true
@@ -163,7 +163,7 @@
           }
         } else {
           // API request failed - fall back to localStorage
-          console.warn('Failed to load from Supabase, falling back to localStorage');
+          console.warn('Failed to load from Neon, falling back to localStorage');
           const stored = localStorage.getItem('projects');
           if (stored) {
             try {
@@ -260,8 +260,8 @@
     newProject.hasCommits = newProject.hasCommits ?? true;
     
     try {
-      // Save to Supabase via API (this will also update localStorage cache)
-      const savedProject = await saveProjectToSupabase(newProject);
+      // Save to Neon via API (this will also update localStorage cache)
+      const savedProject = await saveProjectToNeon(newProject);
       
       // Update local state
       projectsData = [...projectsData, savedProject];
@@ -303,8 +303,8 @@
     saveError = null;
     
     try {
-      // Update in Supabase (this will also update localStorage cache)
-      const updatedProject = await updateProjectInSupabase(editingProject);
+      // Update in Neon (this will also update localStorage cache)
+      const updatedProject = await updateProjectInNeon(editingProject);
       
       // Update local state
       const index = projectsData.findIndex(p => p.id === updatedProject.id);
@@ -347,8 +347,8 @@
     saveError = null;
     
     try {
-      // Delete from Supabase (this will also update localStorage cache)
-      await deleteProjectFromSupabase(projectId);
+      // Delete from Neon (this will also update localStorage cache)
+      await deleteProjectFromNeon(projectId);
       
       // Update local state
       projectsData = projectsData.filter(p => p.id !== projectId);

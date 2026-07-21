@@ -1,5 +1,5 @@
 /**
- * Load projects from Supabase, with localStorage as fallback
+ * Load projects from Neon, with localStorage as fallback
  * @param {boolean} isAdmin - Whether user is admin (affects which projects are returned)
  * @returns {Promise<Array>} Array of projects
  */
@@ -10,7 +10,7 @@ export async function loadProjects(isAdmin = false) {
   }
   
   try {
-    // Try to fetch from Supabase first
+    // Try to fetch from Neon first
     const response = await fetch('/api/projects');
     
     if (response.ok) {
@@ -25,12 +25,12 @@ export async function loadProjects(isAdmin = false) {
       
       return projects;
     } else {
-      // If Supabase fails, fall back to localStorage
-      console.warn('Failed to load from Supabase, falling back to localStorage');
+      // If Neon fails, fall back to localStorage
+      console.warn('Failed to load from Neon, falling back to localStorage');
       return loadFromLocalStorage();
     }
   } catch (error) {
-    console.error('Error loading projects from Supabase:', error);
+    console.error('Error loading projects from Neon:', error);
     // Fall back to localStorage
     return loadFromLocalStorage();
   }
@@ -59,11 +59,11 @@ export function loadFromLocalStorage() {
 }
 
 /**
- * Save project to Supabase and update localStorage cache
+ * Save project to Neon and update localStorage cache
  * @param {Object} project - Project object to save
  * @returns {Promise<Object>} Saved project object
  */
-export async function saveProjectToSupabase(project) {
+export async function saveProjectToNeon(project) {
   try {
     const response = await fetch('/api/projects', {
       method: 'POST',
@@ -104,21 +104,21 @@ export async function saveProjectToSupabase(project) {
     
     return savedProject;
   } catch (error) {
-    console.error('Error saving project to Supabase:', error);
+    console.error('Error saving project to Neon:', error);
     // Still save to localStorage as backup
     const cachedProjects = loadFromLocalStorage();
     cachedProjects.push(project);
     localStorage.setItem('projects', JSON.stringify(cachedProjects));
-    throw error; // Re-throw so caller knows Supabase save failed
+    throw error; // Re-throw so caller knows Neon save failed
   }
 }
 
 /**
- * Update project in Supabase and update localStorage cache
+ * Update project in Neon and update localStorage cache
  * @param {Object} project - Project object to update (must include id)
  * @returns {Promise<Object>} Updated project object
  */
-export async function updateProjectInSupabase(project) {
+export async function updateProjectInNeon(project) {
   try {
     const response = await fetch('/api/projects', {
       method: 'PUT',
@@ -160,7 +160,7 @@ export async function updateProjectInSupabase(project) {
     
     return updatedProject;
   } catch (error) {
-    console.error('Error updating project in Supabase:', error);
+    console.error('Error updating project in Neon:', error);
     // Still update localStorage as backup
     const cachedProjects = loadFromLocalStorage();
     const existingIndex = cachedProjects.findIndex(p => p.id === project.id);
@@ -171,16 +171,16 @@ export async function updateProjectInSupabase(project) {
       cachedProjects.push(project);
     }
     localStorage.setItem('projects', JSON.stringify(cachedProjects));
-    throw error; // Re-throw so caller knows Supabase update failed
+    throw error; // Re-throw so caller knows Neon update failed
   }
 }
 
 /**
- * Delete project from Supabase and update localStorage cache
+ * Delete project from Neon and update localStorage cache
  * @param {string} projectId - ID of project to delete
  * @returns {Promise<void>}
  */
-export async function deleteProjectFromSupabase(projectId) {
+export async function deleteProjectFromNeon(projectId) {
   try {
     const response = await fetch(`/api/projects?id=${encodeURIComponent(projectId)}`, {
       method: 'DELETE',
@@ -202,17 +202,17 @@ export async function deleteProjectFromSupabase(projectId) {
     
     return;
   } catch (error) {
-    console.error('Error deleting project from Supabase:', error);
+    console.error('Error deleting project from Neon:', error);
     // Still update localStorage as backup
     const cachedProjects = loadFromLocalStorage();
     const filteredProjects = cachedProjects.filter(p => p.id !== projectId);
     localStorage.setItem('projects', JSON.stringify(filteredProjects));
-    throw error; // Re-throw so caller knows Supabase delete failed
+    throw error; // Re-throw so caller knows Neon delete failed
   }
 }
 
 /**
- * Load project content from Supabase, with localStorage as fallback
+ * Load project content from Neon, with localStorage as fallback
  * @param {string} projectId - ID of the project
  * @returns {Promise<Object>} Object with markdownContent, githubRepo, and lastUpdated
  */
@@ -223,7 +223,7 @@ export async function loadProjectContent(projectId) {
   }
   
   try {
-    // Try to fetch from Supabase first
+    // Try to fetch from Neon first
     const response = await fetch(`/api/projects/${encodeURIComponent(projectId)}/content`);
     
     if (response.ok) {
@@ -241,12 +241,12 @@ export async function loadProjectContent(projectId) {
       
       return content;
     } else {
-      // If Supabase fails, fall back to localStorage
-      console.warn('Failed to load content from Supabase, falling back to localStorage');
+      // If Neon fails, fall back to localStorage
+      console.warn('Failed to load content from Neon, falling back to localStorage');
       return loadProjectContentFromLocalStorage(projectId);
     }
   } catch (error) {
-    console.error('Error loading project content from Supabase:', error);
+    console.error('Error loading project content from Neon:', error);
     // Fall back to localStorage
     return loadProjectContentFromLocalStorage(projectId);
   }
@@ -283,11 +283,11 @@ export function loadProjectContentFromLocalStorage(projectId) {
 }
 
 /**
- * Sync projects to Supabase - creates projects in database if they don't exist
+ * Sync projects to Neon - creates projects in database if they don't exist
  * @param {Array} projects - Array of projects to sync
  * @returns {Promise<Array>} Array of synced projects
  */
-export async function syncProjectsToSupabase(projects) {
+export async function syncProjectsToNeon(projects) {
   if (typeof window === 'undefined') {
     return [];
   }
@@ -308,11 +308,11 @@ export async function syncProjectsToSupabase(projects) {
     try {
       if (existingProjects.includes(project.id)) {
         // Project exists, update it
-        const updatedProject = await updateProjectInSupabase(project);
+        const updatedProject = await updateProjectInNeon(project);
         syncedProjects.push(updatedProject);
       } else {
         // Project doesn't exist, create it
-        const savedProject = await saveProjectToSupabase(project);
+        const savedProject = await saveProjectToNeon(project);
         syncedProjects.push(savedProject);
       }
     } catch (error) {
@@ -327,15 +327,15 @@ export async function syncProjectsToSupabase(projects) {
 }
 
 /**
- * Save project content to Supabase and update localStorage cache
+ * Save project content to Neon and update localStorage cache
  * @param {string} projectId - ID of the project
  * @param {string} markdownContent - Markdown content to save
  * @param {string} githubRepo - GitHub repository URL (optional)
  * @returns {Promise<Object>} Saved content object
  */
-export async function saveProjectContentToSupabase(projectId, markdownContent, githubRepo = '') {
+export async function saveProjectContentToNeon(projectId, markdownContent, githubRepo = '') {
   if (typeof window === 'undefined') {
-    throw new Error('saveProjectContentToSupabase can only be called from the browser');
+    throw new Error('saveProjectContentToNeon can only be called from the browser');
   }
   
   try {
@@ -369,7 +369,7 @@ export async function saveProjectContentToSupabase(projectId, markdownContent, g
     
     return savedContent;
   } catch (error) {
-    console.error('Error saving project content to Supabase:', error);
+    console.error('Error saving project content to Neon:', error);
     // Still save to localStorage as backup
     const key = `project_${projectId}`;
     const cacheData = {
@@ -378,6 +378,6 @@ export async function saveProjectContentToSupabase(projectId, markdownContent, g
       lastUpdated: new Date().toISOString()
     };
     localStorage.setItem(key, JSON.stringify(cacheData));
-    throw error; // Re-throw so caller knows Supabase save failed
+    throw error; // Re-throw so caller knows Neon save failed
   }
 }
