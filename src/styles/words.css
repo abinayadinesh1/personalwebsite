@@ -14,12 +14,20 @@
   margin-bottom: 1rem;
 }
 
-.add-word-form .word-input {
-  flex: 1;
-}
-
+/* width: auto so the flex row sizes the fields (the .edit-input
+   width: 100% default lets the date input crush the word input) */
 .add-word-form .edit-input {
   margin-top: 0;
+  width: auto;
+}
+
+.add-word-form .word-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.add-word-form .word-date-input {
+  flex: 0 0 auto;
 }
 
 .add-error {
