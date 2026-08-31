@@ -1,0 +1,56 @@
+/* Home page "new words I've learned" ticker */
+.words-ticker {
+  display: block;
+  margin-top: 1rem;
+  padding: 0.5rem 0.75rem 0.6rem;
+  border: 1px solid var(--link-hover);
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.words-ticker:hover {
+  border-color: var(--link);
+}
+
+.words-ticker-label {
+  display: block;
+  font-size: 0.65em;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+  margin-bottom: 0.35rem;
+}
+
+.words-ticker-viewport {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.words-ticker-track {
+  display: inline-flex;
+  align-items: baseline;
+  width: max-content;
+  animation: ticker-scroll linear infinite;
+}
+
+/* Spacing lives on the separator so both halves of the duplicated
+   track are identical in width and the -50% loop is seamless */
+.ticker-word {
+  font-size: 0.85em;
+}
+
+.ticker-sep {
+  font-size: 0.85em;
+  margin: 0 0.75rem;
+  opacity: 0.5;
+}
+
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.words-ticker:hover .words-ticker-track {
+  animation-play-state: paused;
+}

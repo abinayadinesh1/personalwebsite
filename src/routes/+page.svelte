@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import '../styles/components/homepage.css';
+  import WordsTicker from '$lib/components/WordsTicker.svelte';
 
   let img1 = "/IMG_4363.jpg";
   let img2 = "/IMG_6410.jpg";
@@ -77,6 +78,7 @@
         <img src={img3} alt="an image of abi" />
         <img src={img4} alt="an image of abi" />
       </div>
+      <WordsTicker />
     </div>
 
     <!-- Right column -->
