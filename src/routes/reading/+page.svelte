@@ -21,6 +21,20 @@
 
   const books = [
     {
+      date: "09.06.26",
+      title: "A Mask the Color of the Sky",
+      author: "Bassem Khandaqji",
+      image: "/mask_color_sky.png",
+      note: "This Palestinian author wrote, published, and sold copies of this book from prison!"
+    },
+    {
+      date: "09.06.26",
+      title: "Maintenance: Of Everything",
+      author: "Stewart Brand",
+      image: "/maintenance.png",
+      note: "Go check out his next section at https://books.worksinprogress.co/"
+    },
+    {
       date: "02.04.25",
       title: "The Burden of Joy",
       author: "Lexi Kent-Monning",

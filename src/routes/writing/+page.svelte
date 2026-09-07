@@ -1,4 +1,12 @@
 <script>
+  import { onMount } from 'svelte';
+  import { browser } from '$app/environment';
+  import { loadProjects, updateProjectInNeon, deleteProjectFromNeon, moveProjectToSection } from '$lib/utils/projects.js';
+
+  export let data; // Server-side data from +page.server.js
+
+  let isAdmin = data?.isAdmin || false;
+
   const subjects = ["General", "Ag", "Notes"];
   let selectedSubjects = ["General"];
 
@@ -14,7 +22,126 @@
     selectedSubjects = [...subjects];
   }
 
-  $: filteredPosts = posts.filter(p => selectedSubjects.includes(p.subject));
+  // --- Writings that live in the database (projects moved into the Writing tab) ---
+  let dbWritings = [];
+  let editingWriting = null;
+  let savingWriting = false;
+  let saveError = null;
+
+  onMount(async () => {
+    if (!browser) return;
+    const clientAuth = sessionStorage.getItem('adminAuth') === 'true';
+    isAdmin = (data?.isAdmin || false) || clientAuth;
+    try {
+      const all = await loadProjects(isAdmin);
+      dbWritings = all.filter(p => p.section === 'writing');
+    } catch (e) {
+      console.error('Error loading writings from database:', e);
+    }
+  });
+
+  // Format an ISO date (YYYY-MM-DD) like the static posts: MM.DD.YY
+  function formatShortDate(dateString) {
+    if (!dateString) return '';
+    const d = new Date(dateString);
+    if (isNaN(d)) return '';
+    const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const dd = String(d.getUTCDate()).padStart(2, '0');
+    const yy = String(d.getUTCFullYear()).slice(-2);
+    return `${mm}.${dd}.${yy}`;
+  }
+
+  // Date input wants YYYY-MM-DD; the API may return a full ISO timestamp
+  function toDateInput(dateString) {
+    if (!dateString) return '';
+    return String(dateString).slice(0, 10);
+  }
+
+  // Database writings are shown under "General" alongside the static posts.
+  // Private ones are only returned by the API to admins.
+  $: dbPosts = dbWritings
+    .filter(p => isAdmin || p.isPublic !== false)
+    .map(p => ({
+      title: p.title,
+      date: formatShortDate(p.lastUpdated),
+      sortDate: new Date(p.lastUpdated),
+      subject: "General",
+      href: p.path,
+      project: p
+    }));
+
+  $: allPosts = [...dbPosts, ...posts];
+  $: filteredPosts = allPosts.filter(p => selectedSubjects.includes(p.subject));
+
+  function handleEditWriting(project) {
+    if (!isAdmin) return;
+    editingWriting = { ...project, lastUpdated: toDateInput(project.lastUpdated) };
+    saveError = null;
+  }
+
+  function handleCancelEdit() {
+    editingWriting = null;
+    saveError = null;
+  }
+
+  function replaceWriting(updated) {
+    const index = dbWritings.findIndex(p => p.id === updated.id);
+    if (index !== -1) {
+      dbWritings[index] = updated;
+      dbWritings = [...dbWritings];
+    }
+  }
+
+  async function handleSaveEdit() {
+    if (!editingWriting || !browser) return;
+    savingWriting = true;
+    saveError = null;
+    try {
+      const updated = await updateProjectInNeon(editingWriting);
+      replaceWriting(updated);
+      editingWriting = null;
+    } catch (error) {
+      saveError = error.message || 'Failed to update writing';
+      console.error('Error updating writing:', error);
+    } finally {
+      savingWriting = false;
+    }
+  }
+
+  async function handleDeleteWriting(projectId) {
+    if (!browser) return;
+    if (!confirm('Are you sure you want to delete this writing?')) return;
+    savingWriting = true;
+    saveError = null;
+    try {
+      await deleteProjectFromNeon(projectId);
+      dbWritings = dbWritings.filter(p => p.id !== projectId);
+      if (editingWriting && editingWriting.id === projectId) editingWriting = null;
+    } catch (error) {
+      saveError = error.message || 'Failed to delete writing';
+      console.error('Error deleting writing:', error);
+    } finally {
+      savingWriting = false;
+    }
+  }
+
+  // Move a writing back to the Projects tab. It keeps its id, path, and content.
+  async function handleMoveToProjects(project) {
+    if (!browser || !isAdmin) return;
+    savingWriting = true;
+    saveError = null;
+    try {
+      await moveProjectToSection(project, 'projects');
+      dbWritings = dbWritings.filter(p => p.id !== project.id);
+      if (editingWriting && editingWriting.id === project.id) editingWriting = null;
+    } catch (error) {
+      saveError = error.message || 'Failed to move writing';
+      console.error('Error moving writing to projects:', error);
+      alert(`Failed to move: ${saveError}`);
+    } finally {
+      savingWriting = false;
+    }
+  }
 
   const posts = [
     {
@@ -180,14 +307,73 @@
     </thead>
     <tbody>
       {#each filteredPosts as post}
-        <tr>
-          <td>
-            {#if post.starred}<span class="star">&#11088;&#65039;</span>{/if}
-            <a href={post.href}>{post.title}</a>
-          </td>
-          <td class="date-cell">{post.date || '—'}</td>
-          <td class="subject-cell">{post.subject}</td>
-        </tr>
+        {#if post.project && editingWriting && editingWriting.id === post.project.id}
+          <!-- Inline edit row for a database-backed writing (admin only) -->
+          <tr class="edit-row">
+            <td colspan="3">
+              <div class="edit-form">
+                <input type="text" class="edit-input" placeholder="Title" bind:value={editingWriting.title} />
+                <input type="text" class="edit-input" placeholder="Short caption (optional)" bind:value={editingWriting.subtitle} />
+                <div class="edit-meta">
+                  <label>
+                    Last updated:
+                    <input type="date" class="edit-input small" bind:value={editingWriting.lastUpdated} />
+                  </label>
+                  <label>
+                    Status:
+                    <select class="edit-input small" bind:value={editingWriting.status}>
+                      <option value="Graduated">Graduated</option>
+                      <option value="In Progress">In Progress</option>
+                      <option value="Graveyard">Graveyard</option>
+                      <option value="Idea">Idea</option>
+                    </select>
+                  </label>
+                  <label class="check-label">
+                    <input type="checkbox" bind:checked={editingWriting.isPublic} />
+                    Public
+                  </label>
+                </div>
+                <div class="edit-actions">
+                  <button class="admin-btn" on:click={handleSaveEdit} disabled={savingWriting}>
+                    {savingWriting ? 'Saving...' : 'Save'}
+                  </button>
+                  <button class="admin-btn" on:click={handleCancelEdit}>Cancel</button>
+                  <button class="admin-btn" on:click={() => handleMoveToProjects(post.project)} disabled={savingWriting}>
+                    Move to projects
+                  </button>
+                  <button class="admin-btn danger" on:click={() => handleDeleteWriting(post.project.id)} disabled={savingWriting}>
+                    Delete
+                  </button>
+                </div>
+                {#if saveError}
+                  <p class="error-message">Error: {saveError}</p>
+                {/if}
+              </div>
+            </td>
+          </tr>
+        {:else}
+          <tr>
+            <td>
+              {#if post.starred}<span class="star">&#11088;&#65039;</span>{/if}
+              <a href={post.href}>{post.title}</a>
+              {#if isAdmin && post.project}
+                {#if post.project.isPublic === false}
+                  <span class="private-badge" title="Private">🔒</span>
+                {/if}
+                <span class="row-admin">
+                  <button class="icon-btn" title="Edit" on:click={() => handleEditWriting(post.project)}>
+                    <i class="las la-edit"></i>
+                  </button>
+                  <button class="icon-btn" title="Move to projects" on:click={() => handleMoveToProjects(post.project)} disabled={savingWriting}>
+                    <i class="las la-cube"></i>
+                  </button>
+                </span>
+              {/if}
+            </td>
+            <td class="date-cell">{post.date || '—'}</td>
+            <td class="subject-cell">{post.subject}</td>
+          </tr>
+        {/if}
       {/each}
     </tbody>
   </table>
@@ -211,14 +397,9 @@
   .writing-table thead th {
     padding: 0.4rem 1rem;
     border-bottom: 1px solid rgba(180, 235, 203, 0.5);
-    border-right: 1px solid rgba(180, 235, 203, 0.5);
     font-size: 0.9em;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-  }
-
-  .writing-table thead th:last-child {
-    border-right: none;
   }
 
   .writing-table tbody td {
@@ -226,11 +407,6 @@
     font-size: 0.85em;
     vertical-align: top;
     border-bottom: 1px solid rgba(180, 235, 203, 0.5);
-    border-right: 1px solid rgba(180, 235, 203, 0.5);
-  }
-
-  .writing-table tbody td:last-child {
-    border-right: none;
   }
 
   .writing-table tbody tr:last-child td {
@@ -294,13 +470,140 @@
 
   .writing-table a {
     color: transparent;
-    text-decoration: underline;
-    text-decoration-color: rgba(205, 127, 50, 0.2);
-    -webkit-text-decoration-color: rgba(205, 127, 50, 0.2);
+    text-decoration: none;
   }
 
   .star {
     margin-right: 0.25rem;
+  }
+
+  /* Admin controls for database-backed writings */
+  .row-admin {
+    display: inline-flex;
+    gap: 0.25rem;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+
+  .private-badge {
+    margin-left: 0.35rem;
+    font-size: 0.85em;
+    opacity: 0.7;
+  }
+
+  .icon-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid #cd7f32;
+    background: transparent;
+    color: #b4ebcb;
+    font-size: 0.9em;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.2s ease;
+  }
+
+  .icon-btn:hover {
+    background: #cd7f32;
+    color: #1e1e1e;
+  }
+
+  .icon-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+  }
+
+  .edit-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.4rem 0.5rem;
+    background: rgba(30, 30, 30, 0.8);
+    border: 1px solid #cd7f32;
+    border-radius: 4px;
+    color: #b4ebcb;
+    font-family: inherit;
+    font-size: 0.9em;
+  }
+
+  .edit-input.small {
+    width: auto;
+  }
+
+  .edit-input:focus {
+    outline: none;
+    border-color: #e6a85c;
+  }
+
+  .edit-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    font-size: 0.85em;
+  }
+
+  .edit-meta label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .check-label input {
+    accent-color: #cd7f32;
+  }
+
+  .edit-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .admin-btn {
+    padding: 0.35rem 0.8rem;
+    border: 1px solid #cd7f32;
+    border-radius: 4px;
+    background: transparent;
+    color: #cd7f32;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.85em;
+    transition: all 0.2s ease;
+  }
+
+  .admin-btn:hover {
+    background: rgba(205, 127, 50, 0.15);
+  }
+
+  .admin-btn.danger {
+    border-color: #966919;
+    color: #966919;
+  }
+
+  .admin-btn.danger:hover {
+    background: #966919;
+    color: #1e1e1e;
+  }
+
+  .admin-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .error-message {
+    color: #c33;
+    font-size: 0.85em;
+    margin: 0;
   }
 
   @media (max-width: 600px) {

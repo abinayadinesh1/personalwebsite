@@ -50,5 +50,5 @@
     <a href="/projects">← Back to Projects</a>
   </div>
 {:else if project}
-  <ProjectEditor projectId={project.id} {isAdmin} />
+  <ProjectEditor projectId={project.id} title={project.title} {isAdmin} />
 {/if}

@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   import { page } from '$app/stores';
-  import { loadProjects, saveProjectToNeon, updateProjectInNeon, deleteProjectFromNeon, syncProjectsToNeon } from '$lib/utils/projects.js';
+  import { loadProjects, saveProjectToNeon, updateProjectInNeon, deleteProjectFromNeon, syncProjectsToNeon, moveProjectToSection } from '$lib/utils/projects.js';
 
   export let data; // Server-side data from +page.server.js
 
@@ -216,9 +216,11 @@
     ...p,
     isPublic: p.isPublic !== undefined ? p.isPublic : true // Ensure isPublic is set
   }));
+  // Only projects in the 'projects' section belong on this tab (others live under Writing)
+  $: sectionProjects = allProjects.filter(p => (p.section || 'projects') === 'projects');
   $: filteredProjects = isAdmin 
-    ? allProjects 
-    : allProjects.filter(p => p.isPublic === true); // Only show public projects to non-admins
+    ? sectionProjects 
+    : sectionProjects.filter(p => p.isPublic === true); // Only show public projects to non-admins
   $: projects = filteredProjects.sort((a, b) => {
     return new Date(b.lastUpdated) - new Date(a.lastUpdated);
   });
@@ -334,6 +336,29 @@
   function handleCancelEdit() {
     editingProject = null;
     saveError = null;
+  }
+
+  // Move a project to the Writing tab. It keeps its id, path, and content,
+  // and can still be edited from /writing or its own page.
+  async function handleMoveToWriting(project) {
+    if (!browser || !isAdmin) return;
+    savingProject = true;
+    saveError = null;
+    try {
+      const moved = await moveProjectToSection(project, 'writing');
+      const index = projectsData.findIndex(p => p.id === moved.id);
+      if (index !== -1) {
+        projectsData[index] = moved;
+        projectsData = [...projectsData];
+      }
+      console.log('Project moved to writing:', moved.id);
+    } catch (error) {
+      saveError = error.message || 'Failed to move project';
+      console.error('Error moving project to writing:', error);
+      alert(`Failed to move project: ${saveError}`);
+    } finally {
+      savingProject = false;
+    }
   }
 
   async function handleDeleteProject(projectId) {
@@ -571,6 +596,9 @@
           {#if isAdmin}
             <button class="edit-button" on:click={() => handleEditProject(project)} title="Edit project">
               <i class="las la-edit"></i>
+            </button>
+            <button class="move-button" on:click={() => handleMoveToWriting(project)} title="Move to writing" disabled={savingProject}>
+              <i class="las la-pen-nib"></i>
             </button>
           {/if}
         </div>

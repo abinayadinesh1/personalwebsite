@@ -403,6 +403,37 @@
   transform: scale(1.1);
 }
 
+.move-button {
+  position: absolute;
+  top: 1rem;
+  right: 3.25rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #cd7f32;
+  background: rgba(30, 30, 30, 0.9);
+  color: #b4ebcb;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  padding: 0;
+  z-index: 10;
+}
+
+.move-button:hover {
+  background: #cd7f32;
+  color: #1e1e1e;
+  transform: scale(1.1);
+}
+
+.move-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 .delete-button {
   padding: 0.5rem 1rem;
   border: 1px solid #966919;

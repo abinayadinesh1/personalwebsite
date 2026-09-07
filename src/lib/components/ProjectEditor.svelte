@@ -9,6 +9,7 @@
 
   export let projectId = '';
   export let isAdmin = false;
+  export let title = ''; // Project title, shown as the article heading in view mode
 
   // Note: projectId should always be provided as a prop from the parent component
   // (which resolves the project and passes project.id, not the route param)
@@ -73,7 +74,16 @@
       }
       const { url } = await res.json();
       const imgTag = `<img src="${url}" alt="${file.name || 'image'}" width="50%" />`;
-      markdownContent = embedChangelog(editableContent.replace(marker, imgTag), timelineData);
+      const updated = editableContent.replace(marker, imgTag);
+      markdownContent = embedChangelog(updated, timelineData);
+      // Park the caret right after the new tag so a following upload lands
+      // beside it (adjacent images render side by side) instead of inside it.
+      if (editTextarea) {
+        const pos = updated.indexOf(imgTag) + imgTag.length;
+        setTimeout(() => {
+          editTextarea?.setSelectionRange(pos, pos);
+        }, 0);
+      }
       await saveProjectData();
     } catch (e) {
       markdownContent = embedChangelog(editableContent.replace(marker, ''), timelineData);
@@ -419,22 +429,32 @@
     isEditingRepo = false;
   }
 
+  // Sidebar visibility: admins always see Changelog and GitHub; viewers only see
+  // sections that actually have content.
+  $: showChangelog = isAdmin || timelineData.length > 0;
+  $: showGithub = isAdmin || !!githubRepo;
+  $: showSidebar = showChangelog || showGithub;
 </script>
 
-<div class="editor-dashboard">
+<div class="editor-dashboard" class:no-sidebar={!showSidebar}>
   <!-- Main Editor Column (75%) -->
   <div class="editor-column">
-    <div class="editor-header">
-      <h2>Editor</h2>
-      {#if isAdmin}
+    {#if isAdmin}
+      <div class="editor-header">
+        <h2>Editor</h2>
         <div class="editor-actions">
         </div>
-      {/if}
-    </div>
+      </div>
+    {:else if title}
+      <div class="editor-header">
+        <h2>{title}</h2>
+      </div>
+    {/if}
     
     <div 
       class="editor-content" 
       class:editing={isEditing}
+      class:published={!isAdmin}
       on:dblclick={handleDoubleClick}
       role={isAdmin ? "textbox" : "article"}
       aria-label={isAdmin ? "Double-click to edit daily log" : "Daily log content"}
@@ -505,9 +525,11 @@
     </div>
   </div>
 
-  <!-- Right Sidebar (25%) -->
+  <!-- Right Sidebar (25%). In view mode, empty sections are hidden; admins always see both. -->
+  {#if showSidebar}
   <div class="sidebar-column">
     <!-- Changelog -->
+    {#if showChangelog}
     <div class="sidebar-section">
       <h3>Changelog</h3>
       <div class="timeline-container">
@@ -540,8 +562,10 @@
         {/if}
       </div>
     </div>
+    {/if}
 
     <!-- GitHub Section -->
+    {#if showGithub}
     <div class="sidebar-section">
       <h3>GitHub</h3>
       {#if isEditingRepo && isAdmin}
@@ -609,5 +633,7 @@
         </div>
       {/if}
     </div>
+    {/if}
   </div>
+  {/if}
 </div>

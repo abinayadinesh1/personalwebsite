@@ -77,7 +77,8 @@ export async function saveProjectToNeon(project) {
         status: project.status,
         lastUpdated: project.lastUpdated,
         hasCommits: project.hasCommits ?? false,
-        isPublic: project.isPublic ?? true
+        isPublic: project.isPublic ?? true,
+        section: project.section || 'projects'
       })
     });
 
@@ -133,7 +134,8 @@ export async function updateProjectInNeon(project) {
         status: project.status,
         lastUpdated: project.lastUpdated,
         hasCommits: project.hasCommits ?? false,
-        isPublic: project.isPublic ?? true
+        isPublic: project.isPublic ?? true,
+        section: project.section || 'projects'
       })
     });
 
@@ -380,4 +382,14 @@ export async function saveProjectContentToNeon(projectId, markdownContent, githu
     localStorage.setItem(key, JSON.stringify(cacheData));
     throw error; // Re-throw so caller knows Neon save failed
   }
+}
+
+/**
+ * Move a project between the Projects and Writing tabs.
+ * @param {Object} project - Full project object (must include id)
+ * @param {'projects'|'writing'} section - Destination section
+ * @returns {Promise<Object>} Updated project object
+ */
+export async function moveProjectToSection(project, section) {
+  return updateProjectInNeon({ ...project, section });
 }

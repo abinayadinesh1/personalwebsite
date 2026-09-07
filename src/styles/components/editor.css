@@ -14,6 +14,11 @@
   flex-direction: column;
 }
 
+/* When the sidebar is hidden (view mode with no changelog or repo), let the content fill the row */
+.editor-dashboard.no-sidebar .editor-column {
+  flex: 1 1 100%;
+}
+
 .sidebar-column {
   flex: 0 0 25%;
   display: flex;
@@ -78,6 +83,16 @@
 
 .editor-content:hover {
   border-color: rgba(205, 127, 50, 0.4);
+}
+
+/* View mode (not authenticated): render as a plain published page, no editor chrome */
+.editor-content.published,
+.editor-content.published:hover {
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  cursor: default;
 }
 
 .edit-toolbar {
@@ -554,11 +569,19 @@
   font-weight: 600;
 }
 
-.markdown-display :global(img) {
+.markdown-display img {
   max-width: 100%;
   border-radius: 4px;
   margin: 1rem 0;
 }
+
+/* NOTE: this is a plain CSS file, so Svelte's :global() wrapper is NOT
+   compiled away here; a selector like ".markdown-display :global(p)" reaches
+   the browser verbatim and is invalid, so those rules never apply. The other
+   :global() rules above have always been inert for that reason. */
+
+/* Side-by-side layout for adjacent images lives in styles/global.css, next to
+   the base .markdown-display img rule it overrides. */
 
 /* Hidden content admin indicator */
 .hidden-content-admin {

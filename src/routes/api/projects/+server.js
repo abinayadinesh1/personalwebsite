@@ -28,7 +28,8 @@ export async function GET({ url, cookies }) {
       lastUpdated: p.last_updated,
       status: p.status,
       hasCommits: p.has_commits,
-      isPublic: p.is_public
+      isPublic: p.is_public,
+      section: p.section || 'projects'
     }));
 
     return json({ projects: formattedProjects });
@@ -48,7 +49,7 @@ export async function POST({ request, cookies }) {
 
   try {
     const body = await request.json();
-    const { title, subtitle, path, status, lastUpdated, hasCommits, isPublic } = body;
+    const { title, subtitle, path, status, lastUpdated, hasCommits, isPublic, section } = body;
 
     // Validate required fields
     if (!title || !path || !status || !lastUpdated) {
@@ -59,6 +60,13 @@ export async function POST({ request, cookies }) {
     const validStatuses = ['Graduated', 'In Progress', 'Graveyard', 'Idea'];
     if (!validStatuses.includes(status)) {
       return json({ error: 'Invalid status' }, { status: 400 });
+    }
+
+    // Validate section (which tab the project lives under)
+    const validSections = ['projects', 'writing'];
+    const sec = section || 'projects';
+    if (!validSections.includes(sec)) {
+      return json({ error: 'Invalid section' }, { status: 400 });
     }
 
     // Generate project ID from path
@@ -73,8 +81,8 @@ export async function POST({ request, cookies }) {
     const pub = isPublic ?? true;
 
     const result = await sql`
-      INSERT INTO projects (id, title, subtitle, path, status, last_updated, has_commits, is_public, created_at, updated_at)
-      VALUES (${projectId}, ${trimmedTitle}, ${trimmedSubtitle}, ${path}, ${status}, ${lastUpdated}, ${commits}, ${pub}, ${now}, ${now})
+      INSERT INTO projects (id, title, subtitle, path, status, last_updated, has_commits, is_public, section, created_at, updated_at)
+      VALUES (${projectId}, ${trimmedTitle}, ${trimmedSubtitle}, ${path}, ${status}, ${lastUpdated}, ${commits}, ${pub}, ${sec}, ${now}, ${now})
       RETURNING *
     `;
 
@@ -103,7 +111,8 @@ export async function POST({ request, cookies }) {
       lastUpdated: insertedProject.last_updated,
       status: insertedProject.status,
       hasCommits: insertedProject.has_commits,
-      isPublic: insertedProject.is_public
+      isPublic: insertedProject.is_public,
+      section: insertedProject.section || 'projects'
     };
 
     return json({ project: formattedProject }, { status: 201 });
@@ -126,7 +135,7 @@ export async function PUT({ request, cookies }) {
 
   try {
     const body = await request.json();
-    const { id, title, subtitle, path, status, lastUpdated, hasCommits, isPublic } = body;
+    const { id, title, subtitle, path, status, lastUpdated, hasCommits, isPublic, section } = body;
 
     if (!id) {
       return json({ error: 'Project ID is required' }, { status: 400 });
@@ -139,6 +148,13 @@ export async function PUT({ request, cookies }) {
     const validStatuses = ['Graduated', 'In Progress', 'Graveyard', 'Idea'];
     if (!validStatuses.includes(status)) {
       return json({ error: 'Invalid status' }, { status: 400 });
+    }
+
+    // Validate section (which tab the project lives under)
+    const validSections = ['projects', 'writing'];
+    const sec = section || 'projects';
+    if (!validSections.includes(sec)) {
+      return json({ error: 'Invalid section' }, { status: 400 });
     }
 
     const sql = getDb();
@@ -157,6 +173,7 @@ export async function PUT({ request, cookies }) {
           last_updated = ${lastUpdated},
           has_commits = ${commits},
           is_public = ${pub},
+          section = ${sec},
           updated_at = ${now}
       WHERE id = ${id}
       RETURNING *
@@ -187,7 +204,8 @@ export async function PUT({ request, cookies }) {
       lastUpdated: updatedProject.last_updated,
       status: updatedProject.status,
       hasCommits: updatedProject.has_commits,
-      isPublic: updatedProject.is_public
+      isPublic: updatedProject.is_public,
+      section: updatedProject.section || 'projects'
     };
 
     return json({ project: formattedProject });

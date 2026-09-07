@@ -11,10 +11,9 @@ export async function GET({ url, cookies }) {
   const owner = url.searchParams.get('owner');
   const repo = url.searchParams.get('repo');
   
-  if (!token) {
-    return json({ error: 'Not authenticated' }, { status: 401 });
-  }
-  
+  // No token is fine for public repos: GitHub allows unauthenticated reads
+  // (rate-limited to 60 requests/hour per IP). A token is only needed for
+  // private repos and a higher rate limit, so visitors still see the graph.
   if (!owner || !repo) {
     return json({ error: 'Owner and repo parameters are required' }, { status: 400 });
   }
@@ -26,7 +25,7 @@ export async function GET({ url, cookies }) {
       `https://api.github.com/repos/${owner}/${repo}/commits?per_page=100&since=${new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString()}`,
       {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
           'Accept': 'application/vnd.github.v3+json'
         }
       }

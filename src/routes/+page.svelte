@@ -55,19 +55,11 @@
         alt = "pretty cover image, flying bird and big flower"
       />
       <h1>abinaya dinesh</h1>
-      <h4>Updated: 02/04/225</h4>
       <u><h4>adinesh[at]berkeley.edu</h4></u>
       <p class="social-links">
         <a href="https://curius.app/abinaya-dinesh">Curius</a> |
-        <a href="x.com/abinayaaaa">Twitter</a> |
-        <a href="https://www.apple.com/newsroom/2021/06/apples-wwdc21-swift-student-challenge-winners-code-to-change-the-world/">Apple</a> |
-        <a href="https://www.teenvogue.com/story/national-stem-day">Teen Vogue</a>
+        <a href="x.com/abinayaaaa">Twitter</a>
       </p>
-      <hr class="solid">
-      <p>
-        I love to host nomads, researchers, and curious fellas at our <a href = "https://joinarcadia.org/">group house in Berkeley</a>. Reach out if you need a place to stay!
-      </p>
-
     </div>
 
     <!-- Center column with images -->
@@ -98,8 +90,11 @@
       </ul>
       <p>
         In my free time, I am <a href="https://runtime.substack.com/p/what-my-body-tells-me">obsessed with rock climbing</a>, skiing, and escaping on long hikes to nature. 
-        <hr class="solid">
-        <a href="https://drive.google.com/file/d/14ItwjFKHKaMP2Gp4xY0hrOXUA45f7-Jo/view?usp=sharing">Resume</a>
+      </p>
+      <hr class="solid">
+      <p>
+        I love to host nomads, researchers, and curious fellas at our <a href = "https://joinarcadia.org/">group house in Berkeley</a>. Reach out if you need a place to stay!
+      </p>
     </div>  
   </div>
 </body>
