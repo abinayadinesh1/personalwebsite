@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   import { page } from '$app/stores';
-  import { loadProjects, saveProjectToNeon, updateProjectInNeon, deleteProjectFromNeon, syncProjectsToNeon, moveProjectToSection } from '$lib/utils/projects.js';
+  import { loadProjects, saveProjectToNeon, updateProjectInNeon, deleteProjectFromNeon, syncProjectsToNeon } from '$lib/utils/projects.js';
 
   export let data; // Server-side data from +page.server.js
 
@@ -294,7 +294,7 @@
 
   function handleEditProject(project) {
     if (isAdmin) {
-      editingProject = { ...project };
+      editingProject = { ...project, section: project.section || 'projects' };
     }
   }
 
@@ -316,6 +316,8 @@
       }
       
       editingProject = null;
+      // If the section changed, the reactive filter drops it from this tab
+      // and it shows up under Writing instead.
       console.log('Project updated:', updatedProject);
     } catch (error) {
       saveError = error.message || 'Failed to update project';
@@ -336,29 +338,6 @@
   function handleCancelEdit() {
     editingProject = null;
     saveError = null;
-  }
-
-  // Move a project to the Writing tab. It keeps its id, path, and content,
-  // and can still be edited from /writing or its own page.
-  async function handleMoveToWriting(project) {
-    if (!browser || !isAdmin) return;
-    savingProject = true;
-    saveError = null;
-    try {
-      const moved = await moveProjectToSection(project, 'writing');
-      const index = projectsData.findIndex(p => p.id === moved.id);
-      if (index !== -1) {
-        projectsData[index] = moved;
-        projectsData = [...projectsData];
-      }
-      console.log('Project moved to writing:', moved.id);
-    } catch (error) {
-      saveError = error.message || 'Failed to move project';
-      console.error('Error moving project to writing:', error);
-      alert(`Failed to move project: ${saveError}`);
-    } finally {
-      savingProject = false;
-    }
   }
 
   async function handleDeleteProject(projectId) {
@@ -522,6 +501,13 @@
                     <option value="Idea">Idea</option>
                   </select>
                 </label>
+                <label class="status-label">
+                  Section:
+                  <select class="status-select" bind:value={editingProject.section}>
+                    <option value="projects">Projects</option>
+                    <option value="writing">Writing</option>
+                  </select>
+                </label>
                 <label class="visibility-label">
                   <input
                     type="checkbox"
@@ -596,9 +582,6 @@
           {#if isAdmin}
             <button class="edit-button" on:click={() => handleEditProject(project)} title="Edit project">
               <i class="las la-edit"></i>
-            </button>
-            <button class="move-button" on:click={() => handleMoveToWriting(project)} title="Move to writing" disabled={savingProject}>
-              <i class="las la-pen-nib"></i>
             </button>
           {/if}
         </div>

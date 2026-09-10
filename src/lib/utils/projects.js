@@ -383,13 +383,3 @@ export async function saveProjectContentToNeon(projectId, markdownContent, githu
     throw error; // Re-throw so caller knows Neon save failed
   }
 }
-
-/**
- * Move a project between the Projects and Writing tabs.
- * @param {Object} project - Full project object (must include id)
- * @param {'projects'|'writing'} section - Destination section
- * @returns {Promise<Object>} Updated project object
- */
-export async function moveProjectToSection(project, section) {
-  return updateProjectInNeon({ ...project, section });
-}

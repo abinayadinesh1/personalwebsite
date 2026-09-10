@@ -514,8 +514,20 @@
   color: #cd7f32;
 }
 
-.markdown-display :global(strong) {
+/* Inline emphasis from **bold** and *italic*. Only the Regular weight of
+   BerkeleyMono is loaded, so the browser synthesizes bold/italic; the color
+   lift on <strong> keeps bold legible where faux-bold on a mono font is faint. */
+.markdown-display strong,
+.markdown-display b {
   font-weight: 700;
+  font-synthesis: weight style;
+  color: #e6a85c;
+}
+
+.markdown-display em,
+.markdown-display i {
+  font-style: italic;
+  font-synthesis: weight style;
 }
 
 .markdown-display :global(a) {

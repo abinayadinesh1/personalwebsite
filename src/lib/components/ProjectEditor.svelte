@@ -219,6 +219,35 @@
     markdownContent = embedChangelog(newEditableContent, timelineData);
   }
 
+  // Wrap the current selection in a markdown marker (e.g. ** or *). With no
+  // selection, insert a marker pair and park the caret between them.
+  function wrapSelection(marker) {
+    const el = editTextarea;
+    if (!el) return;
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+    const value = el.value;
+    const selected = value.slice(start, end);
+    const updated = value.slice(0, start) + marker + selected + marker + value.slice(end);
+    markdownContent = embedChangelog(updated, timelineData);
+    setTimeout(() => {
+      el.setSelectionRange(start + marker.length, end + marker.length);
+    }, 0);
+  }
+
+  // Cmd/Ctrl+B -> **bold**, Cmd/Ctrl+I -> *italic*
+  function handleEditorKeydown(e) {
+    if (!(e.metaKey || e.ctrlKey) || e.altKey || e.shiftKey) return;
+    const key = e.key.toLowerCase();
+    if (key === 'b') {
+      e.preventDefault();
+      wrapSelection('**');
+    } else if (key === 'i') {
+      e.preventDefault();
+      wrapSelection('*');
+    }
+  }
+
   // Load project data from backend (with localStorage fallback)
   onMount(async () => {
     if (browser && projectId) {
@@ -486,11 +515,12 @@
           bind:this={editTextarea}
           value={editableContent}
           on:input={handleEditableContentChange}
+          on:keydown={handleEditorKeydown}
           on:drop={handleDrop}
           on:dragover={handleDragOver}
           on:paste={handlePaste}
           class="markdown-editor"
-          placeholder="Start writing ... (drag or paste an image to upload)"
+          placeholder="Start writing ... (**bold**, *italic*, drag or paste an image to upload)"
         ></textarea>
       {:else}
         <div class="markdown-display">

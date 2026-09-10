@@ -21,6 +21,13 @@
 
   const books = [
     {
+      date: "09.09.26",
+      title: "The Motern Method",
+      author: "Matt Farley",
+      image: "/motern_method.png",
+      note: ""
+    },
+    {
       date: "09.06.26",
       title: "A Mask the Color of the Sky",
       author: "Bassem Khandaqji",

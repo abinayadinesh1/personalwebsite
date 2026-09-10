@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
-  import { loadProjects, updateProjectInNeon, deleteProjectFromNeon, moveProjectToSection } from '$lib/utils/projects.js';
+  import { loadProjects, updateProjectInNeon, deleteProjectFromNeon } from '$lib/utils/projects.js';
 
   export let data; // Server-side data from +page.server.js
 
@@ -75,7 +75,7 @@
 
   function handleEditWriting(project) {
     if (!isAdmin) return;
-    editingWriting = { ...project, lastUpdated: toDateInput(project.lastUpdated) };
+    editingWriting = { ...project, lastUpdated: toDateInput(project.lastUpdated), section: project.section || 'writing' };
     saveError = null;
   }
 
@@ -98,7 +98,12 @@
     saveError = null;
     try {
       const updated = await updateProjectInNeon(editingWriting);
-      replaceWriting(updated);
+      if (updated.section === 'writing') {
+        replaceWriting(updated);
+      } else {
+        // Section changed: it now lives on the Projects tab, so drop it here.
+        dbWritings = dbWritings.filter(p => p.id !== updated.id);
+      }
       editingWriting = null;
     } catch (error) {
       saveError = error.message || 'Failed to update writing';
@@ -120,24 +125,6 @@
     } catch (error) {
       saveError = error.message || 'Failed to delete writing';
       console.error('Error deleting writing:', error);
-    } finally {
-      savingWriting = false;
-    }
-  }
-
-  // Move a writing back to the Projects tab. It keeps its id, path, and content.
-  async function handleMoveToProjects(project) {
-    if (!browser || !isAdmin) return;
-    savingWriting = true;
-    saveError = null;
-    try {
-      await moveProjectToSection(project, 'projects');
-      dbWritings = dbWritings.filter(p => p.id !== project.id);
-      if (editingWriting && editingWriting.id === project.id) editingWriting = null;
-    } catch (error) {
-      saveError = error.message || 'Failed to move writing';
-      console.error('Error moving writing to projects:', error);
-      alert(`Failed to move: ${saveError}`);
     } finally {
       savingWriting = false;
     }
@@ -328,6 +315,13 @@
                       <option value="Idea">Idea</option>
                     </select>
                   </label>
+                  <label>
+                    Section:
+                    <select class="edit-input small" bind:value={editingWriting.section}>
+                      <option value="projects">Projects</option>
+                      <option value="writing">Writing</option>
+                    </select>
+                  </label>
                   <label class="check-label">
                     <input type="checkbox" bind:checked={editingWriting.isPublic} />
                     Public
@@ -338,9 +332,6 @@
                     {savingWriting ? 'Saving...' : 'Save'}
                   </button>
                   <button class="admin-btn" on:click={handleCancelEdit}>Cancel</button>
-                  <button class="admin-btn" on:click={() => handleMoveToProjects(post.project)} disabled={savingWriting}>
-                    Move to projects
-                  </button>
                   <button class="admin-btn danger" on:click={() => handleDeleteWriting(post.project.id)} disabled={savingWriting}>
                     Delete
                   </button>
@@ -363,9 +354,6 @@
                 <span class="row-admin">
                   <button class="icon-btn" title="Edit" on:click={() => handleEditWriting(post.project)}>
                     <i class="las la-edit"></i>
-                  </button>
-                  <button class="icon-btn" title="Move to projects" on:click={() => handleMoveToProjects(post.project)} disabled={savingWriting}>
-                    <i class="las la-cube"></i>
                   </button>
                 </span>
               {/if}
