@@ -19,7 +19,17 @@
       "Bash(git push:*)",
       "Bash(node *)",
       "Bash(npm install *)",
-      "Bash(git rm *)"
+      "Bash(git rm *)",
+      "Bash(export DATABASE_URL='postgresql://neondb_owner:npg_EHQCZtD21SFl@ep-shy-bar-afl69rtu-pooler.c-2.us-west-2.aws.neon.tech/neondb?sslmode=require')",
+      "Bash(node scripts/setup-workouts-tables.js)",
+      "Bash(node scripts/seed-workout-exercises.js)",
+      "Bash(node scripts/setup-plan-tables.js)",
+      "Bash(node scripts/seed-plan-days.js)",
+      "Bash(python3 -c \"import fitz; print\\('pymupdf', fitz.__doc__[:20]\\)\")",
+      "Bash(python3 -c \"import pypdf; print\\('pypdf ok'\\)\")",
+      "Bash(python3 -c \"import PyPDF2; print\\('PyPDF2 ok'\\)\")",
+      "Bash(python3 -m pip install --quiet --target ./pylibs pymupdf)",
+      "Bash(PYTHONPATH=./pylibs python3 -c ' *)"
     ]
   },
   "enableAllProjectMcpServers": false
