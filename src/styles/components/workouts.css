@@ -365,6 +365,27 @@
   gap: 0.4rem;
 }
 
+/* The global rule paints every <select> with a text-clipped bronze gradient
+   (color: transparent), which leaves a native select's value invisible.
+   Pin an explicit light color/background so the picked option shows. */
+.add-exercise-form select {
+  color: var(--fg-1) !important;
+  background: var(--bg-2) !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  filter: none !important;
+  border: 1px solid var(--bg-2);
+  border-radius: var(--border-radius);
+  padding: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.add-exercise-form select option {
+  color: var(--fg-1) !important;
+  background: var(--bg-1) !important;
+  filter: none !important;
+}
+
 .add-exercise-form button {
   font-size: 0.8rem;
 }
