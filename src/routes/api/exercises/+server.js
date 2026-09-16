@@ -2,7 +2,7 @@ import { json } from '@sveltejs/kit';
 import { getDb } from '$lib/neonClient.js';
 
 const MUSCLE_GROUPS = ['legs', 'push', 'pull', 'core', 'cardio', 'full_body'];
-const EXERCISE_TYPES = ['warmup', 'main', 'accessory'];
+const EXERCISE_TYPES = ['prework', 'exercises', 'postwork'];
 
 // GET - Fetch exercise library (optionally filtered)
 export async function GET({ url, cookies }) {
@@ -53,7 +53,7 @@ export async function POST({ request, cookies }) {
     if (!MUSCLE_GROUPS.includes(muscle_group)) {
       return json({ error: 'Invalid muscle_group' }, { status: 400 });
     }
-    const type = EXERCISE_TYPES.includes(exercise_type) ? exercise_type : 'main';
+    const type = EXERCISE_TYPES.includes(exercise_type) ? exercise_type : 'exercises';
     const sets = default_sets ? parseInt(default_sets, 10) : null;
 
     const sql = getDb();

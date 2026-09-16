@@ -11,21 +11,21 @@
   let loginLoading = false;
 
   const MUSCLE_GROUPS = ['all', 'legs', 'push', 'pull', 'core', 'cardio', 'full_body'];
-  const SECTIONS = ['warmup', 'main', 'accessory'];
-  const SECTION_LABELS = { warmup: 'warm-up', main: 'main', accessory: 'accessory' };
+  const SECTIONS = ['prework', 'exercises', 'postwork'];
+  const SECTION_LABELS = { prework: 'pre-work', exercises: 'exercises', postwork: 'post-work' };
 
   let exercises = [];
   let libraryFilter = 'all';
   let librarySearch = '';
   let showAddExercise = false;
-  let newExercise = { name: '', muscle_group: 'legs', movement_pattern: '', exercise_type: 'main', default_sets: 3, default_reps: '' };
+  let newExercise = { name: '', muscle_group: 'legs', movement_pattern: '', exercise_type: 'exercises', default_sets: 3, default_reps: '' };
 
   let workoutDate = new Date().toISOString().slice(0, 10);
   let workoutTitle = '';
   let workoutNotes = '';
   let currentWorkoutId = null;
   let planDayId = null;
-  let sections = { warmup: [], main: [], accessory: [] };
+  let sections = { prework: [], exercises: [], postwork: [] };
   let saveMessage = '';
 
   let history = [];
@@ -141,9 +141,9 @@
     workoutTitle = day.title;
     workoutNotes = '';
     workoutDate = new Date().toISOString().slice(0, 10);
-    const grouped = { warmup: [], main: [], accessory: [] };
+    const grouped = { prework: [], exercises: [], postwork: [] };
     for (const ex of day.exercises) {
-      const sec = SECTIONS.includes(ex.section) ? ex.section : 'main';
+      const sec = SECTIONS.includes(ex.section) ? ex.section : 'exercises';
       grouped[sec].push({
         exercise_id: ex.exercise_id,
         exercise_name_snapshot: ex.exercise_name_snapshot,
@@ -182,7 +182,7 @@
   }
 
   function previewSection(exercises, section) {
-    return exercises.filter((e) => (SECTIONS.includes(e.section) ? e.section : 'main') === section);
+    return exercises.filter((e) => (SECTIONS.includes(e.section) ? e.section : 'exercises') === section);
   }
 
   async function loadWorkout(id) {
@@ -194,9 +194,9 @@
     workoutTitle = d.workout.title || '';
     workoutDate = (d.workout.workout_date || '').slice(0, 10) || workoutDate;
     workoutNotes = d.workout.notes || '';
-    const grouped = { warmup: [], main: [], accessory: [] };
+    const grouped = { prework: [], exercises: [], postwork: [] };
     for (const ex of d.exercises) {
-      const sec = SECTIONS.includes(ex.section) ? ex.section : 'main';
+      const sec = SECTIONS.includes(ex.section) ? ex.section : 'exercises';
       grouped[sec].push(ex);
     }
     sections = grouped;
@@ -209,7 +209,7 @@
     workoutTitle = '';
     workoutNotes = '';
     workoutDate = new Date().toISOString().slice(0, 10);
-    sections = { warmup: [], main: [], accessory: [] };
+    sections = { prework: [], exercises: [], postwork: [] };
   }
 
   function onLibraryDragStart(e, exercise) {
@@ -342,7 +342,7 @@
     if (res.ok) {
       await loadExercises();
       showAddExercise = false;
-      newExercise = { name: '', muscle_group: 'legs', movement_pattern: '', exercise_type: 'main', default_sets: 3, default_reps: '' };
+      newExercise = { name: '', muscle_group: 'legs', movement_pattern: '', exercise_type: 'exercises', default_sets: 3, default_reps: '' };
     }
   }
 
@@ -499,9 +499,9 @@
               <option value="full_body">full body</option>
             </select>
             <select bind:value={newExercise.exercise_type}>
-              <option value="warmup">warm-up</option>
-              <option value="main">main</option>
-              <option value="accessory">accessory</option>
+              <option value="prework">pre-work</option>
+              <option value="exercises">exercises</option>
+              <option value="postwork">post-work</option>
             </select>
             <input placeholder="movement pattern (e.g. lunge)" bind:value={newExercise.movement_pattern} />
             <div class="row">
