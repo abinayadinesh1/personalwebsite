@@ -37,6 +37,14 @@
   let planLoaded = false;
   let planFinished = false;
 
+  // Preview of upcoming (not-yet-logged) plan days.
+  let planDays = [];
+  let showUpcoming = false;
+  let expandedDayId = null;
+  let previewCache = {}; // plan_day_id -> template exercises
+
+  $: upcomingDays = planDays.filter((d) => !d.completed);
+
   let dragPayload = null;
   let dropHintSection = null;
 
@@ -116,6 +124,7 @@
     const d = await res.json();
     planTotal = d.total;
     planCompleted = d.completed;
+    planDays = d.days || [];
     planLoaded = true;
 
     if (d.currentDay) {
@@ -153,6 +162,27 @@
     if (!res.ok) return;
     const d = await res.json();
     applyPlanDay({ ...d.day, exercises: d.exercises });
+    showUpcoming = false;
+  }
+
+  // Expand/collapse an upcoming day and lazily fetch its template exercises.
+  async function togglePreview(day) {
+    if (expandedDayId === day.id) {
+      expandedDayId = null;
+      return;
+    }
+    expandedDayId = day.id;
+    if (!previewCache[day.id]) {
+      const res = await fetch(`/api/plan/${day.id}`);
+      if (res.ok) {
+        const d = await res.json();
+        previewCache = { ...previewCache, [day.id]: d.exercises };
+      }
+    }
+  }
+
+  function previewSection(exercises, section) {
+    return exercises.filter((e) => (SECTIONS.includes(e.section) ? e.section : 'main') === section);
   }
 
   async function loadWorkout(id) {
@@ -365,10 +395,52 @@
         <button type="button" on:click={loadPlanProgress}>↻ back to plan</button>
       {/if}
       <button type="button" on:click={saveWorkout}>{planDayId && !currentWorkoutId ? 'log this day' : 'save'}</button>
+      {#if upcomingDays.length > 0}
+        <button type="button" on:click={() => (showUpcoming = !showUpcoming)}>upcoming ({upcomingDays.length})</button>
+      {/if}
       <button type="button" on:click={() => (showHistory = !showHistory)}>history ({history.length})</button>
       {#if saveMessage}<span class="save-msg">{saveMessage}</span>{/if}
       <button type="button" class="logout-link" on:click={logout}>log out</button>
     </div>
+
+    {#if showUpcoming}
+      <div class="workouts-upcoming">
+        {#each upcomingDays as day, i (day.id)}
+          <div class="upcoming-day">
+            <div class="upcoming-day-header">
+              <button type="button" class="upcoming-toggle" on:click={() => togglePreview(day)}>
+                <span class="upcoming-caret">{expandedDayId === day.id ? '▾' : '▸'}</span>
+                <span class="upcoming-day-num">day {planCompleted + 1 + i}</span>
+                {day.title || 'untitled'}
+                {#if day.week_number}<span class="upcoming-meta">wk {day.week_number}{#if day.day_number} · d{day.day_number}{/if}</span>{/if}
+                {#if i === 0}<span class="plan-tag">next up</span>{/if}
+              </button>
+              <button type="button" class="upcoming-load" on:click={() => jumpToPlanDay(day.id)}>load</button>
+            </div>
+            {#if expandedDayId === day.id}
+              <div class="upcoming-exercises">
+                {#if previewCache[day.id]}
+                  {#each SECTIONS as sec}
+                    {@const secEx = previewSection(previewCache[day.id], sec)}
+                    {#if secEx.length}
+                      <div class="upcoming-section">
+                        <span class="upcoming-section-label">{SECTION_LABELS[sec]}</span>
+                        {#each secEx as ex}
+                          <div class="upcoming-ex">{ex.exercise_name_snapshot} · {ex.sets}×{ex.reps || '?'}</div>
+                        {/each}
+                      </div>
+                    {/if}
+                  {/each}
+                  {#if previewCache[day.id].length === 0}<p class="empty-hint">no exercises for this day</p>{/if}
+                {:else}
+                  <p class="empty-hint">loading…</p>
+                {/if}
+              </div>
+            {/if}
+          </div>
+        {/each}
+      </div>
+    {/if}
 
     {#if showHistory}
       <div class="workouts-history">
