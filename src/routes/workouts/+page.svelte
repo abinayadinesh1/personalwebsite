@@ -46,6 +46,10 @@
     return true;
   });
 
+  // Demo links live on the exercise library rows; workout/plan items only carry
+  // an exercise_id snapshot, so map id -> video to show the link in the builder.
+  $: videoById = new Map(exercises.filter((e) => e.video_url).map((e) => [e.id, e.video_url]));
+
   async function login() {
     if (!password.trim()) {
       loginError = 'Please enter a password';
@@ -400,6 +404,10 @@
                 <span class="tag">{ex.exercise_type}</span>
                 {#if ex.default_sets}<span class="exercise-card-sets">{ex.default_sets}x{ex.default_reps || '?'}</span>{/if}
               </div>
+              {#if ex.notes}<div class="exercise-card-notes">{ex.notes}</div>{/if}
+              {#if ex.video_url}
+                <a class="exercise-card-demo" href={ex.video_url} target="_blank" rel="noopener noreferrer" on:mousedown|stopPropagation on:click|stopPropagation>▶ demo</a>
+              {/if}
             </div>
           {/each}
           {#if visibleExercises.length === 0}<p class="empty-hint">no matching exercises</p>{/if}
@@ -448,7 +456,12 @@
             {/if}
             {#each sections[section] as item, i (i)}
               <div class="workout-item" draggable="true" on:dragstart={(e) => onItemDragStart(e, section, i)}>
-                <div class="workout-item-name">{item.exercise_name_snapshot}</div>
+                <div class="workout-item-name">
+                  {item.exercise_name_snapshot}
+                  {#if videoById.get(item.exercise_id)}
+                    <a class="workout-item-demo" href={videoById.get(item.exercise_id)} target="_blank" rel="noopener noreferrer" on:mousedown|stopPropagation on:click|stopPropagation>▶</a>
+                  {/if}
+                </div>
                 <div class="workout-item-fields">
                   <input type="number" bind:value={item.sets} min="0" placeholder="sets" />
                   <input type="text" bind:value={item.reps} placeholder="reps" />

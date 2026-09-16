@@ -45,7 +45,7 @@ export async function POST({ request, cookies }) {
 
   try {
     const body = await request.json();
-    const { name, muscle_group, movement_pattern, exercise_type, default_sets, default_reps, equipment, notes } = body;
+    const { name, muscle_group, movement_pattern, exercise_type, default_sets, default_reps, equipment, notes, video_url } = body;
 
     if (!name || !muscle_group) {
       return json({ error: 'Missing required fields' }, { status: 400 });
@@ -58,8 +58,8 @@ export async function POST({ request, cookies }) {
 
     const sql = getDb();
     const result = await sql`
-      INSERT INTO exercises (name, muscle_group, movement_pattern, exercise_type, default_sets, default_reps, equipment, notes, is_custom)
-      VALUES (${name.trim()}, ${muscle_group}, ${movement_pattern || null}, ${type}, ${sets}, ${default_reps || null}, ${equipment || null}, ${notes || null}, true)
+      INSERT INTO exercises (name, muscle_group, movement_pattern, exercise_type, default_sets, default_reps, equipment, notes, video_url, is_custom)
+      VALUES (${name.trim()}, ${muscle_group}, ${movement_pattern || null}, ${type}, ${sets}, ${default_reps || null}, ${equipment || null}, ${notes || null}, ${video_url || null}, true)
       ON CONFLICT (name) DO UPDATE SET
         muscle_group = EXCLUDED.muscle_group,
         movement_pattern = EXCLUDED.movement_pattern,
@@ -67,7 +67,8 @@ export async function POST({ request, cookies }) {
         default_sets = EXCLUDED.default_sets,
         default_reps = EXCLUDED.default_reps,
         equipment = EXCLUDED.equipment,
-        notes = EXCLUDED.notes
+        notes = EXCLUDED.notes,
+        video_url = EXCLUDED.video_url
       RETURNING *
     `;
 

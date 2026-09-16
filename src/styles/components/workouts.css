@@ -2,6 +2,21 @@
 .workouts-page {
   max-width: 1200px;
   margin: 0 auto;
+
+  /* The site background is always dark (--bg-dark), but the theme class
+     defaults to "light", which sets --fg-* to near-black. Every page but
+     this one paints its text with the bronze gradient, so it never notices;
+     the workouts page opts out of the gradient for legibility and would
+     otherwise render dark-on-dark. Pin the light-text values locally. */
+  --fg-1: hsl(0, 0%, 90%);
+  --fg-2: hsl(0, 0%, 70%);
+  --fg-3: hsl(0, 0%, 60%);
+
+  /* Plain (non-gradient) text like exercise-card names are bare <div>s that
+     global.css forces to `color: unset !important`, so they inherit down to
+     black. Set a light base here; it cascades into those inheriting divs.
+     Gradient headers/spans keep their own color and are unaffected. */
+  color: var(--fg-1) !important;
 }
 
 .workouts-toolbar {
@@ -215,6 +230,25 @@
   font-size: 0.7rem;
   opacity: 0.7;
   margin-left: auto;
+}
+
+.exercise-card-notes {
+  font-size: 0.7rem;
+  color: var(--fg-3) !important;
+  margin-top: 0.35rem;
+  font-style: italic;
+}
+
+.exercise-card-demo {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-size: 0.7rem;
+}
+
+.workout-item-demo {
+  font-size: 0.72rem;
+  margin-left: 0.4rem;
+  text-decoration: none;
 }
 
 .add-exercise-btn {

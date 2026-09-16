@@ -22,6 +22,7 @@ async function setupWorkoutsTables() {
       default_reps TEXT,
       equipment TEXT,
       notes TEXT,
+      video_url TEXT,
       is_custom BOOLEAN NOT NULL DEFAULT true,
       created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     )

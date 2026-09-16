@@ -1,4 +1,5 @@
 import { neon } from '@neondatabase/serverless';
+import { EXERCISE_VIDEOS, EXERCISE_NOTES } from './exercise-media.js';
 
 const DATABASE_URL = process.env.DATABASE_URL;
 if (!DATABASE_URL) {
@@ -94,9 +95,13 @@ async function seedExercises() {
   console.log(`Seeding ${EXERCISES.length} exercises...`);
   let inserted = 0;
   for (const ex of EXERCISES) {
+    // Demo link + coaching cue from the original program live in the shared
+    // exercise-media.js so fresh installs and the backfill stay in sync.
+    const videoUrl = EXERCISE_VIDEOS[ex.name] || null;
+    const notes = ex.notes || EXERCISE_NOTES[ex.name] || null;
     const result = await sql`
-      INSERT INTO exercises (name, muscle_group, movement_pattern, exercise_type, default_sets, default_reps, equipment, notes, is_custom)
-      VALUES (${ex.name}, ${ex.muscle_group}, ${ex.movement_pattern || null}, ${ex.exercise_type}, ${ex.default_sets || null}, ${ex.default_reps || null}, ${ex.equipment || null}, ${ex.notes || null}, false)
+      INSERT INTO exercises (name, muscle_group, movement_pattern, exercise_type, default_sets, default_reps, equipment, notes, video_url, is_custom)
+      VALUES (${ex.name}, ${ex.muscle_group}, ${ex.movement_pattern || null}, ${ex.exercise_type}, ${ex.default_sets || null}, ${ex.default_reps || null}, ${ex.equipment || null}, ${notes}, ${videoUrl}, false)
       ON CONFLICT (name) DO NOTHING
       RETURNING id
     `;
