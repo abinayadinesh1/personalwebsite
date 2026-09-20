@@ -93,20 +93,20 @@
 .word-graph {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  overflow-x: auto;
-  padding: 1rem 0.25rem 0.5rem;
+  gap: 2px;
+  width: 100%;
+  padding: 1rem 0 0.5rem;
   margin: 1.5rem 0;
 }
 
+/* Columns share the full width evenly; no horizontal scrolling */
 .word-graph-col {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  flex-shrink: 0;
-  min-width: 48px;
-  max-width: 110px;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 /* Fixed-height bar area keeps all bars on a shared baseline
@@ -119,7 +119,8 @@
 
 /* !important needed: global.css forces div { background: transparent !important } */
 .word-bar {
-  width: 22px;
+  width: 100%;
+  max-width: 22px;
   min-height: 4px;
   border-radius: 3px 3px 0 0;
   background: linear-gradient(
@@ -148,6 +149,17 @@
   white-space: nowrap;
 }
 
+/* Zero-word days: a faint baseline tick instead of a bar */
+.word-graph-col.empty .word-bar {
+  min-height: 2px;
+  opacity: 0.25;
+}
+
+/* Unlabeled columns keep their slot but hide the text so bars stay aligned */
+.word-bar-date.hidden-label {
+  visibility: hidden;
+}
+
 .word-bar-annotation {
   font-size: 0.6em;
   font-style: italic;
@@ -159,6 +171,7 @@
   filter: none !important;
   font-weight: normal;
   line-height: 1.3;
+  white-space: nowrap;
 }
 
 .annotate-btn {

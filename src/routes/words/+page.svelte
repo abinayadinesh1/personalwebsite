@@ -155,15 +155,32 @@
     return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 
+  // Every day from the first word through today, with 0 for days without new words
   $: dateGroups = (() => {
     const counts = {};
     for (const w of words) {
       counts[w.learned_on] = (counts[w.learned_on] || 0) + 1;
     }
-    return Object.keys(counts).sort().map(date => ({ date, count: counts[date] }));
+    const dates = Object.keys(counts).sort();
+    if (dates.length === 0) return [];
+    const groups = [];
+    const cursor = new Date(dates[0] + 'T00:00:00');
+    const end = new Date(todayLocal() + 'T00:00:00');
+    while (cursor <= end) {
+      const date = cursor.toLocaleDateString('en-CA');
+      groups.push({ date, count: counts[date] || 0 });
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    return groups;
   })();
 
   $: maxCount = Math.max(1, ...dateGroups.map(g => g.count));
+
+  // Only label every Nth column so dates stay readable in the fixed-width graph
+  $: labelEvery = Math.max(1, Math.ceil(dateGroups.length / 8));
+  function showLabel(i) {
+    return i % labelEvery === 0 || i === dateGroups.length - 1;
+  }
 
   $: annotationsByDate = Object.fromEntries(annotations.map(a => [a.date, a.label]));
 </script>
@@ -190,16 +207,16 @@
 
   {#if dateGroups.length > 0}
     <div class="word-graph">
-      {#each dateGroups as g}
-        <div class="word-graph-col">
+      {#each dateGroups as g, i}
+        <div class="word-graph-col" class:empty={g.count === 0}>
           <div class="word-bar-area">
             <div
               class="word-bar"
               style="height: {(g.count / maxCount) * 80}px"
-              title="{g.count} word{g.count === 1 ? '' : 's'}"
+              title="{formatGraphDate(g.date)}: {g.count} word{g.count === 1 ? '' : 's'}"
             ></div>
           </div>
-          <span class="word-bar-date">{formatGraphDate(g.date)}</span>
+          <span class="word-bar-date" class:hidden-label={!showLabel(i)}>{formatGraphDate(g.date)}</span>
           {#if annotatingDate === g.date}
             <input
               class="edit-input annotation-input"
