@@ -241,6 +241,7 @@
       status: 'In Progress',
       hasCommits: false,
       isPublic: true,
+      thread: '',
       isNew: true
     };
   }
@@ -294,7 +295,7 @@
 
   function handleEditProject(project) {
     if (isAdmin) {
-      editingProject = { ...project, section: project.section || 'projects' };
+      editingProject = { ...project, section: project.section || 'projects', thread: project.thread || '' };
     }
   }
 
@@ -431,6 +432,15 @@
                   <option value="Idea">Idea</option>
                 </select>
               </label>
+              <label class="status-label">
+                Thread:
+                <input
+                  type="text"
+                  class="date-input"
+                  placeholder="Group name (optional)"
+                  bind:value={newProject.thread}
+                />
+              </label>
               {#if isAdmin}
                 <label class="visibility-label">
                   <input
@@ -507,6 +517,15 @@
                     <option value="projects">Projects</option>
                     <option value="writing">Writing</option>
                   </select>
+                </label>
+                <label class="status-label">
+                  Thread:
+                  <input
+                    type="text"
+                    class="date-input"
+                    placeholder="Group name (optional)"
+                    bind:value={editingProject.thread}
+                  />
                 </label>
                 <label class="visibility-label">
                   <input

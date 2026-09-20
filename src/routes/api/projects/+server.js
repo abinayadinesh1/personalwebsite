@@ -29,7 +29,8 @@ export async function GET({ url, cookies }) {
       status: p.status,
       hasCommits: p.has_commits,
       isPublic: p.is_public,
-      section: p.section || 'projects'
+      section: p.section || 'projects',
+      thread: p.thread || null
     }));
 
     return json({ projects: formattedProjects });
@@ -49,7 +50,7 @@ export async function POST({ request, cookies }) {
 
   try {
     const body = await request.json();
-    const { title, subtitle, path, status, lastUpdated, hasCommits, isPublic, section } = body;
+    const { title, subtitle, path, status, lastUpdated, hasCommits, isPublic, section, thread } = body;
 
     // Validate required fields
     if (!title || !path || !status || !lastUpdated) {
@@ -79,10 +80,11 @@ export async function POST({ request, cookies }) {
     const trimmedSubtitle = (subtitle || '').trim();
     const commits = hasCommits ?? false;
     const pub = isPublic ?? true;
+    const threadName = (thread || '').trim() || null;
 
     const result = await sql`
-      INSERT INTO projects (id, title, subtitle, path, status, last_updated, has_commits, is_public, section, created_at, updated_at)
-      VALUES (${projectId}, ${trimmedTitle}, ${trimmedSubtitle}, ${path}, ${status}, ${lastUpdated}, ${commits}, ${pub}, ${sec}, ${now}, ${now})
+      INSERT INTO projects (id, title, subtitle, path, status, last_updated, has_commits, is_public, section, thread, created_at, updated_at)
+      VALUES (${projectId}, ${trimmedTitle}, ${trimmedSubtitle}, ${path}, ${status}, ${lastUpdated}, ${commits}, ${pub}, ${sec}, ${threadName}, ${now}, ${now})
       RETURNING *
     `;
 
@@ -112,7 +114,8 @@ export async function POST({ request, cookies }) {
       status: insertedProject.status,
       hasCommits: insertedProject.has_commits,
       isPublic: insertedProject.is_public,
-      section: insertedProject.section || 'projects'
+      section: insertedProject.section || 'projects',
+      thread: insertedProject.thread || null
     };
 
     return json({ project: formattedProject }, { status: 201 });
@@ -135,7 +138,7 @@ export async function PUT({ request, cookies }) {
 
   try {
     const body = await request.json();
-    const { id, title, subtitle, path, status, lastUpdated, hasCommits, isPublic, section } = body;
+    const { id, title, subtitle, path, status, lastUpdated, hasCommits, isPublic, section, thread } = body;
 
     if (!id) {
       return json({ error: 'Project ID is required' }, { status: 400 });
@@ -163,6 +166,7 @@ export async function PUT({ request, cookies }) {
     const trimmedSubtitle = (subtitle || '').trim();
     const commits = hasCommits ?? false;
     const pub = isPublic ?? true;
+    const threadName = (thread || '').trim() || null;
 
     const result = await sql`
       UPDATE projects
@@ -174,6 +178,7 @@ export async function PUT({ request, cookies }) {
           has_commits = ${commits},
           is_public = ${pub},
           section = ${sec},
+          thread = ${threadName},
           updated_at = ${now}
       WHERE id = ${id}
       RETURNING *
@@ -205,7 +210,8 @@ export async function PUT({ request, cookies }) {
       status: updatedProject.status,
       hasCommits: updatedProject.has_commits,
       isPublic: updatedProject.is_public,
-      section: updatedProject.section || 'projects'
+      section: updatedProject.section || 'projects',
+      thread: updatedProject.thread || null
     };
 
     return json({ project: formattedProject });

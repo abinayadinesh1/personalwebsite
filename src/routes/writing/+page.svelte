@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
-  import { loadProjects, updateProjectInNeon, deleteProjectFromNeon } from '$lib/utils/projects.js';
+  import { loadProjects, saveProjectToNeon } from '$lib/utils/projects.js';
 
   export let data; // Server-side data from +page.server.js
 
@@ -24,9 +24,6 @@
 
   // --- Writings that live in the database (projects moved into the Writing tab) ---
   let dbWritings = [];
-  let editingWriting = null;
-  let savingWriting = false;
-  let saveError = null;
 
   onMount(async () => {
     if (!browser) return;
@@ -51,12 +48,6 @@
     return `${mm}.${dd}.${yy}`;
   }
 
-  // Date input wants YYYY-MM-DD; the API may return a full ISO timestamp
-  function toDateInput(dateString) {
-    if (!dateString) return '';
-    return String(dateString).slice(0, 10);
-  }
-
   // Database writings are shown under "General" alongside the static posts.
   // Private ones are only returned by the API to admins.
   $: dbPosts = dbWritings
@@ -67,64 +58,93 @@
       sortDate: new Date(p.lastUpdated),
       subject: "General",
       href: p.path,
+      thread: p.thread || null,
       project: p
     }));
 
   $: allPosts = [...dbPosts, ...posts];
   $: filteredPosts = allPosts.filter(p => selectedSubjects.includes(p.subject));
 
-  function handleEditWriting(project) {
-    if (!isAdmin) return;
-    editingWriting = { ...project, lastUpdated: toDateInput(project.lastUpdated), section: project.section || 'writing' };
-    saveError = null;
+  // --- Threads: posts that share a `thread` name are shown together under one heading ---
+  // Rows keep the position of the thread's first post; ungrouped posts render as plain rows.
+  let collapsedThreads = new Set();
+
+  function toggleThread(name) {
+    const next = new Set(collapsedThreads);
+    if (next.has(name)) next.delete(name); else next.add(name);
+    collapsedThreads = next;
   }
 
-  function handleCancelEdit() {
-    editingWriting = null;
-    saveError = null;
-  }
-
-  function replaceWriting(updated) {
-    const index = dbWritings.findIndex(p => p.id === updated.id);
-    if (index !== -1) {
-      dbWritings[index] = updated;
-      dbWritings = [...dbWritings];
-    }
-  }
-
-  async function handleSaveEdit() {
-    if (!editingWriting || !browser) return;
-    savingWriting = true;
-    saveError = null;
-    try {
-      const updated = await updateProjectInNeon(editingWriting);
-      if (updated.section === 'writing') {
-        replaceWriting(updated);
-      } else {
-        // Section changed: it now lives on the Projects tab, so drop it here.
-        dbWritings = dbWritings.filter(p => p.id !== updated.id);
+  function buildRows(list) {
+    const rows = [];
+    const seen = new Set();
+    for (const post of list) {
+      if (!post.thread) {
+        rows.push({ type: 'post', post });
+        continue;
       }
-      editingWriting = null;
-    } catch (error) {
-      saveError = error.message || 'Failed to update writing';
-      console.error('Error updating writing:', error);
-    } finally {
-      savingWriting = false;
+      if (seen.has(post.thread)) continue;
+      seen.add(post.thread);
+      const items = list.filter(p => p.thread === post.thread);
+      const subjectSet = new Set(items.map(p => p.subject));
+      rows.push({
+        type: 'thread',
+        name: post.thread,
+        items,
+        date: items.find(p => p.date)?.date || '',
+        subject: subjectSet.size === 1 ? items[0].subject : 'Mixed'
+      });
     }
+    return rows;
   }
 
-  async function handleDeleteWriting(projectId) {
-    if (!browser) return;
-    if (!confirm('Are you sure you want to delete this writing?')) return;
+  $: rows = buildRows(filteredPosts);
+
+  // --- Admin: create a new database-backed writing from this page ---
+  let newWriting = null;
+  let savingWriting = false;
+  let saveError = null;
+
+  function handleAddWriting() {
+    const today = new Date().toISOString().split('T')[0];
+    newWriting = { title: '', subtitle: '', lastUpdated: today, thread: '', isPublic: false };
+    saveError = null;
+  }
+
+  function handleCancelWriting() {
+    newWriting = null;
+    saveError = null;
+  }
+
+  async function handleSaveWriting() {
+    if (!newWriting || !browser) return;
+    const title = newWriting.title.trim();
+    if (!title) {
+      saveError = 'Title is required';
+      return;
+    }
+    const slug = title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    if (!slug) {
+      saveError = 'Title needs at least one letter or number';
+      return;
+    }
     savingWriting = true;
     saveError = null;
     try {
-      await deleteProjectFromNeon(projectId);
-      dbWritings = dbWritings.filter(p => p.id !== projectId);
-      if (editingWriting && editingWriting.id === projectId) editingWriting = null;
+      const saved = await saveProjectToNeon({
+        ...newWriting,
+        title,
+        id: slug,
+        path: `/projects/${slug}`,
+        status: 'In Progress',
+        hasCommits: false,
+        section: 'writing'
+      });
+      dbWritings = [saved, ...dbWritings];
+      newWriting = null;
     } catch (error) {
-      saveError = error.message || 'Failed to delete writing';
-      console.error('Error deleting writing:', error);
+      saveError = error.message || 'Failed to create writing';
+      console.error('Error creating writing:', error);
     } finally {
       savingWriting = false;
     }
@@ -224,24 +244,28 @@
     },
     {
       title: "Interview with Durst Organic Farms",
+      thread: "farmer interviews",
       date: "",
       subject: "Ag",
       href: "./writing/farmerinterviews/durstorganic"
     },
     {
       title: "Interview with Ratto Brothers",
+      thread: "farmer interviews",
       date: "",
       subject: "Ag",
       href: "./writing/farmerinterviews/rattobrothers"
     },
     {
       title: "Interview with Cloverfield Organic Farms",
+      thread: "farmer interviews",
       date: "",
       subject: "Ag",
       href: "./writing/farmerinterviews/cloverfieldorganics"
     },
     {
       title: "Interview with Park Farming",
+      thread: "farmer interviews",
       date: "",
       subject: "Ag",
       href: "./writing/farmerinterviews/parkfarming"
@@ -262,7 +286,42 @@
 </script>
 
 <div class="writing-page">
-  <h1>Writing</h1>
+  <div class="page-header">
+    <h1>Writing</h1>
+    {#if isAdmin && !newWriting}
+      <button class="admin-btn" on:click={handleAddWriting}>+ New writing</button>
+    {/if}
+  </div>
+
+  {#if newWriting}
+    <div class="new-writing">
+      <input type="text" class="edit-input" placeholder="Title" bind:value={newWriting.title} />
+      <input type="text" class="edit-input" placeholder="Short caption (optional)" bind:value={newWriting.subtitle} />
+      <div class="edit-meta">
+        <label>
+          Date:
+          <input type="date" class="edit-input small" bind:value={newWriting.lastUpdated} />
+        </label>
+        <label>
+          Thread:
+          <input type="text" class="edit-input small" placeholder="Group name (optional)" bind:value={newWriting.thread} />
+        </label>
+        <label class="check-label">
+          <input type="checkbox" bind:checked={newWriting.isPublic} />
+          Public
+        </label>
+      </div>
+      <div class="edit-actions">
+        <button class="admin-btn" on:click={handleSaveWriting} disabled={savingWriting}>
+          {savingWriting ? 'Creating...' : 'Create'}
+        </button>
+        <button class="admin-btn" on:click={handleCancelWriting} disabled={savingWriting}>Cancel</button>
+      </div>
+      {#if saveError}
+        <p class="error-message">Error: {saveError}</p>
+      {/if}
+    </div>
+  {/if}
 
   <div class="filter-bar">
     <span class="filter-label">Filter by subject:</span>
@@ -293,73 +352,50 @@
       </tr>
     </thead>
     <tbody>
-      {#each filteredPosts as post}
-        {#if post.project && editingWriting && editingWriting.id === post.project.id}
-          <!-- Inline edit row for a database-backed writing (admin only) -->
-          <tr class="edit-row">
-            <td colspan="3">
-              <div class="edit-form">
-                <input type="text" class="edit-input" placeholder="Title" bind:value={editingWriting.title} />
-                <input type="text" class="edit-input" placeholder="Short caption (optional)" bind:value={editingWriting.subtitle} />
-                <div class="edit-meta">
-                  <label>
-                    Last updated:
-                    <input type="date" class="edit-input small" bind:value={editingWriting.lastUpdated} />
-                  </label>
-                  <label>
-                    Status:
-                    <select class="edit-input small" bind:value={editingWriting.status}>
-                      <option value="Graduated">Graduated</option>
-                      <option value="In Progress">In Progress</option>
-                      <option value="Graveyard">Graveyard</option>
-                      <option value="Idea">Idea</option>
-                    </select>
-                  </label>
-                  <label>
-                    Section:
-                    <select class="edit-input small" bind:value={editingWriting.section}>
-                      <option value="projects">Projects</option>
-                      <option value="writing">Writing</option>
-                    </select>
-                  </label>
-                  <label class="check-label">
-                    <input type="checkbox" bind:checked={editingWriting.isPublic} />
-                    Public
-                  </label>
-                </div>
-                <div class="edit-actions">
-                  <button class="admin-btn" on:click={handleSaveEdit} disabled={savingWriting}>
-                    {savingWriting ? 'Saving...' : 'Save'}
-                  </button>
-                  <button class="admin-btn" on:click={handleCancelEdit}>Cancel</button>
-                  <button class="admin-btn danger" on:click={() => handleDeleteWriting(post.project.id)} disabled={savingWriting}>
-                    Delete
-                  </button>
-                </div>
-                {#if saveError}
-                  <p class="error-message">Error: {saveError}</p>
-                {/if}
-              </div>
+      {#each rows as row}
+        {#if row.type === 'thread'}
+          <tr class="thread-row">
+            <td>
+              <button
+                class="thread-toggle"
+                aria-expanded={!collapsedThreads.has(row.name)}
+                on:click={() => toggleThread(row.name)}
+              >
+                <span class="thread-caret" class:collapsed={collapsedThreads.has(row.name)}>&#9662;</span>
+                <span class="thread-title">{row.name}</span>
+                <span class="thread-count">{row.items.length}</span>
+              </button>
             </td>
+            <td class="date-cell">{row.date || '—'}</td>
+            <td class="subject-cell">{row.subject}</td>
           </tr>
+          {#if !collapsedThreads.has(row.name)}
+            {#each row.items as post}
+              <tr class="thread-item">
+                <td>
+                  <span class="thread-indent"></span>
+                  {#if post.starred}<span class="star">&#11088;&#65039;</span>{/if}
+                  <a href={post.href}>{post.title}</a>
+                  {#if isAdmin && post.project && post.project.isPublic === false}
+                    <span class="private-badge" title="Private">🔒</span>
+                  {/if}
+                </td>
+                <td class="date-cell">{post.date || '—'}</td>
+                <td class="subject-cell">{post.subject}</td>
+              </tr>
+            {/each}
+          {/if}
         {:else}
           <tr>
             <td>
-              {#if post.starred}<span class="star">&#11088;&#65039;</span>{/if}
-              <a href={post.href}>{post.title}</a>
-              {#if isAdmin && post.project}
-                {#if post.project.isPublic === false}
-                  <span class="private-badge" title="Private">🔒</span>
-                {/if}
-                <span class="row-admin">
-                  <button class="icon-btn" title="Edit" on:click={() => handleEditWriting(post.project)}>
-                    <i class="las la-edit"></i>
-                  </button>
-                </span>
+              {#if row.post.starred}<span class="star">&#11088;&#65039;</span>{/if}
+              <a href={row.post.href}>{row.post.title}</a>
+              {#if isAdmin && row.post.project && row.post.project.isPublic === false}
+                <span class="private-badge" title="Private">🔒</span>
               {/if}
             </td>
-            <td class="date-cell">{post.date || '—'}</td>
-            <td class="subject-cell">{post.subject}</td>
+            <td class="date-cell">{row.post.date || '—'}</td>
+            <td class="subject-cell">{row.post.subject}</td>
           </tr>
         {/if}
       {/each}
@@ -465,51 +501,84 @@
     margin-right: 0.25rem;
   }
 
-  /* Admin controls for database-backed writings */
-  .row-admin {
-    display: inline-flex;
-    gap: 0.25rem;
-    margin-left: 0.5rem;
-    vertical-align: middle;
-  }
-
   .private-badge {
     margin-left: 0.35rem;
     font-size: 0.85em;
     opacity: 0.7;
   }
 
-  .icon-btn {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: 1px solid #cd7f32;
-    background: transparent;
-    color: #b4ebcb;
-    font-size: 0.9em;
-    cursor: pointer;
-    display: inline-flex;
+  /* Page header with admin "new writing" button */
+  .page-header {
+    display: flex;
     align-items: center;
     justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  /* Threads: one heading row with its articles listed underneath */
+  .thread-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     padding: 0;
-    transition: all 0.2s ease;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    text-align: left;
   }
 
-  .icon-btn:hover {
-    background: #cd7f32;
-    color: #1e1e1e;
+  .thread-caret {
+    display: inline-block;
+    font-size: 0.8em;
+    opacity: 0.7;
+    transition: transform 0.15s;
   }
 
-  .icon-btn:disabled {
-    opacity: 0.5;
-    cursor: default;
+  .thread-caret.collapsed {
+    transform: rotate(-90deg);
   }
 
-  .edit-form {
+  .thread-title {
+    font-weight: 600;
+  }
+
+  .thread-count {
+    font-size: 0.75em;
+    opacity: 0.6;
+    border: 1px solid rgba(180, 235, 203, 0.5);
+    border-radius: 999px;
+    padding: 0 0.45em;
+    line-height: 1.5;
+  }
+
+  .writing-table tbody tr.thread-item td {
+    border-bottom-color: rgba(180, 235, 203, 0.2);
+  }
+
+  .thread-indent {
+    display: inline-block;
+    width: 1.25rem;
+    border-left: 1px solid rgba(180, 235, 203, 0.4);
+    margin-left: 0.3rem;
+    margin-right: 0.5rem;
+    height: 1em;
+    vertical-align: middle;
+  }
+
+  /* Admin: new writing form */
+  .new-writing {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    padding: 0.5rem 0;
+    max-width: 600px;
+    margin: 0 auto 1.5rem;
+    padding: 0.75rem;
+    border: 1px solid rgba(180, 235, 203, 0.5);
+    border-radius: 6px;
+    text-align: left;
   }
 
   .edit-input {
@@ -571,16 +640,6 @@
 
   .admin-btn:hover {
     background: rgba(205, 127, 50, 0.15);
-  }
-
-  .admin-btn.danger {
-    border-color: #966919;
-    color: #966919;
-  }
-
-  .admin-btn.danger:hover {
-    background: #966919;
-    color: #1e1e1e;
   }
 
   .admin-btn:disabled {

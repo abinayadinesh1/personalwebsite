@@ -78,7 +78,8 @@ export async function saveProjectToNeon(project) {
         lastUpdated: project.lastUpdated,
         hasCommits: project.hasCommits ?? false,
         isPublic: project.isPublic ?? true,
-        section: project.section || 'projects'
+        section: project.section || 'projects',
+        thread: project.thread || null
       })
     });
 
@@ -135,7 +136,8 @@ export async function updateProjectInNeon(project) {
         lastUpdated: project.lastUpdated,
         hasCommits: project.hasCommits ?? false,
         isPublic: project.isPublic ?? true,
-        section: project.section || 'projects'
+        section: project.section || 'projects',
+        thread: project.thread || null
       })
     });
 
