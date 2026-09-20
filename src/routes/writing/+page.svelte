@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
-  import { loadProjects, saveProjectToNeon } from '$lib/utils/projects.js';
+  import { loadProjects, saveProjectToNeon, updateProjectInNeon, deleteProjectFromNeon } from '$lib/utils/projects.js';
 
   export let data; // Server-side data from +page.server.js
 
@@ -150,6 +150,74 @@
     }
   }
 
+  // --- Admin: edit or delete an existing database-backed writing ---
+  let editingWriting = null;
+
+  // Date input wants YYYY-MM-DD; the API may return a full ISO timestamp
+  function toDateInput(dateString) {
+    if (!dateString) return '';
+    return String(dateString).slice(0, 10);
+  }
+
+  function handleEditWriting(project) {
+    if (!isAdmin) return;
+    newWriting = null;
+    editingWriting = {
+      ...project,
+      lastUpdated: toDateInput(project.lastUpdated),
+      section: project.section || 'writing',
+      thread: project.thread || ''
+    };
+    saveError = null;
+  }
+
+  function handleCancelEdit() {
+    editingWriting = null;
+    saveError = null;
+  }
+
+  async function handleSaveEdit() {
+    if (!editingWriting || !browser) return;
+    if (!editingWriting.title.trim()) {
+      saveError = 'Title is required';
+      return;
+    }
+    savingWriting = true;
+    saveError = null;
+    try {
+      const updated = await updateProjectInNeon(editingWriting);
+      if (updated.section === 'writing') {
+        dbWritings = dbWritings.map(p => (p.id === updated.id ? updated : p));
+      } else {
+        // Section changed: it now lives on the Projects tab, so drop it here.
+        dbWritings = dbWritings.filter(p => p.id !== updated.id);
+      }
+      editingWriting = null;
+    } catch (error) {
+      saveError = error.message || 'Failed to update writing';
+      console.error('Error updating writing:', error);
+    } finally {
+      savingWriting = false;
+    }
+  }
+
+  async function handleDeleteWriting(projectId) {
+    if (!browser) return;
+    if (!confirm('Are you sure you want to delete this writing?')) return;
+    savingWriting = true;
+    saveError = null;
+    try {
+      await deleteProjectFromNeon(projectId);
+      dbWritings = dbWritings.filter(p => p.id !== projectId);
+      editingWriting = null;
+    } catch (error) {
+      saveError = error.message || 'Failed to delete writing';
+      console.error('Error deleting writing:', error);
+    } finally {
+      savingWriting = false;
+    }
+  }
+
   const posts = [
     {
       title: "favorite publications of 2024",
@@ -288,7 +356,7 @@
 <div class="writing-page">
   <div class="page-header">
     <h1>Writing</h1>
-    {#if isAdmin && !newWriting}
+    {#if isAdmin && !newWriting && !editingWriting}
       <button class="admin-btn" on:click={handleAddWriting}>+ New writing</button>
     {/if}
   </div>
@@ -316,6 +384,55 @@
           {savingWriting ? 'Creating...' : 'Create'}
         </button>
         <button class="admin-btn" on:click={handleCancelWriting} disabled={savingWriting}>Cancel</button>
+      </div>
+      {#if saveError}
+        <p class="error-message">Error: {saveError}</p>
+      {/if}
+    </div>
+  {/if}
+
+  {#if editingWriting}
+    <div class="new-writing">
+      <input type="text" class="edit-input" placeholder="Title" bind:value={editingWriting.title} />
+      <input type="text" class="edit-input" placeholder="Short caption (optional)" bind:value={editingWriting.subtitle} />
+      <div class="edit-meta">
+        <label>
+          Last updated:
+          <input type="date" class="edit-input small" bind:value={editingWriting.lastUpdated} />
+        </label>
+        <label>
+          Thread:
+          <input type="text" class="edit-input small" placeholder="Group name (optional)" bind:value={editingWriting.thread} />
+        </label>
+        <label>
+          Status:
+          <select class="edit-input small" bind:value={editingWriting.status}>
+            <option value="Graduated">Graduated</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Graveyard">Graveyard</option>
+            <option value="Idea">Idea</option>
+          </select>
+        </label>
+        <label>
+          Section:
+          <select class="edit-input small" bind:value={editingWriting.section}>
+            <option value="projects">Projects</option>
+            <option value="writing">Writing</option>
+          </select>
+        </label>
+        <label class="check-label">
+          <input type="checkbox" bind:checked={editingWriting.isPublic} />
+          Public
+        </label>
+      </div>
+      <div class="edit-actions">
+        <button class="admin-btn" on:click={handleSaveEdit} disabled={savingWriting}>
+          {savingWriting ? 'Saving...' : 'Save'}
+        </button>
+        <button class="admin-btn" on:click={handleCancelEdit} disabled={savingWriting}>Cancel</button>
+        <button class="admin-btn danger" on:click={() => handleDeleteWriting(editingWriting.id)} disabled={savingWriting}>
+          Delete
+        </button>
       </div>
       {#if saveError}
         <p class="error-message">Error: {saveError}</p>
@@ -376,8 +493,15 @@
                   <span class="thread-indent"></span>
                   {#if post.starred}<span class="star">&#11088;&#65039;</span>{/if}
                   <a href={post.href}>{post.title}</a>
-                  {#if isAdmin && post.project && post.project.isPublic === false}
-                    <span class="private-badge" title="Private">🔒</span>
+                  {#if isAdmin && post.project}
+                    {#if post.project.isPublic === false}
+                      <span class="private-badge" title="Private">🔒</span>
+                    {/if}
+                    <span class="row-admin">
+                      <button class="icon-btn" title="Edit" on:click={() => handleEditWriting(post.project)}>
+                        <i class="las la-edit"></i>
+                      </button>
+                    </span>
                   {/if}
                 </td>
                 <td class="date-cell">{post.date || '—'}</td>
@@ -390,8 +514,15 @@
             <td>
               {#if row.post.starred}<span class="star">&#11088;&#65039;</span>{/if}
               <a href={row.post.href}>{row.post.title}</a>
-              {#if isAdmin && row.post.project && row.post.project.isPublic === false}
-                <span class="private-badge" title="Private">🔒</span>
+              {#if isAdmin && row.post.project}
+                {#if row.post.project.isPublic === false}
+                  <span class="private-badge" title="Private">🔒</span>
+                {/if}
+                <span class="row-admin">
+                  <button class="icon-btn" title="Edit" on:click={() => handleEditWriting(row.post.project)}>
+                    <i class="las la-edit"></i>
+                  </button>
+                </span>
               {/if}
             </td>
             <td class="date-cell">{row.post.date || '—'}</td>
@@ -505,6 +636,35 @@
     margin-left: 0.35rem;
     font-size: 0.85em;
     opacity: 0.7;
+  }
+
+  /* Admin controls for database-backed writings */
+  .row-admin {
+    display: inline-flex;
+    gap: 0.25rem;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+
+  .icon-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid #cd7f32;
+    background: transparent;
+    color: #b4ebcb;
+    font-size: 0.9em;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.2s ease;
+  }
+
+  .icon-btn:hover {
+    background: #cd7f32;
+    color: #1e1e1e;
   }
 
   /* Page header with admin "new writing" button */
@@ -640,6 +800,16 @@
 
   .admin-btn:hover {
     background: rgba(205, 127, 50, 0.15);
+  }
+
+  .admin-btn.danger {
+    border-color: #966919;
+    color: #966919;
+  }
+
+  .admin-btn.danger:hover {
+    background: #966919;
+    color: #1e1e1e;
   }
 
   .admin-btn:disabled {
