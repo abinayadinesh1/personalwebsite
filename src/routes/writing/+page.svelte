@@ -589,6 +589,7 @@
         <th>Title</th>
         <th>Date</th>
         <th>Subject</th>
+        {#if isAdmin}<th class="action-cell" aria-label="Actions"></th>{/if}
       </tr>
     </thead>
     <tbody>
@@ -596,11 +597,6 @@
         {#if row.type === 'thread'}
           <tr class="thread-row">
             <td>
-              {#if isAdmin && dbThreads.includes(row.name)}
-                <button class="icon-btn" title="Delete group" on:click={() => handleDeleteGroup(row.name)}>
-                  <i class="las la-trash"></i>
-                </button>
-              {/if}
               <button
                 class="thread-toggle"
                 aria-expanded={!collapsedThreads.has(row.name)}
@@ -613,17 +609,21 @@
             </td>
             <td class="date-cell">{row.date || '—'}</td>
             <td class="subject-cell">{row.subject}</td>
+            {#if isAdmin}
+              <td class="action-cell">
+                {#if dbThreads.includes(row.name)}
+                  <button class="icon-btn" title="Delete group" on:click={() => handleDeleteGroup(row.name)}>
+                    <i class="las la-trash"></i>
+                  </button>
+                {/if}
+              </td>
+            {/if}
           </tr>
           {#if !collapsedThreads.has(row.name)}
             {#each row.items as post}
               <tr class="thread-item">
                 <td>
                   <span class="thread-indent"></span>
-                  {#if isAdmin && post.project}
-                    <button class="icon-btn" title="Edit" on:click={() => handleEditWriting(post.project)}>
-                      <i class="las la-edit"></i>
-                    </button>
-                  {/if}
                   {#if post.starred}<span class="star">&#11088;&#65039;</span>{/if}
                   <a href={post.href}>{post.title}</a>
                   {#if isAdmin && post.project && post.project.isPublic === false}
@@ -632,17 +632,21 @@
                 </td>
                 <td class="date-cell">{post.date || '—'}</td>
                 <td class="subject-cell">{post.subject}</td>
+                {#if isAdmin}
+                  <td class="action-cell">
+                    {#if post.project}
+                      <button class="icon-btn" title="Edit" on:click={() => handleEditWriting(post.project)}>
+                        <i class="las la-edit"></i>
+                      </button>
+                    {/if}
+                  </td>
+                {/if}
               </tr>
             {/each}
           {/if}
         {:else}
           <tr>
             <td>
-              {#if isAdmin && row.post.project}
-                <button class="icon-btn" title="Edit" on:click={() => handleEditWriting(row.post.project)}>
-                  <i class="las la-edit"></i>
-                </button>
-              {/if}
               {#if row.post.starred}<span class="star">&#11088;&#65039;</span>{/if}
               <a href={row.post.href}>{row.post.title}</a>
               {#if isAdmin && row.post.project && row.post.project.isPublic === false}
@@ -651,6 +655,15 @@
             </td>
             <td class="date-cell">{row.post.date || '—'}</td>
             <td class="subject-cell">{row.post.subject}</td>
+            {#if isAdmin}
+              <td class="action-cell">
+                {#if row.post.project}
+                  <button class="icon-btn" title="Edit" on:click={() => handleEditWriting(row.post.project)}>
+                    <i class="las la-edit"></i>
+                  </button>
+                {/if}
+              </td>
+            {/if}
           </tr>
         {/if}
       {/each}
@@ -773,9 +786,20 @@
     display: inline-flex;
     align-items: center;
     padding: 0;
-    margin-right: 0.5rem;
     vertical-align: middle;
     transition: color 0.2s ease;
+  }
+
+  /* Admin icons sit past the subject column with no header or rule beneath them */
+  .writing-table .action-cell,
+  .writing-table thead th.action-cell,
+  .writing-table tbody td.action-cell,
+  .writing-table tbody tr.thread-item td.action-cell {
+    width: 1.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0;
+    border-bottom: none;
+    white-space: nowrap;
   }
 
   .icon-btn:hover {
