@@ -15,6 +15,10 @@
   // (which resolves the project and passes project.id, not the route param)
 
   let markdownContent = '';
+
+  // One Enter in the editor is a line break; two Enters start a new paragraph
+  // (paragraph spacing is one blank line, see .markdown-display p in global.css).
+  const markdownOptions = { breaks: true };
   let isEditing = false;
   let editTextarea = null;
   let githubRepo = '';
@@ -532,14 +536,14 @@
                 {#if segment.type === 'hidden'}
                   <div class="hidden-content-admin">
                     <span class="hidden-badge">Hidden</span>
-                    <SvelteMarkdown source={segment.content} />
+                    <SvelteMarkdown source={segment.content} options={markdownOptions} />
                   </div>
                 {:else}
-                  <SvelteMarkdown source={segment.content} />
+                  <SvelteMarkdown source={segment.content} options={markdownOptions} />
                 {/if}
               {/each}
             {:else}
-              <SvelteMarkdown source={publicContent} />
+              <SvelteMarkdown source={publicContent} options={markdownOptions} />
             {/if}
           {:else}
             <p class="empty-state">
