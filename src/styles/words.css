@@ -37,8 +37,8 @@
 }
 
 /* Shared edit controls (same vocabulary as articles.css) */
-/* !important opt-outs: global.css puts the bronze gradient + color: transparent
-   on all inputs, which makes typed characters invisible in form fields */
+/* !important opt-outs: global.css styles all inputs as bronze bold text,
+   which is hard to read in form fields */
 .edit-input {
   display: block;
   width: 100%;

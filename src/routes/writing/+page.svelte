@@ -754,7 +754,7 @@
   }
 
   .writing-table a {
-    color: transparent;
+    color: var(--text-bronze);
     text-decoration: none;
   }
 

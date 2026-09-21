@@ -26,18 +26,7 @@ a, label, button,
 input:not([type="image"]), textarea, select,
 .book-title, .book-author, .book-date {
   position: relative;
-  background: linear-gradient(
-    to right,
-    #b87333 0%,
-    #cd7f32 20%,
-    #e6a85c 40%,
-    #cd7f32 60%,
-    #b87333 80%,
-    #966919 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: #e6a85c;
   font-weight: bold;
   letter-spacing: 0.05em;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));

@@ -176,10 +176,7 @@
   padding: 3rem;
   opacity: 0.6;
   font-style: italic;
-  background: var(--bronze-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--text-bronze);
 }
 
 /* Sidebar Styles */
@@ -305,10 +302,7 @@
   opacity: 0.6;
   font-style: italic;
   font-size: 0.9rem;
-  background: var(--bronze-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--text-bronze);
 }
 
 /* GitHub Styles */
@@ -322,10 +316,7 @@
   word-break: break-all;
   font-size: 0.9rem;
   text-decoration: underline;
-  background: var(--bronze-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--text-bronze);
   font-weight: bold;
 }
 
@@ -356,10 +347,7 @@
   font-size: 0.85rem;
   opacity: 0.6;
   font-style: italic;
-  background: var(--bronze-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--text-bronze);
 }
 
 .repo-editor {
@@ -392,10 +380,7 @@
   font-style: italic;
   text-align: center;
   padding: 0.5rem;
-  background: var(--bronze-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--text-bronze);
 }
 
 .no-repos a {
@@ -429,10 +414,7 @@
   font-size: 0.85rem;
   opacity: 0.8;
   margin-bottom: 0.5rem;
-  background: var(--bronze-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--text-bronze);
 }
 
 .no-commits {
@@ -441,10 +423,7 @@
   font-style: italic;
   text-align: center;
   padding: 1rem;
-  background: var(--bronze-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--text-bronze);
 }
 
 /* Markdown display styles — normalize text to standard HTML sizes */

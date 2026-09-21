@@ -19,6 +19,7 @@
     Consolas, "DejaVu Sans Mono", monospace;
   
   /* Color values */
+  --text-bronze: #e6a85c; /* lightest stop of the bronze gradient; used for all text */
   --bronze-gradient: linear-gradient(
     to right,
     #b87333 0%,
