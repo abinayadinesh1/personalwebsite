@@ -262,6 +262,27 @@
     });
   }
 
+  // In Markdown a "---" line directly under text turns that text into a heading
+  // (setext style). We only ever want a horizontal rule, so insert a blank
+  // line before any dashes-only line. Lines inside fenced code are left alone.
+  function forceHorizontalRules(md) {
+    if (!md) return md;
+    const lines = md.split('\n');
+    const out = [];
+    let inFence = false;
+    for (const line of lines) {
+      if (/^\s*(```|~~~)/.test(line)) inFence = !inFence;
+      const isRule = !inFence && /^[ \t]*-{3,}[ \t]*$/.test(line);
+      if (isRule && out.length > 0 && out[out.length - 1].trim() !== '') out.push('');
+      out.push(line);
+    }
+    return out.join('\n');
+  }
+
+  function prepareMarkdown(md) {
+    return embedDriveLinks(forceHorizontalRules(md));
+  }
+
   // Split content into segments: regular markdown and hidden blocks.
   // Returns array of { type: 'visible' | 'hidden', content: string }
   function splitHiddenContent(content) {
@@ -296,9 +317,9 @@
   }
 
   $: contentSegments = isAdmin
-    ? splitHiddenContent(markdownContent).map(seg => ({ ...seg, content: embedDriveLinks(seg.content) }))
+    ? splitHiddenContent(markdownContent).map(seg => ({ ...seg, content: prepareMarkdown(seg.content) }))
     : [];
-  $: publicContent = !isAdmin ? embedDriveLinks(stripHiddenContent(markdownContent)) : '';
+  $: publicContent = !isAdmin ? prepareMarkdown(stripHiddenContent(markdownContent)) : '';
   // Editable content without changelog metadata
   $: editableContent = markdownContent ? markdownContent.replace(/<!-- changelog:.*? -->\n?/, '') : '';
 
