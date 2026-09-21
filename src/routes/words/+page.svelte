@@ -176,13 +176,57 @@
 
   $: maxCount = Math.max(1, ...dateGroups.map(g => g.count));
 
-  // Only label every Nth column so dates stay readable in the fixed-width graph
-  $: labelEvery = Math.max(1, Math.ceil(dateGroups.length / 8));
+  // Only label every Nth day: as many labels as fit at ~64px each, at most 8
+  $: maxLabels = Math.min(8, Math.max(2, Math.floor((innerW || 0) / 64)));
+  $: labelEvery = Math.max(1, Math.ceil(dateGroups.length / maxLabels));
   function showLabel(i) {
-    return i % labelEvery === 0 || i === dateGroups.length - 1;
+    const last = dateGroups.length - 1;
+    if (i === last) return true;
+    // skip a regular label that would sit right next to the final one
+    return i % labelEvery === 0 && last - i >= Math.ceil(labelEvery / 2);
   }
 
   $: annotationsByDate = Object.fromEntries(annotations.map(a => [a.date, a.label]));
+
+  // --- Line graph geometry. The SVG is sized in pixels from the container width
+  // so text and stroke widths never stretch. ---
+  let graphWidth = 0;
+  const GRAPH_H = 150;
+  const PAD = { top: 22, right: 8, bottom: 26, left: 8 };
+  $: innerW = Math.max(0, graphWidth - PAD.left - PAD.right);
+  $: innerH = GRAPH_H - PAD.top - PAD.bottom;
+  $: points = dateGroups.map((g, i) => ({
+    ...g,
+    x: PAD.left + (dateGroups.length > 1 ? (i / (dateGroups.length - 1)) * innerW : innerW / 2),
+    y: PAD.top + innerH - (g.count / maxCount) * innerH
+  }));
+  $: linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  $: areaPath = points.length
+    ? `${linePath} L${points[points.length - 1].x.toFixed(1)},${PAD.top + innerH} L${points[0].x.toFixed(1)},${PAD.top + innerH} Z`
+    : '';
+
+  let hoverIndex = null;
+  function handleGraphMove(e) {
+    if (!points.length || !innerW) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    let best = 0;
+    let bestDist = Infinity;
+    for (let i = 0; i < points.length; i++) {
+      const d = Math.abs(points[i].x - x);
+      if (d < bestDist) { bestDist = d; best = i; }
+    }
+    hoverIndex = best;
+  }
+  function handleGraphLeave() {
+    hoverIndex = null;
+  }
+  function handleGraphClick() {
+    if (isAdmin && hoverIndex !== null) startAnnotate(points[hoverIndex].date);
+  }
+  $: hovered = hoverIndex !== null ? points[hoverIndex] : null;
+  // Keep the tooltip inside the graph on either edge
+  $: tooltipLeft = hovered ? Math.min(Math.max(hovered.x, 70), Math.max(70, graphWidth - 70)) : 0;
 </script>
 
 <div class="words-page">
@@ -206,41 +250,89 @@
   {/if}
 
   {#if dateGroups.length > 0}
-    <div class="word-graph">
-      {#each dateGroups as g, i}
-        <div class="word-graph-col" class:empty={g.count === 0}>
-          <div class="word-bar-area">
-            <div
-              class="word-bar"
-              style="height: {(g.count / maxCount) * 80}px"
-              title="{formatGraphDate(g.date)}: {g.count} word{g.count === 1 ? '' : 's'}"
-            ></div>
-          </div>
-          <span class="word-bar-date" class:hidden-label={!showLabel(i)}>{formatGraphDate(g.date)}</span>
-          {#if annotatingDate === g.date}
-            <input
-              class="edit-input annotation-input"
-              placeholder="label..."
-              bind:value={annotationText}
-              on:keydown={(e) => {
-                if (e.key === 'Enter') saveAnnotation();
-                if (e.key === 'Escape') cancelAnnotate();
-              }}
-            />
-            <div class="annotation-actions">
-              <button class="edit-btn save" on:click={saveAnnotation}>Save</button>
-              <button class="edit-btn cancel" on:click={cancelAnnotate}>Cancel</button>
-            </div>
-          {:else}
-            {#if annotationsByDate[g.date]}
-              <span class="word-bar-annotation">{annotationsByDate[g.date]}</span>
+    <div class="word-graph" bind:clientWidth={graphWidth}>
+      {#if graphWidth > 0}
+        <!-- svelte-ignore a11y-no-static-element-interactions a11y-click-events-have-key-events -->
+        <svg
+          class="word-line-graph"
+          width={graphWidth}
+          height={GRAPH_H}
+          role="img"
+          aria-label="New words learned per day"
+          on:mousemove={handleGraphMove}
+          on:mouseleave={handleGraphLeave}
+          on:click={handleGraphClick}
+        >
+          <!-- baseline and max gridline -->
+          <line class="grid" x1={PAD.left} x2={PAD.left + innerW} y1={PAD.top + innerH} y2={PAD.top + innerH} />
+          <line class="grid faint" x1={PAD.left} x2={PAD.left + innerW} y1={PAD.top} y2={PAD.top} />
+          <text class="axis-label" x={PAD.left} y={PAD.top - 6}>{maxCount}</text>
+
+          <path class="area" d={areaPath} />
+          <path class="line" d={linePath} />
+
+          <!-- annotated days get a marker and an italic label above the point -->
+          {#each points as p}
+            {#if annotationsByDate[p.date]}
+              <circle class="annotation-dot" cx={p.x} cy={p.y} r="3.5" />
+              <text
+                class="annotation-label"
+                x={p.x}
+                y={Math.max(10, p.y - 9)}
+                text-anchor={p.x < 60 ? 'start' : p.x > graphWidth - 60 ? 'end' : 'middle'}
+              >{annotationsByDate[p.date]}</text>
+            {/if}
+          {/each}
+
+          <!-- date labels -->
+          {#each points as p, i}
+            {#if showLabel(i)}
+              <text
+                class="axis-label"
+                x={p.x}
+                y={GRAPH_H - 8}
+                text-anchor={i === 0 ? 'start' : i === points.length - 1 ? 'end' : 'middle'}
+              >{formatGraphDate(p.date)}</text>
+            {/if}
+          {/each}
+
+          <!-- hover crosshair -->
+          {#if hovered}
+            <line class="crosshair" x1={hovered.x} x2={hovered.x} y1={PAD.top} y2={PAD.top + innerH} />
+            <circle class="hover-dot" cx={hovered.x} cy={hovered.y} r="4" />
+          {/if}
+        </svg>
+
+        {#if hovered}
+          <div class="graph-tooltip" style="left: {tooltipLeft}px;">
+            <span class="tooltip-date">{formatGraphDate(hovered.date)}</span>
+            <span class="tooltip-value">{hovered.count} word{hovered.count === 1 ? '' : 's'}</span>
+            {#if annotationsByDate[hovered.date]}
+              <span class="tooltip-note">{annotationsByDate[hovered.date]}</span>
             {/if}
             {#if isAdmin}
-              <button class="annotate-btn" title="Annotate this date" on:click={() => startAnnotate(g.date)}>&#x270E;</button>
+              <span class="tooltip-hint">click to annotate</span>
             {/if}
-          {/if}
+          </div>
+        {/if}
+      {/if}
+
+      {#if annotatingDate}
+        <div class="annotation-form">
+          <span class="annotation-form-date">{formatGraphDate(annotatingDate)}</span>
+          <input
+            class="edit-input annotation-input"
+            placeholder="label..."
+            bind:value={annotationText}
+            on:keydown={(e) => {
+              if (e.key === 'Enter') saveAnnotation();
+              if (e.key === 'Escape') cancelAnnotate();
+            }}
+          />
+          <button class="edit-btn save" on:click={saveAnnotation}>Save</button>
+          <button class="edit-btn cancel" on:click={cancelAnnotate}>Cancel</button>
         </div>
-      {/each}
+      {/if}
     </div>
   {/if}
 

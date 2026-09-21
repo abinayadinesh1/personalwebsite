@@ -89,108 +89,121 @@
   color: #e06c75 !important;
 }
 
-/* Frequency graph */
+/* Frequency graph: a single line, sized in pixels from the container width */
 .word-graph {
-  display: flex;
-  align-items: flex-start;
-  gap: 2px;
+  position: relative;
   width: 100%;
-  padding: 1rem 0 0.5rem;
   margin: 1.5rem 0;
 }
 
-/* Columns share the full width evenly; no horizontal scrolling */
-.word-graph-col {
+.word-line-graph {
+  display: block;
+  width: 100%;
+  overflow: visible;
+  cursor: crosshair;
+}
+
+.word-line-graph .grid {
+  stroke: rgba(180, 235, 203, 0.35);
+  stroke-width: 1;
+}
+
+.word-line-graph .grid.faint {
+  stroke: rgba(180, 235, 203, 0.12);
+  stroke-dasharray: 2 4;
+}
+
+.word-line-graph .line {
+  fill: none;
+  stroke: #cd7f32;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.word-line-graph .area {
+  fill: rgba(205, 127, 50, 0.08);
+  stroke: none;
+}
+
+.word-line-graph .axis-label {
+  fill: #b4ebcb;
+  opacity: 0.7;
+  font-size: 11px;
+  font-family: var(--font);
+}
+
+.word-line-graph .annotation-dot {
+  fill: #1e1e1e;
+  stroke: #e6a85c;
+  stroke-width: 2;
+}
+
+.word-line-graph .annotation-label {
+  fill: #cd7f32;
+  font-size: 10px;
+  font-style: italic;
+  font-family: var(--font);
+}
+
+.word-line-graph .crosshair {
+  stroke: rgba(180, 235, 203, 0.4);
+  stroke-width: 1;
+  pointer-events: none;
+}
+
+.word-line-graph .hover-dot {
+  fill: #e6a85c;
+  stroke: #1e1e1e;
+  stroke-width: 2;
+  pointer-events: none;
+}
+
+/* Hover tooltip: HTML so it can wrap; text opts out of the global bold styling */
+.graph-tooltip {
+  position: absolute;
+  top: 0;
+  transform: translate(-50%, -100%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  flex: 1 1 0;
-  min-width: 0;
-}
-
-/* Fixed-height bar area keeps all bars on a shared baseline
-   regardless of label/annotation height below */
-.word-bar-area {
-  height: 88px;
-  display: flex;
-  align-items: flex-end;
-}
-
-/* !important needed: global.css forces div { background: transparent !important } */
-.word-bar {
-  width: 100%;
-  max-width: 22px;
-  min-height: 4px;
-  border-radius: 3px 3px 0 0;
-  background: linear-gradient(
-    to top,
-    #b87333 0%,
-    #cd7f32 50%,
-    #e6a85c 100%
-  ) !important;
-  transition: all 0.3s ease;
-}
-
-.word-graph-col:hover .word-bar {
-  opacity: 0.8;
-}
-
-/* Solid-color opt-outs from the global bronze text gradient */
-.word-bar-date {
-  font-size: 0.65em;
-  color: #b4ebcb !important;
-  background: none !important;
-  -webkit-background-clip: unset !important;
-  background-clip: unset !important;
-  filter: none !important;
-  font-weight: normal;
-  opacity: 0.7;
+  gap: 2px;
+  padding: 0.3rem 0.5rem;
+  background: rgba(30, 30, 30, 0.95) !important;
+  border: 1px solid rgba(205, 127, 50, 0.4);
+  border-radius: 4px;
+  pointer-events: none;
   white-space: nowrap;
 }
 
-/* Zero-word days: a faint baseline tick instead of a bar */
-.word-graph-col.empty .word-bar {
-  min-height: 2px;
-  opacity: 0.25;
-}
-
-/* Unlabeled columns keep their slot but hide the text so bars stay aligned */
-.word-bar-date.hidden-label {
-  visibility: hidden;
-}
-
-.word-bar-annotation {
-  font-size: 0.6em;
-  font-style: italic;
-  text-align: center;
-  color: #cd7f32 !important;
-  background: none !important;
-  -webkit-background-clip: unset !important;
-  background-clip: unset !important;
-  filter: none !important;
+.graph-tooltip span {
   font-weight: normal;
+  letter-spacing: normal;
+  filter: none !important;
+  font-size: 0.7em;
   line-height: 1.3;
-  white-space: nowrap;
 }
 
-.annotate-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 0.65em;
-  padding: 0.05rem 0.2rem;
-  color: var(--link-hover);
-  opacity: 0.35;
-  transition: opacity 0.2s ease;
+.graph-tooltip .tooltip-date { color: #b4ebcb !important; opacity: 0.8; }
+.graph-tooltip .tooltip-value { color: #e6a85c !important; }
+.graph-tooltip .tooltip-note { color: #cd7f32 !important; font-style: italic; }
+.graph-tooltip .tooltip-hint { color: #b4ebcb !important; opacity: 0.5; font-size: 0.6em; }
+
+/* Admin: annotate the hovered date */
+.annotation-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
-.word-graph-col:hover .annotate-btn {
+.annotation-form-date {
+  font-size: 0.7em;
+  font-weight: normal;
+  letter-spacing: normal;
+  color: #b4ebcb !important;
   opacity: 0.8;
-}
-
-.annotate-btn:hover {
-  opacity: 1;
 }
 
 .annotation-input {
