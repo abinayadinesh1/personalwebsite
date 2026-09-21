@@ -76,24 +76,11 @@
     <!-- Right column -->
     <div class="text-column">
       <p>
-        i'm currently wrapping up a degree <a href = "./secret/coursework">at uc berkeley</a> 🧸. 
-      </p>
-      <p>
         I'm a tinkerer that likes to make robots that are fun and functional.
-        I'm currently at <a href="https://www.pi.website/">PI</a>, helping them build better robot runtimes. 
+        Previously, I was at <a href="https://www.pi.website/">PI</a>, <a href="https://seneca.com/">Seneca</a>, and <a href="https://farm-ng.com/">farm-ng</a>.
       </p>
-      <p> In the past, I... </p>
-      <ul>
-        <li> Spent 5-months with <a href = "https://seneca.com/">Seneca</a> to make heavy lift drones that can fight fires from the air.</li>  
-        <li> Moved to strawberry land 🍓 (Watsonville, CA) to build perception + motion planning techniques for <a href = "https://farm-ng.com/">farm rovers</a> </li>
-        <li> Flew to Minnesota to help build microbial fertilizers for <a href="https://www.loambio.com/">Loam Bio.</li>  
-      </ul>
       <p>
-        In my free time, I am <a href="https://runtime.substack.com/p/what-my-body-tells-me">obsessed with rock climbing</a>, skiing, and escaping on long hikes to nature. 
-      </p>
-      <hr class="solid">
-      <p>
-        I love to host nomads, researchers, and curious fellas at our <a href = "https://joinarcadia.org/">group house in Berkeley</a>. Reach out if you need a place to stay!
+        In my free time, I am <a href="https://runtime.substack.com/p/what-my-body-tells-me">obsessed with rock climbing</a>, sailing, skiing, wildlife photography, prototyping objects, and escaping on long hikes to nature.
       </p>
     </div>  
   </div>
