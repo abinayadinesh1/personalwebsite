@@ -574,6 +574,44 @@
 /* Side-by-side layout for adjacent images lives in styles/global.css, next to
    the base .markdown-display img rule it overrides. */
 
+/* Floating tools shown when an admin clicks an image in the rendered view */
+.image-tools {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  background: rgba(30, 30, 30, 0.92);
+  border: 1px solid rgba(205, 127, 50, 0.4);
+  border-radius: 4px;
+}
+
+.image-tools button {
+  border: none;
+  background: transparent;
+  color: #b4ebcb;
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+  letter-spacing: normal;
+  font-weight: 400;
+}
+
+.image-tools button:hover {
+  color: #e6a85c;
+}
+
+.image-tools button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Rendered images are clickable for admins */
+.editor-content:not(.published) .markdown-display img {
+  cursor: pointer;
+}
+
 /* Hidden content admin indicator */
 .hidden-content-admin {
   position: relative;

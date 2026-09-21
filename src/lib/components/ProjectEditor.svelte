@@ -279,8 +279,125 @@
     return out.join('\n');
   }
 
+  // Markdown treats a line that is just an HTML tag (an uploaded <img>, an
+  // embed) as the start of a raw HTML block that runs until the next blank
+  // line, so text typed directly beneath it is dumped as unformatted HTML.
+  // Insert the blank line. Consecutive tag lines are left adjacent so the
+  // side-by-side image layout still works.
+  function separateHtmlBlocks(md) {
+    if (!md) return md;
+    const lines = md.split('\n');
+    const out = [];
+    let inFence = false;
+    const isTag = (l) => /^\s*<[a-zA-Z][^>]*>(?:.*<\/[a-zA-Z]+>)?\s*$/.test(l);
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (/^\s*(```|~~~)/.test(line)) inFence = !inFence;
+      if (inFence) { out.push(line); continue; }
+      const prev = out.length ? out[out.length - 1] : undefined;
+      const next = lines[i + 1];
+      const tagLine = isTag(line);
+      // text above a tag line would otherwise absorb it (e.g. into a list item)
+      if (tagLine && prev !== undefined && prev.trim() !== '' && !isTag(prev)) out.push('');
+      out.push(line);
+      // text below a tag line would otherwise become raw HTML
+      if (tagLine && next !== undefined && next.trim() !== '' && !/^\s*</.test(next)) out.push('');
+    }
+    return out.join('\n');
+  }
+
   function prepareMarkdown(md) {
-    return embedDriveLinks(forceHorizontalRules(md));
+    return embedDriveLinks(forceHorizontalRules(separateHtmlBlocks(md)));
+  }
+
+  // --- Admin image tools: click an image in the rendered view to rotate it or
+  // give it a caption. Edits are made to the markdown source and saved. ---
+  let editorContentEl;
+  let imageTools = null; // { src, top, left }
+  let imageToolsBusy = false;
+
+  function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function handleDisplayClick(e) {
+    if (!isAdmin || isEditing) return;
+    const target = e.target;
+    if (target && target.tagName === 'IMG' && editorContentEl) {
+      const src = target.getAttribute('src');
+      const rect = target.getBoundingClientRect();
+      const base = editorContentEl.getBoundingClientRect();
+      imageTools = { src, top: rect.top - base.top + 8, left: rect.left - base.left + 8 };
+    } else {
+      imageTools = null;
+    }
+  }
+
+  function closeImageTools() {
+    imageTools = null;
+  }
+
+  // The <img ...> tag in the source for the clicked image, plus any <figure>
+  // wrapper it already has.
+  function findImageTag(src) {
+    const tagRe = new RegExp('<img\\b[^>]*\\bsrc="' + escapeRegex(src) + '"[^>]*>');
+    const tagMatch = editableContent.match(tagRe);
+    if (!tagMatch) return null;
+    const tag = tagMatch[0];
+    const figRe = new RegExp('<figure>\\s*' + escapeRegex(tag) + '\\s*<figcaption>([\\s\\S]*?)<\\/figcaption>\\s*<\\/figure>');
+    const figMatch = editableContent.match(figRe);
+    return { tag, figure: figMatch ? figMatch[0] : null, caption: figMatch ? figMatch[1] : '' };
+  }
+
+  async function rotateSelectedImage(degrees) {
+    if (!imageTools || imageToolsBusy) return;
+    const found = findImageTag(imageTools.src);
+    if (!found) { imageTools = null; return; }
+    const id = imageTools.src.split('/').pop();
+    imageToolsBusy = true;
+    saveError = null;
+    try {
+      const res = await fetch(`/api/images/${id}/rotate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ degrees })
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Rotate failed (${res.status})`);
+      }
+      const { url } = await res.json();
+      const newTag = found.tag.replace(`src="${imageTools.src}"`, `src="${url}"`);
+      const updated = editableContent.replace(found.tag, newTag);
+      markdownContent = embedChangelog(updated, timelineData);
+      await saveProjectData();
+    } catch (e) {
+      saveError = e.message || 'Failed to rotate image';
+    } finally {
+      imageToolsBusy = false;
+      imageTools = null;
+    }
+  }
+
+  async function captionSelectedImage() {
+    if (!imageTools || imageToolsBusy) return;
+    const found = findImageTag(imageTools.src);
+    if (!found) { imageTools = null; return; }
+    const current = found.caption.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+    const text = prompt('Caption (leave empty to remove):', current);
+    if (text === null) return;
+    const trimmed = text.trim();
+    const replacement = trimmed
+      ? `<figure>${found.tag}<figcaption>${escapeHtml(trimmed)}</figcaption></figure>`
+      : found.tag;
+    const updated = editableContent.replace(found.figure || found.tag, replacement);
+    markdownContent = embedChangelog(updated, timelineData);
+    imageTools = null;
+    await saveProjectData();
   }
 
   // Split content into segments: regular markdown and hidden blocks.
@@ -413,6 +530,7 @@
     if (!isAdmin) return;
     
     if (!isEditing) {
+      imageTools = null;
       isEditing = true;
       // Focus the textarea after it's rendered
       setTimeout(() => {
@@ -591,6 +709,7 @@
     
     <div 
       class="editor-content" 
+      bind:this={editorContentEl}
       class:editing={isEditing}
       class:published={!isAdmin}
       on:dblclick={handleDoubleClick}
@@ -632,7 +751,8 @@
           placeholder="Start writing ... (**bold**, *italic*, drag or paste an image to upload, paste a Google Drive link on its own line to embed a video)"
         ></textarea>
       {:else}
-        <div class="markdown-display">
+        <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
+        <div class="markdown-display" on:click={handleDisplayClick}>
           {#if loadingContent}
             <p class="empty-state">Loading content...</p>
           {:else if markdownContent}
@@ -659,6 +779,16 @@
               {/if}
             </p>
           {/if}
+        </div>
+      {/if}
+
+      {#if imageTools && isAdmin && !isEditing}
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
+        <div class="image-tools" style="top: {imageTools.top}px; left: {imageTools.left}px;" on:dblclick|stopPropagation>
+          <button type="button" title="Rotate left" disabled={imageToolsBusy} on:click|stopPropagation={() => rotateSelectedImage(270)}>&#8634;</button>
+          <button type="button" title="Rotate right" disabled={imageToolsBusy} on:click|stopPropagation={() => rotateSelectedImage(90)}>&#8635;</button>
+          <button type="button" title="Caption" disabled={imageToolsBusy} on:click|stopPropagation={captionSelectedImage}>caption</button>
+          <button type="button" title="Close" on:click|stopPropagation={closeImageTools}>&#10005;</button>
         </div>
       {/if}
     </div>
