@@ -766,7 +766,7 @@
   .icon-btn {
     border: none;
     background: transparent;
-    color: #b4ebcb;
+    color: rgba(180, 235, 203, 0.5); /* same faded mint as the .thread-count ring */
     font-size: 1em;
     line-height: 1;
     cursor: pointer;
@@ -775,13 +775,11 @@
     padding: 0;
     margin-right: 0.5rem;
     vertical-align: middle;
-    opacity: 0.85;
-    transition: opacity 0.2s ease, color 0.2s ease;
+    transition: color 0.2s ease;
   }
 
   .icon-btn:hover {
-    opacity: 1;
-    color: #e6a85c;
+    color: #b4ebcb;
   }
 
   /* Page header with admin "new writing" button */
