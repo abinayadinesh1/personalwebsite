@@ -371,6 +371,16 @@ ul.todos button:hover {
   letter-spacing: normal !important;
 }
 
+/* Embedded Google Drive video (see embedDriveLinks in ProjectEditor) */
+.markdown-display iframe.drive-embed {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid rgba(205, 127, 50, 0.2);
+  border-radius: 4px;
+  margin: 1rem 0;
+}
+
 .graduated-project-content img,
 .markdown-display img {
   max-width: 50%;

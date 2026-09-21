@@ -249,6 +249,19 @@
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
+  // A Google Drive share link on its own line becomes an embedded player.
+  // Handles .../file/d/<id>/view?usp=sharing and .../open?id=<id>. The file
+  // must be shared as "Anyone with the link" for the embed to play.
+  const DRIVE_LINK_LINE = /^[ \t]*<?(https?:\/\/drive\.google\.com\/(?:file\/d\/([\w-]+)[^\s>]*|open\?id=([\w-]+)[^\s>]*))>?[ \t]*$/gm;
+
+  function embedDriveLinks(md) {
+    if (!md) return md;
+    return md.replace(DRIVE_LINK_LINE, (_m, _url, idA, idB) => {
+      const id = idA || idB;
+      return `<iframe class="drive-embed" src="https://drive.google.com/file/d/${id}/preview" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe>`;
+    });
+  }
+
   // Split content into segments: regular markdown and hidden blocks.
   // Returns array of { type: 'visible' | 'hidden', content: string }
   function splitHiddenContent(content) {
@@ -282,8 +295,10 @@
     return content.replace(/<hidden>[\s\S]*?<\/hidden>/g, '').replace(/<!-- changelog:.*? -->\n?/, '');
   }
 
-  $: contentSegments = isAdmin ? splitHiddenContent(markdownContent) : [];
-  $: publicContent = !isAdmin ? stripHiddenContent(markdownContent) : '';
+  $: contentSegments = isAdmin
+    ? splitHiddenContent(markdownContent).map(seg => ({ ...seg, content: embedDriveLinks(seg.content) }))
+    : [];
+  $: publicContent = !isAdmin ? embedDriveLinks(stripHiddenContent(markdownContent)) : '';
   // Editable content without changelog metadata
   $: editableContent = markdownContent ? markdownContent.replace(/<!-- changelog:.*? -->\n?/, '') : '';
 
@@ -593,7 +608,7 @@
           on:dragover={handleDragOver}
           on:paste={handlePaste}
           class="markdown-editor"
-          placeholder="Start writing ... (**bold**, *italic*, drag or paste an image to upload)"
+          placeholder="Start writing ... (**bold**, *italic*, drag or paste an image to upload, paste a Google Drive link on its own line to embed a video)"
         ></textarea>
       {:else}
         <div class="markdown-display">
