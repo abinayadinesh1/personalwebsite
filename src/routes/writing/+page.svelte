@@ -35,7 +35,30 @@
     } catch (e) {
       console.error('Error loading writings from database:', e);
     }
+    await loadThreads();
   });
+
+  // --- Threads (groups) stored in the database. A group can exist with no writings. ---
+  let dbThreads = [];
+
+  async function loadThreads() {
+    try {
+      const res = await fetch('/api/threads');
+      if (res.ok) {
+        const data = await res.json();
+        dbThreads = data.threads || [];
+      }
+    } catch (e) {
+      console.error('Error loading threads:', e);
+    }
+  }
+
+  // Every group name available for assignment: database groups plus any names
+  // used by the static posts below (e.g. "farmer interviews").
+  $: threadOptions = Array.from(new Set([
+    ...dbThreads,
+    ...allPosts.map(p => p.thread).filter(Boolean)
+  ]));
 
   // Format an ISO date (YYYY-MM-DD) like the static posts: MM.DD.YY
   function formatShortDate(dateString) {
@@ -75,7 +98,7 @@
     collapsedThreads = next;
   }
 
-  function buildRows(list) {
+  function buildRows(list, threadNames) {
     const rows = [];
     const seen = new Set();
     for (const post of list) {
@@ -95,25 +118,93 @@
         subject: subjectSet.size === 1 ? items[0].subject : 'Mixed'
       });
     }
-    return rows;
+    // Groups with no (visible) writings yet appear at the top so they can be found
+    const empty = threadNames
+      .filter(name => !seen.has(name))
+      .map(name => ({ type: 'thread', name, items: [], date: '', subject: '—' }));
+    return [...empty, ...rows];
   }
 
-  $: rows = buildRows(filteredPosts);
+  $: rows = buildRows(filteredPosts, isAdmin ? dbThreads : dbThreads.filter(n => allPosts.some(p => p.thread === n)));
 
-  // --- Admin: create a new database-backed writing from this page ---
+  // --- Admin: create a new group or a new database-backed writing from this page ---
+  // newMode: null | 'choose' | 'group' | 'writing'
+  let newMode = null;
   let newWriting = null;
+  let newGroupName = '';
   let savingWriting = false;
   let saveError = null;
 
-  function handleAddWriting() {
+  function handleAddNew() {
+    editingWriting = null;
+    newMode = 'choose';
+    saveError = null;
+  }
+
+  function handleChooseGroup() {
+    newGroupName = '';
+    newMode = 'group';
+    saveError = null;
+  }
+
+  function handleChooseWriting() {
     const today = new Date().toISOString().split('T')[0];
     newWriting = { title: '', subtitle: '', lastUpdated: today, thread: '', isPublic: false };
+    newMode = 'writing';
     saveError = null;
   }
 
   function handleCancelWriting() {
+    newMode = null;
     newWriting = null;
+    newGroupName = '';
     saveError = null;
+  }
+
+  async function handleSaveGroup() {
+    if (!browser) return;
+    const name = newGroupName.trim();
+    if (!name) {
+      saveError = 'Group name is required';
+      return;
+    }
+    savingWriting = true;
+    saveError = null;
+    try {
+      const res = await fetch('/api/threads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Failed to create group: ${res.status}`);
+      }
+      dbThreads = [name, ...dbThreads.filter(n => n !== name)];
+      handleCancelWriting();
+    } catch (error) {
+      saveError = error.message || 'Failed to create group';
+      console.error('Error creating group:', error);
+    } finally {
+      savingWriting = false;
+    }
+  }
+
+  async function handleDeleteGroup(name) {
+    if (!browser) return;
+    if (!confirm(`Delete the group "${name}"? Its writings will be kept but ungrouped.`)) return;
+    try {
+      const res = await fetch(`/api/threads?name=${encodeURIComponent(name)}`, { method: 'DELETE' });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Failed to delete group: ${res.status}`);
+      }
+      dbThreads = dbThreads.filter(n => n !== name);
+      dbWritings = dbWritings.map(p => (p.thread === name ? { ...p, thread: null } : p));
+    } catch (error) {
+      saveError = error.message || 'Failed to delete group';
+      console.error('Error deleting group:', error);
+    }
   }
 
   async function handleSaveWriting() {
@@ -141,7 +232,7 @@
         section: 'writing'
       });
       dbWritings = [saved, ...dbWritings];
-      newWriting = null;
+      handleCancelWriting();
     } catch (error) {
       saveError = error.message || 'Failed to create writing';
       console.error('Error creating writing:', error);
@@ -161,7 +252,7 @@
 
   function handleEditWriting(project) {
     if (!isAdmin) return;
-    newWriting = null;
+    handleCancelWriting();
     editingWriting = {
       ...project,
       lastUpdated: toDateInput(project.lastUpdated),
@@ -356,12 +447,34 @@
 <div class="writing-page">
   <div class="page-header">
     <h1>Writing</h1>
-    {#if isAdmin && !newWriting && !editingWriting}
-      <button class="admin-btn" on:click={handleAddWriting}>+ New writing</button>
+    {#if isAdmin && !newMode && !editingWriting}
+      <button class="admin-btn" on:click={handleAddNew}>+ New</button>
     {/if}
   </div>
 
-  {#if newWriting}
+  {#if newMode === 'choose'}
+    <div class="new-writing choose">
+      <span class="choose-label">Create a new</span>
+      <div class="edit-actions">
+        <button class="admin-btn" on:click={handleChooseGroup}>Group</button>
+        <button class="admin-btn" on:click={handleChooseWriting}>Writing</button>
+        <button class="admin-btn" on:click={handleCancelWriting}>Cancel</button>
+      </div>
+    </div>
+  {:else if newMode === 'group'}
+    <div class="new-writing">
+      <input type="text" class="edit-input" placeholder="Group name" bind:value={newGroupName} />
+      <div class="edit-actions">
+        <button class="admin-btn" on:click={handleSaveGroup} disabled={savingWriting}>
+          {savingWriting ? 'Creating...' : 'Create group'}
+        </button>
+        <button class="admin-btn" on:click={handleCancelWriting} disabled={savingWriting}>Cancel</button>
+      </div>
+      {#if saveError}
+        <p class="error-message">Error: {saveError}</p>
+      {/if}
+    </div>
+  {:else if newMode === 'writing' && newWriting}
     <div class="new-writing">
       <input type="text" class="edit-input" placeholder="Title" bind:value={newWriting.title} />
       <input type="text" class="edit-input" placeholder="Short caption (optional)" bind:value={newWriting.subtitle} />
@@ -372,7 +485,12 @@
         </label>
         <label>
           Thread:
-          <input type="text" class="edit-input small" placeholder="Group name (optional)" bind:value={newWriting.thread} />
+          <select class="edit-input small" bind:value={newWriting.thread}>
+            <option value="">No group</option>
+            {#each threadOptions as name}
+              <option value={name}>{name}</option>
+            {/each}
+          </select>
         </label>
         <label class="check-label">
           <input type="checkbox" bind:checked={newWriting.isPublic} />
@@ -402,7 +520,12 @@
         </label>
         <label>
           Thread:
-          <input type="text" class="edit-input small" placeholder="Group name (optional)" bind:value={editingWriting.thread} />
+          <select class="edit-input small" bind:value={editingWriting.thread}>
+            <option value="">No group</option>
+            {#each threadOptions as name}
+              <option value={name}>{name}</option>
+            {/each}
+          </select>
         </label>
         <label>
           Status:
@@ -482,6 +605,13 @@
                 <span class="thread-title">{row.name}</span>
                 <span class="thread-count">{row.items.length}</span>
               </button>
+              {#if isAdmin && dbThreads.includes(row.name)}
+                <span class="row-admin">
+                  <button class="icon-btn" title="Delete group" on:click={() => handleDeleteGroup(row.name)}>
+                    <i class="las la-trash"></i>
+                  </button>
+                </span>
+              {/if}
             </td>
             <td class="date-cell">{row.date || '—'}</td>
             <td class="subject-cell">{row.subject}</td>
@@ -728,7 +858,19 @@
     vertical-align: middle;
   }
 
-  /* Admin: new writing form */
+  /* Admin: new group / writing forms */
+  .new-writing.choose {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .choose-label {
+    opacity: 0.8;
+  }
+
   .new-writing {
     display: flex;
     flex-direction: column;
