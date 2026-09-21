@@ -190,6 +190,36 @@
     }
   }
 
+  async function handleRenameGroup(name) {
+    if (!browser) return;
+    const text = prompt('Rename group:', name);
+    if (text === null) return;
+    const newName = text.trim();
+    if (!newName || newName === name) return;
+    try {
+      const res = await fetch('/api/threads', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, newName })
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Failed to rename group: ${res.status}`);
+      }
+      dbThreads = dbThreads.map(n => (n === name ? newName : n));
+      dbWritings = dbWritings.map(p => (p.thread === name ? { ...p, thread: newName } : p));
+      if (collapsedThreads.has(name)) {
+        const next = new Set(collapsedThreads);
+        next.delete(name);
+        next.add(newName);
+        collapsedThreads = next;
+      }
+    } catch (error) {
+      saveError = error.message || 'Failed to rename group';
+      console.error('Error renaming group:', error);
+    }
+  }
+
   async function handleDeleteGroup(name) {
     if (!browser) return;
     if (!confirm(`Delete the group "${name}"? Its writings will be kept but ungrouped.`)) return;
@@ -612,6 +642,9 @@
             {#if isAdmin}
               <td class="action-cell">
                 {#if dbThreads.includes(row.name)}
+                  <button class="icon-btn" title="Rename group" on:click={() => handleRenameGroup(row.name)}>
+                    <i class="las la-edit"></i>
+                  </button>
                   <button class="icon-btn" title="Delete group" on:click={() => handleDeleteGroup(row.name)}>
                     <i class="las la-trash"></i>
                   </button>
@@ -788,6 +821,10 @@
     padding: 0;
     vertical-align: middle;
     transition: color 0.2s ease;
+  }
+
+  .icon-btn + .icon-btn {
+    margin-left: 0.4rem;
   }
 
   /* Admin icons sit past the subject column with no header or rule beneath them */

@@ -60,6 +60,40 @@ export async function POST({ request, cookies }) {
   }
 }
 
+// PUT - Rename a thread; writings in it follow the new name
+export async function PUT({ request, cookies }) {
+  if (cookies.get('adminAuth') !== 'true') {
+    return json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const body = await request.json();
+    const name = (body?.name || '').trim();
+    const newName = (body?.newName || '').trim();
+    if (!name || !newName) {
+      return json({ error: 'Both the current and new group names are required' }, { status: 400 });
+    }
+    if (name === newName) {
+      return json({ thread: newName });
+    }
+
+    const sql = getDb();
+    await ensureTable(sql);
+    const clash = await sql`SELECT name FROM writing_threads WHERE name = ${newName}`;
+    if (clash.length > 0) {
+      return json({ error: 'A group with this name already exists' }, { status: 409 });
+    }
+
+    await sql`INSERT INTO writing_threads (name) VALUES (${newName}) ON CONFLICT (name) DO NOTHING`;
+    await sql`UPDATE projects SET thread = ${newName} WHERE thread = ${name}`;
+    await sql`DELETE FROM writing_threads WHERE name = ${name}`;
+    return json({ thread: newName });
+  } catch (error) {
+    console.error('Error in PUT /api/threads:', error);
+    return json({ error: 'Server error', details: error.message }, { status: 500 });
+  }
+}
+
 // DELETE - Remove a thread; writings in it become ungrouped
 export async function DELETE({ url, cookies }) {
   if (cookies.get('adminAuth') !== 'true') {
