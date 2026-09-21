@@ -344,6 +344,15 @@ ul.todos button:hover {
   margin-bottom: 0;
 }
 
+/* "---" in the editor: match the 1px bronze border drawn around the editor
+   (.editor-content in components/editor.css). */
+.markdown-display hr {
+  border: none;
+  border-top: 1px solid rgba(205, 127, 50, 0.2);
+  height: 0;
+  margin: 1.6em 0;
+}
+
 .markdown-display a {
   font-weight: 400 !important;
   letter-spacing: normal !important;
