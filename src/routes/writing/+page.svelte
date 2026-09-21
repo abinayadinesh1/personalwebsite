@@ -596,6 +596,11 @@
         {#if row.type === 'thread'}
           <tr class="thread-row">
             <td>
+              {#if isAdmin && dbThreads.includes(row.name)}
+                <button class="icon-btn" title="Delete group" on:click={() => handleDeleteGroup(row.name)}>
+                  <i class="las la-trash"></i>
+                </button>
+              {/if}
               <button
                 class="thread-toggle"
                 aria-expanded={!collapsedThreads.has(row.name)}
@@ -605,13 +610,6 @@
                 <span class="thread-title">{row.name}</span>
                 <span class="thread-count">{row.items.length}</span>
               </button>
-              {#if isAdmin && dbThreads.includes(row.name)}
-                <span class="row-admin">
-                  <button class="icon-btn" title="Delete group" on:click={() => handleDeleteGroup(row.name)}>
-                    <i class="las la-trash"></i>
-                  </button>
-                </span>
-              {/if}
             </td>
             <td class="date-cell">{row.date || '—'}</td>
             <td class="subject-cell">{row.subject}</td>
@@ -621,17 +619,15 @@
               <tr class="thread-item">
                 <td>
                   <span class="thread-indent"></span>
+                  {#if isAdmin && post.project}
+                    <button class="icon-btn" title="Edit" on:click={() => handleEditWriting(post.project)}>
+                      <i class="las la-edit"></i>
+                    </button>
+                  {/if}
                   {#if post.starred}<span class="star">&#11088;&#65039;</span>{/if}
                   <a href={post.href}>{post.title}</a>
-                  {#if isAdmin && post.project}
-                    {#if post.project.isPublic === false}
-                      <span class="private-badge" title="Private">🔒</span>
-                    {/if}
-                    <span class="row-admin">
-                      <button class="icon-btn" title="Edit" on:click={() => handleEditWriting(post.project)}>
-                        <i class="las la-edit"></i>
-                      </button>
-                    </span>
+                  {#if isAdmin && post.project && post.project.isPublic === false}
+                    <span class="private-badge" title="Private">🔒</span>
                   {/if}
                 </td>
                 <td class="date-cell">{post.date || '—'}</td>
@@ -642,17 +638,15 @@
         {:else}
           <tr>
             <td>
+              {#if isAdmin && row.post.project}
+                <button class="icon-btn" title="Edit" on:click={() => handleEditWriting(row.post.project)}>
+                  <i class="las la-edit"></i>
+                </button>
+              {/if}
               {#if row.post.starred}<span class="star">&#11088;&#65039;</span>{/if}
               <a href={row.post.href}>{row.post.title}</a>
-              {#if isAdmin && row.post.project}
-                {#if row.post.project.isPublic === false}
-                  <span class="private-badge" title="Private">🔒</span>
-                {/if}
-                <span class="row-admin">
-                  <button class="icon-btn" title="Edit" on:click={() => handleEditWriting(row.post.project)}>
-                    <i class="las la-edit"></i>
-                  </button>
-                </span>
+              {#if isAdmin && row.post.project && row.post.project.isPublic === false}
+                <span class="private-badge" title="Private">🔒</span>
               {/if}
             </td>
             <td class="date-cell">{row.post.date || '—'}</td>
@@ -768,33 +762,26 @@
     opacity: 0.7;
   }
 
-  /* Admin controls for database-backed writings */
-  .row-admin {
-    display: inline-flex;
-    gap: 0.25rem;
-    margin-left: 0.5rem;
-    vertical-align: middle;
-  }
-
+  /* Admin controls for database-backed writings: a bare icon left of the title */
   .icon-btn {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: 1px solid #cd7f32;
+    border: none;
     background: transparent;
     color: #b4ebcb;
-    font-size: 0.9em;
+    font-size: 1em;
+    line-height: 1;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
     padding: 0;
-    transition: all 0.2s ease;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+    opacity: 0.85;
+    transition: opacity 0.2s ease, color 0.2s ease;
   }
 
   .icon-btn:hover {
-    background: #cd7f32;
-    color: #1e1e1e;
+    opacity: 1;
+    color: #e6a85c;
   }
 
   /* Page header with admin "new writing" button */
