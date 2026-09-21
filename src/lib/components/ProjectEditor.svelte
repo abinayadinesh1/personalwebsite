@@ -60,6 +60,71 @@
     }, 0);
   }
 
+  // Vercel rejects request bodies over ~4.5MB with a bare 413 before our code
+  // runs, so shrink large images in the browser first. The server re-encodes
+  // to JPEG anyway, so quality loss here is minimal.
+  const UPLOAD_TARGET_BYTES = 3.5 * 1024 * 1024;
+  const UPLOAD_MAX_DIMENSION = 2400;
+
+  async function decodeImage(file) {
+    if (typeof createImageBitmap === 'function') {
+      try {
+        return await createImageBitmap(file, { imageOrientation: 'from-image' });
+      } catch {
+        // fall through to the <img> path
+      }
+    }
+    const url = URL.createObjectURL(file);
+    try {
+      return await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error('Could not read image'));
+        img.src = url;
+      });
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  function canvasToBlob(canvas, quality) {
+    return new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
+  }
+
+  async function shrinkImage(file) {
+    if (file.size <= UPLOAD_TARGET_BYTES) return file;
+    if (file.type === 'image/gif' || file.type === 'image/svg+xml') return file;
+
+    const source = await decodeImage(file);
+    const srcW = source.width || source.naturalWidth;
+    const srcH = source.height || source.naturalHeight;
+    let scale = Math.min(1, UPLOAD_MAX_DIMENSION / Math.max(srcW, srcH));
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    let blob = null;
+
+    // Try progressively lower quality, then smaller dimensions, until it fits.
+    for (let attempt = 0; attempt < 6; attempt++) {
+      canvas.width = Math.max(1, Math.round(srcW * scale));
+      canvas.height = Math.max(1, Math.round(srcH * scale));
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
+      for (const quality of [0.85, 0.7, 0.55]) {
+        blob = await canvasToBlob(canvas, quality);
+        if (blob && blob.size <= UPLOAD_TARGET_BYTES) break;
+      }
+      if (blob && blob.size <= UPLOAD_TARGET_BYTES) break;
+      scale *= 0.7;
+    }
+    if (source.close) source.close();
+    if (!blob) return file;
+
+    const name = (file.name || 'image').replace(/\.[^.]+$/, '') + '.jpg';
+    return new File([blob], name, { type: 'image/jpeg' });
+  }
+
   // Upload one image: insert a placeholder marker, POST to /api/images, then
   // swap the marker for an <img> tag pointing at the stored image.
   async function uploadImage(file) {
@@ -69,11 +134,15 @@
     const marker = `⏳uploading-${Date.now()}-${Math.random().toString(36).slice(2)}⏳`;
     insertAtCursor(marker);
     try {
+      const upload = await shrinkImage(file);
       const fd = new FormData();
-      fd.append('file', file);
+      fd.append('file', upload);
       const res = await fetch('/api/images', { method: 'POST', body: fd });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
+        if (res.status === 413) {
+          throw new Error(err.error || 'Image is too large to upload (server limit is about 4.5MB)');
+        }
         throw new Error(err.error || `Upload failed (${res.status})`);
       }
       const { url } = await res.json();
