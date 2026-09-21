@@ -80,7 +80,7 @@
         Previously, I was at <a href="https://www.pi.website/">PI</a>, <a href="https://seneca.com/">Seneca</a>, and <a href="https://farm-ng.com/">farm-ng</a>.
       </p>
       <p>
-        In my free time, I am <a href="https://runtime.substack.com/p/what-my-body-tells-me">obsessed with rock climbing</a>, sailing, skiing, wildlife photography, prototyping objects, and escaping on long hikes to nature.
+        In my free time, I am <a href="https://runtime.substack.com/p/what-my-body-tells-me">obsessed with rock climbing</a>, <a href="/projects/sailing-logbook-">sailing</a>, skiing, wildlife photography, prototyping objects, and escaping on long hikes to nature.
       </p>
     </div>  
   </div>
