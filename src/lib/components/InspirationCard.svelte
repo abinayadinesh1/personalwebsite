@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher, onMount, tick } from 'svelte';
   import { hostOf, MIN_WIDTH } from '$lib/inspiration.js';
+  import VideoPlayer from '$lib/components/VideoPlayer.svelte';
 
   export let item;
   export let isAdmin = false;
@@ -42,7 +43,7 @@
 
   function startDrag(e) {
     if (e.button !== 0) return;
-    if (e.target.closest('textarea, iframe, .card-action, .resize-handle')) return;
+    if (e.target.closest('textarea, iframe, .card-action, .resize-handle, .vp-controls')) return;
 
     const sx = e.clientX;
     const sy = e.clientY;
@@ -149,13 +150,7 @@
 
     {:else if item.kind === 'video'}
       {#if playing}
-        <iframe
-          src="https://www.youtube-nocookie.com/embed/{meta.videoId}?autoplay=1&rel=0{meta.start ? `&start=${meta.start}` : ''}"
-          title="YouTube video"
-          frameborder="0"
-          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-          allowfullscreen
-        ></iframe>
+        <VideoPlayer videoId={meta.videoId} start={meta.start || 0} />
       {:else}
         <button class="insp-video-poster" on:click={() => (playing = true)} aria-label="Play video">
           <img src="https://i.ytimg.com/vi/{meta.videoId}/hqdefault.jpg" alt="" draggable="false" loading="lazy" />
