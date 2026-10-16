@@ -47,6 +47,10 @@
 </script>
 
 <body>
+  <!-- 95gsm butter paper laid over a blurred photo; see homepage.css -->
+  <div class="butter-under" aria-hidden="true"></div>
+  <div class="butter-sheet" aria-hidden="true"></div>
+
   <div class="page-container">
     <!-- Left column -->
     <div class="text-column">

@@ -56,3 +56,100 @@
     margin: 2rem auto;
   }
 }
+
+/* --- Butter paper (front page only) ---
+   Everything is gated on :has(.butter-sheet) because route CSS stays loaded
+   after client-side navigation to other pages. */
+
+:root {
+  --paper-ink: #1b1a17;
+  --paper-ink-soft: rgba(27, 26, 23, 0.55);
+  --paper-ink-hover: #6b3d14;
+}
+
+/* The layout nests several <body> elements, each painting the dark
+   background with !important; clear all of them. */
+html:has(.butter-sheet),
+body:has(.butter-sheet) {
+  background: #f1eee6 !important;
+  background-color: #f1eee6 !important;
+}
+
+body:has(.butter-sheet) body {
+  background: transparent !important;
+}
+
+/* Stacking context so the negative z-index layers paint above the body bg */
+html > body:has(.butter-sheet) {
+  position: relative;
+  z-index: 0;
+}
+
+/* What shows through the sheet: a photo, far out of focus. Fixed, so the
+   paper slides over it on scroll like a real overlay sheet. */
+.butter-under {
+  position: fixed;
+  inset: -80px;
+  z-index: -2;
+  background: #cfc8bb url('/IMG_9055.jpg') center / cover no-repeat !important;
+  filter: blur(40px) saturate(0.8) brightness(1.2) !important;
+  pointer-events: none;
+}
+
+/* The sheet: milky translucent base, cloudy fibre formation (the uneven
+   density you see holding tracing paper to light), fine tooth, and a soft
+   surface sheen. Noise alpha is keyed to luminance to keep it faint. */
+.butter-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: rgba(247, 245, 239, 0.84) !important;
+  background-image:
+    radial-gradient(120% 80% at 15% 0%, rgba(255, 255, 255, 0.4), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='900'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.011' numOctaves='5' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.43 0 0 0 0 0.38 0.55 0 0 0 -0.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.28 0 0 0 0 0.25 0.32 0 0 0 -0.13'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E") !important;
+  background-size: 100% 100%, 900px 900px, 240px 240px !important;
+  background-repeat: no-repeat, repeat, repeat !important;
+}
+
+/* Ink on paper: black text, no glow */
+body:has(.butter-sheet) :is(h1, h2, h3, h4, h5, h6, p, span, li, a, u, label, button, nav a) {
+  color: var(--paper-ink) !important;
+  -webkit-text-fill-color: var(--paper-ink);
+  filter: none !important;
+}
+
+body:has(.butter-sheet) nav {
+  background: transparent !important;
+}
+
+body:has(.butter-sheet) a {
+  text-decoration-color: var(--paper-ink-soft) !important;
+  -webkit-text-decoration-color: var(--paper-ink-soft) !important;
+  text-underline-offset: 0.15em;
+}
+
+body:has(.butter-sheet) a:hover,
+body:has(.butter-sheet) a:hover :is(span, h4) {
+  color: var(--paper-ink-hover) !important;
+  -webkit-text-fill-color: var(--paper-ink-hover);
+  text-decoration-color: var(--paper-ink-hover) !important;
+}
+
+body:has(.butter-sheet) ::selection {
+  background: rgba(27, 26, 23, 0.15);
+}
+
+/* Photos read as prints laid on the sheet */
+body:has(.butter-sheet) .page-container img {
+  box-shadow: 0 1px 2px rgba(27, 26, 23, 0.18), 0 8px 24px -12px rgba(27, 26, 23, 0.35);
+}
+
+body:has(.butter-sheet) .words-ticker {
+  border-color: rgba(27, 26, 23, 0.3);
+}
+
+body:has(.butter-sheet) .words-ticker:hover {
+  border-color: var(--paper-ink);
+}
