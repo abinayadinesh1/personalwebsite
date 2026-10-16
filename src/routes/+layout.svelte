@@ -12,6 +12,7 @@
     <a href="/writing"><strong>writing</strong></a>
     <a href="/projects"><strong>projects</strong></a>
     <a href="/reading"><strong>reading</strong></a>
+    <!-- <a href="/inspiration"><strong>inspiration</strong></a> -->
   </nav>
 
   <slot />

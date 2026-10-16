@@ -1,0 +1,398 @@
+/* /inspiration canvas.
+   !important opt-outs: global.css forces transparent div backgrounds and bold
+   bronze drop-shadowed text on p/span/a/button/textarea. */
+
+.insp-page {
+  /* Full-bleed: undo the body's 1rem side padding */
+  margin: 0 -1rem;
+}
+
+.insp-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  padding: 0 1rem 0.75rem;
+}
+
+.insp-header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.insp-status {
+  font-size: 0.75em;
+  font-weight: normal;
+  opacity: 0.8;
+}
+
+/* --- Canvas --- */
+
+.insp-viewport {
+  position: relative;
+  overflow: auto;
+  border-top: 1px solid rgba(205, 127, 50, 0.2);
+  border-bottom: 1px solid rgba(205, 127, 50, 0.2);
+  overscroll-behavior: contain;
+}
+
+.insp-viewport.drop-active {
+  outline: 2px dashed var(--link-hover);
+  outline-offset: -6px;
+}
+
+.insp-viewport.panning,
+.insp-viewport.panning * {
+  cursor: grabbing !important;
+}
+
+.insp-board {
+  position: relative;
+  cursor: grab;
+  background-image: radial-gradient(rgba(230, 168, 92, 0.16) 1px, transparent 1.2px) !important;
+  background-size: 24px 24px !important;
+}
+
+/* iframes swallow pointer events, which would stall a drag passing over one */
+.insp-board.dragging iframe {
+  pointer-events: none;
+}
+
+.insp-empty {
+  position: absolute;
+  top: 40%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* --- Card: content with a paper note attached underneath, same width --- */
+
+.insp-card {
+  position: absolute;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  border-radius: 4px;
+  /* box-shadow, not filter: a filter on an iframe's ancestor hurts scrolling */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+.insp-board.dragging .insp-card {
+  cursor: grabbing;
+}
+
+.insp-content {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px 4px 0 0;
+  background: #2a2a28 !important;
+}
+
+.insp-card:not(:has(.insp-paper)) .insp-content {
+  border-radius: 4px;
+}
+
+.insp-content img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.kind-image .insp-content img {
+  cursor: zoom-in;
+}
+
+.insp-content iframe {
+  display: block;
+  width: 100%;
+  border: 0;
+}
+
+.kind-video .insp-content iframe,
+.insp-video-poster {
+  aspect-ratio: 16 / 9;
+}
+
+.kind-pdf .insp-content iframe {
+  aspect-ratio: 8.5 / 11;
+  background: #fff !important;
+}
+
+.insp-missing {
+  padding: 2rem 1rem;
+  text-align: center;
+  font-size: 0.8em;
+  opacity: 0.6;
+}
+
+/* Video: thumbnail until clicked, then the player loads */
+.insp-video-poster {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: #000 !important;
+  cursor: pointer;
+  filter: none !important;
+}
+
+.insp-video-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.insp-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(205, 50, 50, 0.92) !important;
+  color: #fff !important;
+  font-size: 18px;
+  filter: none !important;
+  transition: transform 0.15s ease;
+}
+
+.insp-video-poster:hover .insp-play {
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+/* Link: unfurled preview card */
+.insp-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  filter: none !important;
+}
+
+.insp-link-image {
+  aspect-ratio: 1.91 / 1;
+  object-fit: cover;
+}
+
+.insp-link-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.7rem 0.8rem 0.75rem;
+}
+
+.insp-link-body span {
+  filter: none !important;
+  letter-spacing: normal;
+}
+
+.insp-link-title {
+  font-size: 0.9em;
+  line-height: 1.3;
+  color: var(--text-bronze) !important;
+}
+
+.insp-link:hover .insp-link-title {
+  text-decoration: underline;
+}
+
+.insp-link-desc {
+  font-size: 0.75em;
+  font-weight: normal;
+  line-height: 1.45;
+  color: #cfc8b8 !important;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.insp-link-site {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7em;
+  font-weight: normal;
+  color: #8f8a7e !important;
+}
+
+.insp-content .insp-favicon {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+}
+
+/* Paper note */
+.insp-paper {
+  position: relative;
+  padding: 0.55rem 0.75rem 0.7rem;
+  border-radius: 0 0 4px 4px;
+  background-color: #f4eedb !important;
+  background-image:
+    repeating-linear-gradient(to bottom, transparent 0, transparent 21px, rgba(90, 120, 160, 0.18) 21px, rgba(90, 120, 160, 0.18) 22px) !important;
+  background-position: 0 0.55rem !important;
+}
+
+.insp-paper textarea,
+.insp-paper p {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  resize: none;
+  overflow: hidden;
+  background: transparent !important;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: normal;
+  letter-spacing: normal;
+  line-height: 22px;
+  color: #2d2a24 !important;
+  -webkit-text-fill-color: #2d2a24 !important;
+  caret-color: #2d2a24;
+  filter: none !important;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  user-select: text;
+  -webkit-user-select: text;
+  cursor: text;
+}
+
+.insp-paper textarea::placeholder {
+  color: #a39b88;
+  -webkit-text-fill-color: #a39b88;
+}
+
+/* Toolbar floats above the card on hover; it's the drag handle for iframes */
+.insp-toolbar {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 26px;
+  padding: 0 0.15rem;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  touch-action: none;
+}
+
+.insp-card:hover .insp-toolbar,
+.insp-card:focus-within .insp-toolbar {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .insp-toolbar {
+    opacity: 1;
+  }
+}
+
+.insp-toolbar span,
+.insp-toolbar a,
+.insp-toolbar button {
+  font-size: 11px;
+  font-weight: normal;
+  letter-spacing: normal;
+  filter: none !important;
+}
+
+.insp-grip {
+  color: var(--text-bronze) !important;
+  opacity: 0.7;
+}
+
+.insp-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #b8b0a0 !important;
+}
+
+.card-action {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid rgba(205, 127, 50, 0.4);
+  border-radius: 4px;
+  background: #1e1e1e;
+  color: var(--text-bronze) !important;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.card-action:hover {
+  background: var(--link-hover);
+  color: #1e1e1e !important;
+}
+
+.resize-handle {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  width: 14px;
+  height: 14px;
+  cursor: ew-resize;
+  touch-action: none;
+  border-right: 2px solid var(--link-hover);
+  border-bottom: 2px solid var(--link-hover);
+  border-radius: 0 0 4px 0;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  filter: none !important;
+}
+
+.insp-card:hover .resize-handle {
+  opacity: 0.9;
+}
+
+@media (hover: none) {
+  .resize-handle {
+    opacity: 0.6;
+  }
+}
+
+/* --- Image lightbox --- */
+
+.insp-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  background: rgba(10, 10, 10, 0.88) !important;
+  cursor: zoom-out;
+}
+
+.insp-lightbox img {
+  max-width: 100%;
+  max-height: calc(100% - 4rem);
+  object-fit: contain;
+}
+
+.insp-lightbox-note {
+  max-width: 640px;
+  margin: 0;
+  text-align: center;
+  white-space: pre-wrap;
+}
