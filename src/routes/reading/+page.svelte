@@ -21,6 +21,13 @@
 
   const books = [
     {
+      date: "10.15.26",
+      title: "Why I Am Not Going to Buy a Computer",
+      author: "Wendell Berry",
+      image: "/why_not_computer.jpg",
+      note: ""
+    },
+    {
       date: "09.09.26",
       title: "The Motern Method",
       author: "Matt Farley",
