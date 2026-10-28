@@ -5,7 +5,10 @@
 
   export let data; // Server-side data from +page.server.js
 
-  let isAdmin = data?.isAdmin || false;
+  let adminAuth = data?.isAdmin || false;
+  // Admins can preview the list as the public sees it; isAdmin drives all admin-only UI
+  let previewPublic = false;
+  $: isAdmin = adminAuth && !previewPublic;
 
   const subjects = ["General", "Ag", "Notes"];
   let selectedSubjects = ["General"];
@@ -28,9 +31,9 @@
   onMount(async () => {
     if (!browser) return;
     const clientAuth = sessionStorage.getItem('adminAuth') === 'true';
-    isAdmin = (data?.isAdmin || false) || clientAuth;
+    adminAuth = (data?.isAdmin || false) || clientAuth;
     try {
-      const all = await loadProjects(isAdmin);
+      const all = await loadProjects(adminAuth);
       dbWritings = all.filter(p => p.section === 'writing');
     } catch (e) {
       console.error('Error loading writings from database:', e);
@@ -479,6 +482,11 @@
     <h1>Writing</h1>
     {#if isAdmin && !newMode && !editingWriting}
       <button class="admin-btn" on:click={handleAddNew}>+ New</button>
+    {/if}
+    {#if adminAuth && !newMode && !editingWriting}
+      <button class="admin-btn" aria-pressed={previewPublic} on:click={() => (previewPublic = !previewPublic)}>
+        {previewPublic ? 'Admin view' : 'Public view'}
+      </button>
     {/if}
   </div>
 
