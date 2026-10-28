@@ -1,4 +1,5 @@
 <script>
+  import { previewPublic } from '$lib/adminView.js';
   import { onMount } from 'svelte';
   import '../../styles/words.css';
   import { loadWordsFromCache, fetchWords, saveWordsToCache } from '$lib/utils/words.js';
@@ -7,7 +8,8 @@
 
   let words = [];
   let annotations = [];
-  let isAdmin = false;
+  let adminAuth = false;
+  $: isAdmin = adminAuth && !$previewPublic;
 
   let newWord = '';
   let newDate = todayLocal();
@@ -27,7 +29,7 @@
   }
 
   onMount(async () => {
-    isAdmin = data?.isAdmin || sessionStorage.getItem('adminAuth') === 'true';
+    adminAuth = data?.isAdmin || sessionStorage.getItem('adminAuth') === 'true';
 
     const cached = loadWordsFromCache();
     words = cached.words;

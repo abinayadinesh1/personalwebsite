@@ -2,12 +2,14 @@
   import '../../styles/projects.css';
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
+  import { previewPublic } from '$lib/adminView.js';
   import { page } from '$app/stores';
   import { loadProjects, saveProjectToNeon, updateProjectInNeon, deleteProjectFromNeon, syncProjectsToNeon } from '$lib/utils/projects.js';
 
   export let data; // Server-side data from +page.server.js
 
-  let isAdmin = data?.isAdmin || false;
+  let adminAuth = data?.isAdmin || false;
+  $: isAdmin = adminAuth && !$previewPublic;
   let editingProject = null;
   let loadingProjects = false;
   let savingProject = false;
@@ -89,7 +91,7 @@
       // for immediate client-side updates after login
       const serverAuth = data?.isAdmin || false;
       const clientAuth = checkAuth();
-      isAdmin = serverAuth || clientAuth;
+      adminAuth = serverAuth || clientAuth;
       
       // Always try to load from database first
       loadingProjects = true;
@@ -112,7 +114,7 @@
             localStorage.setItem('projects_last_sync', new Date().toISOString());
           } else {
             // No projects in database - sync default projects if admin
-            if (isAdmin) {
+            if (adminAuth) {
               console.log('No projects in database, syncing default projects...');
               try {
                 const synced = await syncProjectsToNeon(defaultProjects);

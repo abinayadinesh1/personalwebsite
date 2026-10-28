@@ -1,4 +1,5 @@
 <script>
+  import { previewPublic } from '$lib/adminView.js';
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import MarkdownIt from 'markdown-it';
@@ -9,7 +10,8 @@
   let article = null;
   let loading = true;
   let error = null;
-  let isAdmin = false;
+  let adminAuth = false;
+  $: isAdmin = adminAuth && !$previewPublic;
   let isEditing = false;
   let saving = false;
 
@@ -20,7 +22,7 @@
   let editTextarea;
 
   onMount(async () => {
-    isAdmin = sessionStorage.getItem('adminAuth') === 'true';
+    adminAuth = sessionStorage.getItem('adminAuth') === 'true';
 
     try {
       const res = await fetch(`/api/articles/${$page.params.id}`);

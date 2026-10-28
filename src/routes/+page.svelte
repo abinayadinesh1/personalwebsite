@@ -2,6 +2,11 @@
   import { onMount } from 'svelte';
   import '../styles/components/homepage.css';
   import WordsTicker from '$lib/components/WordsTicker.svelte';
+  import { previewPublic } from '$lib/adminView.js';
+
+  export let data;
+
+  let adminAuth = data?.isAdmin || false;
 
   let img1 = "/IMG_4363.jpg";
   let img2 = "/IMG_6410.jpg";
@@ -10,6 +15,8 @@
   let img5 = "/pretty_image.jpg";
 
   onMount(() => {
+    adminAuth = adminAuth || sessionStorage.getItem('adminAuth') === 'true';
+
     // Add the telescoping text script and styles
     const script = document.createElement('script');
     script.src = "https://unpkg.com/telescopic-text/lib/index.js";
@@ -45,6 +52,12 @@
   });
 
 </script>
+
+{#if adminAuth}
+  <button class="view-toggle" aria-pressed={$previewPublic} on:click={() => previewPublic.update((v) => !v)}>
+    {$previewPublic ? 'Admin view' : 'Public view'}
+  </button>
+{/if}
 
 <body>
   <div class="page-container">
@@ -88,3 +101,26 @@
     </div>  
   </div>
 </body>
+
+<style>
+  .view-toggle {
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+    z-index: 3;
+    padding: 0.35rem 0.8rem;
+    border: 1px solid #cd7f32;
+    border-radius: 4px;
+    background: transparent;
+    color: #cd7f32;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.85em;
+    transition: all 0.2s ease;
+  }
+
+  .view-toggle:hover,
+  .view-toggle[aria-pressed='true'] {
+    background: rgba(205, 127, 50, 0.15);
+  }
+</style>

@@ -1,15 +1,17 @@
 <script>
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
+  import { previewPublic } from '$lib/adminView.js';
   import ProjectEditor from '$lib/components/ProjectEditor.svelte';
 
   export let data;
 
-  let isAdmin = data.isAdmin || false;
+  let adminAuth = data.isAdmin || false;
+  $: isAdmin = adminAuth && !$previewPublic;
 
   onMount(() => {
     if (browser) {
-      isAdmin = data.isAdmin || sessionStorage.getItem('adminAuth') === 'true';
+      adminAuth = data.isAdmin || sessionStorage.getItem('adminAuth') === 'true';
     }
   });
 </script>

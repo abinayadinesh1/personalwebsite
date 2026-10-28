@@ -1,14 +1,13 @@
 <script>
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
+  import { previewPublic } from '$lib/adminView.js';
   import { loadProjects, saveProjectToNeon, updateProjectInNeon, deleteProjectFromNeon } from '$lib/utils/projects.js';
 
   export let data; // Server-side data from +page.server.js
 
   let adminAuth = data?.isAdmin || false;
-  // Admins can preview the list as the public sees it; isAdmin drives all admin-only UI
-  let previewPublic = false;
-  $: isAdmin = adminAuth && !previewPublic;
+  $: isAdmin = adminAuth && !$previewPublic;
 
   const subjects = ["General", "Ag", "Notes"];
   let selectedSubjects = ["General"];
@@ -482,11 +481,6 @@
     <h1>Writing</h1>
     {#if isAdmin && !newMode && !editingWriting}
       <button class="admin-btn" on:click={handleAddNew}>+ New</button>
-    {/if}
-    {#if adminAuth && !newMode && !editingWriting}
-      <button class="admin-btn" aria-pressed={previewPublic} on:click={() => (previewPublic = !previewPublic)}>
-        {previewPublic ? 'Admin view' : 'Public view'}
-      </button>
     {/if}
   </div>
 

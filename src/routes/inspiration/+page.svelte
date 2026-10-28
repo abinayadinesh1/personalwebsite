@@ -1,12 +1,13 @@
 <script>
   import { onMount } from 'svelte';
+  import { previewPublic } from '$lib/adminView.js';
   import '../../styles/inspiration.css';
   import InspirationCard from '$lib/components/InspirationCard.svelte';
   import { classifyUrl, parseUrl, DEFAULT_WIDTHS } from '$lib/inspiration.js';
 
   export let data;
 
-  const isAdmin = data.isAdmin;
+  $: isAdmin = data.isAdmin && !$previewPublic;
   let items = data.items || [];
   let heights = {};
 

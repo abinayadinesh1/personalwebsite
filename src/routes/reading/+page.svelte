@@ -1,4 +1,5 @@
 <script>
+  import { previewPublic } from '$lib/adminView.js';
   import { onMount } from 'svelte';
   import '../../styles/carousel.css';
   import '../../styles/articles.css';
@@ -8,7 +9,8 @@
   let cardWidth = 160; // Base card width in pixels
   let cardGap = 8; // Gap between cards (0.5rem ≈ 8px)
   let articles = [];
-  let isAdmin = false;
+  let adminAuth = false;
+  $: isAdmin = adminAuth && !$previewPublic;
   let editingId = null;
   let editLink = '';
   let editContent = '';
@@ -161,7 +163,7 @@
     updateItemsPerView();
     window.addEventListener('resize', updateItemsPerView);
 
-    isAdmin = sessionStorage.getItem('adminAuth') === 'true';
+    adminAuth = sessionStorage.getItem('adminAuth') === 'true';
 
     // Fetch articles from API
     try {
