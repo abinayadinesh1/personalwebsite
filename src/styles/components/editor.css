@@ -19,6 +19,23 @@
   flex: 1 1 100%;
 }
 
+/* Same column as src/routes/writing/+layout.svelte: 92% gutters, capped at 720px */
+.editor-dashboard.narrow {
+  justify-content: center;
+  padding: 2rem 4%;
+}
+
+.editor-dashboard.narrow .editor-column {
+  flex: 0 1 auto;
+  width: 100%;
+  max-width: 720px;
+  min-width: 0;
+}
+
+.editor-dashboard.narrow .editor-column * {
+  overflow-wrap: break-word;
+}
+
 .sidebar-column {
   flex: 0 0 25%;
   display: flex;
@@ -647,5 +664,10 @@
 
   .sidebar-column {
     flex: 1;
+  }
+
+  .editor-dashboard.narrow .editor-column {
+    flex: 0 1 auto;
+    align-self: center;
   }
 }

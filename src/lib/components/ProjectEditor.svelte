@@ -10,6 +10,7 @@
   export let projectId = '';
   export let isAdmin = false;
   export let title = ''; // Project title, shown as the article heading in view mode
+  export let narrow = false; // Centered reading column, matching the static /writing pages
 
   // Note: projectId should always be provided as a prop from the parent component
   // (which resolves the project and passes project.id, not the route param)
@@ -692,7 +693,7 @@
   $: showSidebar = showChangelog || showGithub;
 </script>
 
-<div class="editor-dashboard" class:no-sidebar={!showSidebar}>
+<div class="editor-dashboard" class:no-sidebar={!showSidebar} class:narrow>
   <!-- Main Editor Column (75%) -->
   <div class="editor-column">
     {#if isAdmin}

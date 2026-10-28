@@ -82,6 +82,9 @@
       <p>
         In my free time, I am <a href="https://runtime.substack.com/p/what-my-body-tells-me">obsessed with rock climbing</a>, <a href="/projects/sailing-logbook-">sailing</a>, skiing, wildlife photography, prototyping objects, and escaping on long hikes to nature.
       </p>
+      <p>
+        To actually learn a bit more about me, read this <a href="/about-me">user manual</a>. 
+      </p>
     </div>  
   </div>
 </body>
