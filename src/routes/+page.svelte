@@ -90,6 +90,7 @@
     <div class="text-column">
       <p>
         I'm a tinkerer that likes to make robots that are fun and functional.
+        Currently, I'm at <a href="https://www.somana.tech/">Somana</a>, where I think about linux, embedded systems, and factories.
         Previously, I was at <a href="https://www.pi.website/">PI</a>, <a href="https://seneca.com/">Seneca</a>, and <a href="https://farm-ng.com/">farm-ng</a>.
       </p>
       <p>
