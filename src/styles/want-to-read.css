@@ -1,0 +1,100 @@
+.want-intro {
+  font-size: 0.75em;
+}
+
+.want-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1.5rem 0.5rem;
+  margin-top: 1rem;
+}
+
+.want-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 140px;
+  height: 210px;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  border: 1px dashed var(--link-hover);
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  font-size: 0.8em;
+}
+
+.want-edit {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  z-index: 5;
+  background: var(--bg-dark);
+  border: 1px solid var(--link-hover);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8em;
+  padding: 0.05rem 0.35rem;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.book-card:hover .want-edit,
+.want-edit:focus-visible {
+  opacity: 1;
+}
+
+.want-finished {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.3rem;
+  font-size: 0.7em;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.want-dialog {
+  width: min(360px, calc(100vw - 2rem));
+  padding: 1rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--link-hover);
+  border-radius: 6px;
+}
+
+.want-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.want-dialog h3 {
+  margin-top: 0;
+}
+
+.want-preview {
+  display: block;
+  max-height: 140px;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.want-delete {
+  margin-left: auto;
+  color: #e06c75;
+  border-color: #e06c75;
+}
+
+@media (hover: none) {
+  .want-edit {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .want-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  }
+
+  .want-placeholder {
+    width: 90px;
+    height: 135px;
+  }
+}

@@ -1,8 +1,11 @@
 <script>
   import { previewPublic } from '$lib/adminView.js';
+  import { shelfDate } from '$lib/books.js';
   import { onMount } from 'svelte';
   import '../../styles/carousel.css';
   import '../../styles/articles.css';
+
+  export let data;
 
   let currentIndex = 0;
   let itemsPerView = 5;
@@ -21,7 +24,7 @@
   let newDate = '';
   let addError = '';
 
-  const books = [
+  const shelvedBooks = [
     {
       date: "10.15.26",
       title: "Why I Am Not Going to Buy a Computer",
@@ -56,13 +59,6 @@
       author: "Lexi Kent-Monning",
       image: "/burden_of_joy.jpg",
       note: "Book club'd with Alice! We cried sm, such a beautiful depiction of a woman's life."
-    },
-    {
-      date: "01.30.25",
-      title: "The Idea Factory",
-      author: "Jon Gertner",
-      image: "/idea_factory.jpg",
-      note: ""
     },
     {
       date: "01.16.25",
@@ -101,26 +97,17 @@
     },
     {
       date: "",
-      title: "Project Hail Mary",
-      author: "Andy Weir",
-      image: "/hailmary.jpg",
-      note: "A brian machado recc!"
-    },
-    {
-      date: "",
       title: "The Secret Life of Groceries",
       author: "Benjamin Lorr",
       image: "/secretlife.jpg",
       note: "Karina Bao recc, impeccable. "
     },
-    {
-      date: "",
-      title: "Weather: A Very Short Introduction",
-      author: "Storm Dunlop",
-      image: "/weather.jpeg",
-      note: ""
-    },
+  ];
 
+  // Books ticked "finished" on /want-to-read go on the front of the shelf
+  $: books = [
+    ...(data.finishedBooks || []).map((b) => ({ ...b, date: shelfDate(b.finished_on) })),
+    ...shelvedBooks
   ];
 
   const textbooks = [
@@ -137,6 +124,13 @@
       author: "Alexander Givental",
       image: "/linalg.jpg",
       note: "there's a million linalg books; this is succint, and trains your general problem solving skills. he's a mathematical physics prof, and this book gives physics grounding with all the normal vector stuff. just read the first chapter."
+    },
+    {
+      date: "",
+      title: "Shigley's Mechanical Engineering Design",
+      author: "Richard G. Budynas and J. Keith Nisbett",
+      image: "/shigley.jpg",
+      note: ""
     }
   ];
 
@@ -282,7 +276,7 @@
               <img src={book.image} alt="{book.title} cover" />
               <div class="book-info">
                 <h4 class="book-title">{book.title}</h4>
-                <p class="book-author">by {book.author}</p>
+                {#if book.author}<p class="book-author">by {book.author}</p>{/if}
                 <p class="book-date">{book.date}</p>
               </div>
             </div>
@@ -293,6 +287,7 @@
 
     <button class="carousel-button next" on:click={nextBook} aria-label="Next book">›</button>
   </div>
+  <p><a href="/want-to-read">Books I Want To Read</a></p>
 
   <h3>Short(er) Form {#if isAdmin}<button class="add-article-btn" on:click={() => showAddForm = !showAddForm}>{showAddForm ? '−' : '+'}</button>{/if}</h3>
   {#if showAddForm}
